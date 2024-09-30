@@ -1,5 +1,6 @@
 import { createTheme } from "@mui/material/styles";
 import AkrobatRegular from "root/assets/AkrobatFont/Akrobat-Regular.ttf"
+import styles from 'root/shared/default.module.scss';
 
 //can be customized like on this Docs page https://mui.com/material-ui/customization/palette/
 export const themes = createTheme({
@@ -8,6 +9,9 @@ export const themes = createTheme({
   },
   palette: {
     mode: 'dark',
+    primary: {
+      main: styles.discordBluerple,
+    }
   },
   typography: {
     fontFamily: [

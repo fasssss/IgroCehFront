@@ -4,7 +4,7 @@ import './styles.scss';
 
 const CommonButton = (props: PropsWithChildren<ButtonProps>) => {
     return(
-        <Button variant='outlined' 
+        <Button variant='contained' 
             className='common-button'
             startIcon={props.startIcon} 
             endIcon={props.endIcon} 
@@ -15,8 +15,8 @@ const CommonButton = (props: PropsWithChildren<ButtonProps>) => {
 }
 
 type ButtonProps = {
-    startIcon: ReactNode | undefined,
-    endIcon: ReactNode | undefined
+    startIcon?: ReactNode,
+    endIcon?: ReactNode
 }
 
 export { CommonButton }

@@ -1,4 +1,8 @@
-@import '../../../../shared/default.scss';
+@use  '../../../../shared/default.module.scss' as default;
+
+body {
+    overflow: hidden;
+}
 
 .login-page {
     height: 100vh;
@@ -12,8 +16,10 @@
 .login-page__container {
     width: 24%;
     height: 40%;
-    background-color: $grey;
-    border-radius: $border-radius_small;
+    max-width: 200px;
+    padding: default.$padding_big;
+    background-color: default.$grey;
+    border-radius: default.$border-radius_small;
     display: flex;
     flex-direction: column;
     align-items: center;

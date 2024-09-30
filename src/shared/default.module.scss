@@ -5,11 +5,23 @@ $red: #be2908;
 $yellow: #e1b800;
 $black: #121212;
 $grey: #3d3d3d;
+:export {
+    discordBluerple : $discord-bluerple;
+    green : $green;
+    red : $red;
+    yellow: $yellow;
+    black: $black;
+    grey: $grey
+}
+
 
 //Default values
 $border-radius_small: 8px;
 $border-radius_big: 16px;
 $border-radius_large: 32px;
+$padding_small: 8px;
+$padding_big: 16px;
+$padding_large: 32px;
 
 //External fonts
 @font-face {
