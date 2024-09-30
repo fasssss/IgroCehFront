@@ -1,0 +1,77 @@
+//Default colors
+$discord-bluerple: #5865F2;
+$green: #8cc907;
+$red: #be2908;
+$yellow: #e1b800;
+$black: #121212;
+$grey: #3d3d3d;
+
+//Default values
+$border-radius_small: 8px;
+$border-radius_big: 16px;
+$border-radius_large: 32px;
+
+//External fonts
+@font-face {
+    font-family: "Akrobat";
+    src: url(../assets/AkrobatFont/Akrobat-Thin.ttf);
+    font-weight: 100;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Akrobat";
+    src: url(../assets/AkrobatFont/Akrobat-ExtraLight.ttf);
+    font-weight: 200;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Akrobat";
+    src: url(../assets/AkrobatFont/Akrobat-Light.ttf);
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Akrobat";
+    src: url(../assets/AkrobatFont/Akrobat-Regular.ttf);
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Akrobat";
+    src: url(../assets/AkrobatFont/Akrobat-SemiBold.ttf);
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Akrobat";
+    src: url(../assets/AkrobatFont/Akrobat-Bold.ttf);
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Akrobat";
+    src: url(../assets/AkrobatFont/Akrobat-ExtraBold.ttf);
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Akrobat";
+    src: url(../assets/AkrobatFont/Akrobat-Black.ttf);
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
