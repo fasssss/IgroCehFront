@@ -2,7 +2,6 @@ import { CircularProgress, SvgIcon } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { CommonButton } from 'root/shared/components/CommonButton';
 import { SvgSelector } from 'root/shared/components/SvgSelector';
-import { discordClientId } from 'root/shared/constants';
 import { useGetDiscordApiLinkQuery } from '../../authorizationApi';
 import './styles.scss'
 
