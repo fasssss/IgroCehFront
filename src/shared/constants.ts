@@ -1,0 +1,1 @@
+export const igroCehApiBaseUrl: string = import.meta.env.VITE_IGRO_CEH_API;

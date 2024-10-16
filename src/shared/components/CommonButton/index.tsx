@@ -1,5 +1,5 @@
 import { Button } from "@mui/material";
-import { ReactNode, PropsWithChildren } from "react";
+import { ReactNode, PropsWithChildren, MouseEventHandler } from "react";
 import './styles.scss';
 
 const CommonButton = (props: PropsWithChildren<ButtonProps>) => {
@@ -8,6 +8,7 @@ const CommonButton = (props: PropsWithChildren<ButtonProps>) => {
             className='common-button'
             startIcon={props.startIcon} 
             endIcon={props.endIcon} 
+            onClick={props.onClick}
         >
             { props.children }
         </Button>
@@ -16,7 +17,8 @@ const CommonButton = (props: PropsWithChildren<ButtonProps>) => {
 
 type ButtonProps = {
     startIcon?: ReactNode,
-    endIcon?: ReactNode
+    endIcon?: ReactNode,
+    onClick?: MouseEventHandler<HTMLButtonElement>
 }
 
 export { CommonButton }

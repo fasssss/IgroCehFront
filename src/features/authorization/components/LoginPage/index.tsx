@@ -1,10 +1,14 @@
+import { CircularProgress, SvgIcon } from '@mui/material';
+import { useEffect, useState } from 'react';
 import { CommonButton } from 'root/shared/components/CommonButton';
 import { SvgSelector } from 'root/shared/components/SvgSelector';
+import { discordClientId } from 'root/shared/constants';
+import { useGetDiscordApiLinkQuery } from '../../authorizationApi';
 import './styles.scss'
-import { SvgIcon } from '@mui/material';
-import { useEffect, useState } from 'react';
 
 const LoginPage = () => {
+
+    // Start of code section for page animateed background
     const [leftPosition, setLeftPosition] = useState(0);
     const mouseListener = (event: MouseEvent) => {
         let x = (window.innerWidth - event.pageX * 10) / 90;
@@ -17,6 +21,14 @@ const LoginPage = () => {
             document.removeEventListener("mousemove", mouseListener);
         });
     }, []);
+    // End of code section for page animated background
+
+    const getDiscordApiLink = useGetDiscordApiLinkQuery();
+
+    const authorizationFlow = () => {
+        window.location.href = getDiscordApiLink.data?.discordApiLink
+        || window.location.href
+    }
 
     return(
         <div className="login-page">
@@ -27,9 +39,14 @@ const LoginPage = () => {
             </div>
             <div className="login-page__container">
                 <h1>Show thyself</h1>
-                <CommonButton endIcon={<SvgIcon><SvgSelector iconName='discord-icon' /></SvgIcon>}>
-                    Loggin with
-                </CommonButton>
+                {
+                    !getDiscordApiLink.isLoading ?
+                    <CommonButton onClick={authorizationFlow} endIcon={<SvgIcon><SvgSelector iconName='discord-icon' /></SvgIcon>}>
+                        Loggin with
+                    </CommonButton>
+                    : 
+                    <CircularProgress color="primary" />
+                }
             </div>
         </div>
     );
