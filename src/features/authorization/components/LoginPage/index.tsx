@@ -24,7 +24,7 @@ const LoginPage = () => {
 
     const getDiscordApiLink = useGetDiscordApiLinkQuery();
 
-    const authorizationFlow = () => {
+    const authByDiscord = () => {
         window.location.href = getDiscordApiLink.data?.discordApiLink
         || window.location.href
     }
@@ -40,8 +40,8 @@ const LoginPage = () => {
                 <h1>Show thyself</h1>
                 {
                     !getDiscordApiLink.isLoading ?
-                    <CommonButton onClick={authorizationFlow} endIcon={<SvgIcon><SvgSelector iconName='discord-icon' /></SvgIcon>}>
-                        Loggin with
+                    <CommonButton onClick={authByDiscord} endIcon={<SvgIcon><SvgSelector iconName='discord-icon' /></SvgIcon>}>
+                        Login with
                     </CommonButton>
                     : 
                     <CircularProgress color="primary" />
