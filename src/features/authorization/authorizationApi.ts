@@ -14,7 +14,8 @@ const authorizationApi = igroCehApi.injectEndpoints({
                 },
                 body: {
                     authorizationCode: authCode
-                }
+                },
+                credentials: 'include'
             }),
         })
     })
