@@ -1,7 +1,7 @@
-import type { DependencyList, EffectCallback } from "react"
+import type { EffectCallback } from "react"
 import { useEffect, useRef } from "react"
 
-const usePatchedEffect = (effect: EffectCallback, deps?: DependencyList) => {
+const useOnMount = (effect: EffectCallback) => {
   const initialized = useRef(false)
 
   useEffect(() => {
@@ -9,7 +9,7 @@ const usePatchedEffect = (effect: EffectCallback, deps?: DependencyList) => {
       initialized.current = true
       effect()
     }
-  }, deps)
+  }, [])
 }
 
-export { usePatchedEffect }
+export { useOnMount }
