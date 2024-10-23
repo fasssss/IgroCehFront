@@ -1,3 +1,17 @@
-.Layout {
-  text-align: center;
+@use '../../default.module.scss' as default;
+
+.layout {
+  width: 100vw;
+  height: 56px;
+  background-color: default.$grey;
+  position: sticky;
+}
+
+.layout__user-badge {
+  left: 0;
+  padding-right: default.$padding_big;
+  padding-top: auto;
+  padding-bottom: auto;
+  size: 48px;
+  position: relative;
 }
