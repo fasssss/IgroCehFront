@@ -24,6 +24,12 @@ function Layout() {
   return (
     <>
       <div className="layout">
+        <div id='layout__decoration-1'/>
+        <div id='layout__decoration-2'/>
+        <div id='layout__decoration-3'/>
+        <div id='layout__decoration-4'/>
+        <div id='layout__decoration-5'/>
+        <div id='layout__decoration-6'/>
         <div className='layout__user-badge'>
           {
             userInfo.avatarUrl ?

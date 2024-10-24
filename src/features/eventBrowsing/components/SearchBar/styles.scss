@@ -6,9 +6,6 @@
     width: 50%;
     border-radius: default.$border-radius_large;
     height: 56px;
-    //display: flex;
-    //align-items: center;
-    //justify-content: space-between;
 }
 
 .search-bar__input {
@@ -36,5 +33,6 @@
     position: relative;
     left: calc(100% - 38px);
     bottom: 38px;
+    pointer-events: none;
     cursor: pointer;
 }

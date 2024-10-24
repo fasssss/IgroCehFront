@@ -41,5 +41,65 @@
   position: relative;
   top: 62px;
   height: 100vh;
-  padding: default.$padding_big;
+  padding-top: default.$padding_large;
+}
+
+#layout__decoration-1 {
+  position: fixed;
+  top: 16px;
+  left: 52px;
+  width: 40px;
+  height: 16px;
+  transform: rotate(30deg);
+  background-color: default.$light-grey;
+}
+
+#layout__decoration-2 {
+  position: fixed;
+  top: 16px;
+  left: 52px;
+  width: 40px;
+  height: 16px;
+  transform: rotate(120deg);
+  background-color: default.$light-grey;
+}
+
+#layout__decoration-3 {
+  position: fixed;
+  top: 12px;
+  left: 112px;
+  width: 32px;
+  height: 16px;
+  transform: rotate(330deg);
+  background-color: default.$light-grey;
+}
+
+#layout__decoration-4 {
+  position: fixed;
+  top: 11px;
+  left: 112px;
+  width: 32px;
+  height: 16px;
+  transform: rotate(60deg);
+  background-color: default.$light-grey;
+}
+
+#layout__decoration-5 {
+  position: fixed;
+  top: 12px;
+  left: -10px;
+  width: 64px;
+  height: 24px;
+  transform: rotate(340deg);
+  background-color: default.$light-grey;
+}
+
+#layout__decoration-6 {
+  position: fixed;
+  top: 11px;
+  left: -10px;
+  width: 64px;
+  height: 24px;
+  transform: rotate(70deg);
+  background-color: default.$light-grey;
 }
