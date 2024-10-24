@@ -1,0 +1,40 @@
+@use '../../../../shared/default.module.scss' as default;
+
+.search-bar__field {
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+    border-radius: default.$border-radius_large;
+    height: 56px;
+    //display: flex;
+    //align-items: center;
+    //justify-content: space-between;
+}
+
+.search-bar__input {
+    background-color: default.$grey;
+    width: -moz-available;
+    width: -webkit-fill-available;
+    color: white;
+    font-size: 16px;
+    height: inherit;
+    border-radius: default.$border-radius_large;
+    padding: default.$padding_big;
+    padding-right: 48px;
+    transition: background-color 0.2s ease-in-out;
+    border: none;
+    caret-shape: underscore;
+}
+
+.search-bar__input:focus {
+    outline: none;
+    size: 24px;
+    background-color: default.$light-grey;
+}
+
+.search-bar__icon {
+    position: relative;
+    left: calc(100% - 38px);
+    bottom: 38px;
+    cursor: pointer;
+}

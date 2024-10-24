@@ -1,25 +1,44 @@
 import { Outlet } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { SvgIcon } from '@mui/material'
 import { RootState } from 'root/shared/store';
 import { SvgSelector } from 'root/shared/components/SvgSelector';
+import { useGetUserObjectQuery } from 'root/features/authorization/authorizationApi';
+import { setUserObject } from 'root/features/authorization/authorizationSlice';
 import './styles.scss';
 
 function Layout() {
   var userInfo = useSelector((state: RootState) => state.authorizationReducer);
+  var getUserObject = useGetUserObjectQuery();
+  var dispatch = useDispatch();
+  useEffect(() => {
+    if(getUserObject.isSuccess){
+      dispatch(setUserObject({
+        email: getUserObject.data.email,
+        userName: getUserObject.data.userName,
+        avatarUrl: getUserObject.data.avatarUrl
+      }))
+    }
+  }, [getUserObject.isSuccess])
   return (
     <>
       <div className="layout">
         <div className='layout__user-badge'>
           {
             userInfo.avatarUrl ?
-            <img src={userInfo.avatarUrl}></img>
+            <img src={userInfo.avatarUrl} className='layout__user-avatar'></img>
             :
-            <SvgIcon><SvgSelector iconName='discord-icon' /></SvgIcon>
+            <div className='layout__default-avatar'>
+              <SvgIcon><SvgSelector iconName='discord-icon' /></SvgIcon>
+            </div>
           }
+          <span>{userInfo.userName}</span>
         </div>
       </div>
-      <Outlet />
+      <div className='layout__content-container'>
+        <Outlet />
+      </div>
     </>
   );
 }

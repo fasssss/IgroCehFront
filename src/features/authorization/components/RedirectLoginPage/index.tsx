@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useAuthorizeByCodeQuery } from '../../authorizationApi';
-import { authorizationSuccess } from '../../authorizationSlice';
+import { setUserObject } from '../../authorizationSlice';
 
 const RedirectLoginPage = () => {
     var navigate = useNavigate();
@@ -18,7 +18,7 @@ const RedirectLoginPage = () => {
         var dispatch = useDispatch();
         useEffect(() => {
             if(sendAuthCode.isSuccess) {
-                dispatch(authorizationSuccess({
+                dispatch(setUserObject({
                     userName: sendAuthCode.data.userName,
                     email: sendAuthCode.data.email,
                     avatarUrl: sendAuthCode.data.avatarUrl

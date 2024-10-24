@@ -5,9 +5,15 @@ const authorizationApi = igroCehApi.injectEndpoints({
         getDiscordApiLink: build.query<GetDiscordAuthLinkResponse, void>({
             query: () => "/api/getDiscordAuthLink",
         }),
-        authorizeByCode: build.query<AuthorizeByCodeResponse, string>({
+        authorizeByCode: build.query<GetUserObjectResponse, string>({
             query: (authCode) => ({
                 url: `/api/authorizeByCode?authorizationCode=${authCode}`,
+                credentials: 'include'
+            }),
+        }),
+        getUserObject: build.query<GetUserObjectResponse, void>({
+            query: () => ({
+                url: `/api/getUserObject`,
                 credentials: 'include'
             }),
         })
@@ -18,7 +24,7 @@ export type GetDiscordAuthLinkResponse = {
     discordApiLink: string
 }
 
-export type AuthorizeByCodeResponse = {
+export type GetUserObjectResponse = {
     userName: string,
     email: string,
     avatarUrl: string | null
@@ -28,4 +34,5 @@ export const {
     useLazyGetDiscordApiLinkQuery,
     useGetDiscordApiLinkQuery,
     useAuthorizeByCodeQuery,
+    useGetUserObjectQuery,
 } = authorizationApi;

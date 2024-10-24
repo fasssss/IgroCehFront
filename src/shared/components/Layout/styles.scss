@@ -2,16 +2,44 @@
 
 .layout {
   width: 100vw;
-  height: 56px;
+  height: 62px;
   background-color: default.$grey;
-  position: sticky;
+  position: fixed;
+  display: flex;
+  align-items: center;
 }
 
 .layout__user-badge {
-  left: 0;
+  right: 0;
   padding-right: default.$padding_big;
-  padding-top: auto;
-  padding-bottom: auto;
-  size: 48px;
+  width: fit-content;
+  position: fixed;
+  display: flex;
+  align-items: center;
+}
+
+.layout__user-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: default.$border-radius_large;
+  margin-right: 8px;
+}
+
+.layout__default-avatar {
+  width: 48px;
+  height: 48px;
+  padding: 8px;
+  margin-right: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: default.$border-radius_large;
+  background-color: default.$discord-bluerple;
+}
+
+.layout__content-container {
   position: relative;
+  top: 62px;
+  height: 100vh;
+  padding: default.$padding_big;
 }

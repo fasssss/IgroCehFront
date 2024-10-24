@@ -16,7 +16,7 @@ export const authorizationSlice = createSlice({
     name: 'authorization',
     initialState: initialState,
     reducers: {
-        authorizationSuccess: (state, action: PayloadAction<AuthorizationState>) => {
+        setUserObject: (state, action: PayloadAction<AuthorizationState>) => {
             state.userName = action.payload.userName,
             state.email = action.payload.email,
             state.avatarUrl = action.payload.avatarUrl
@@ -24,6 +24,6 @@ export const authorizationSlice = createSlice({
     }
 });
 
-export const { authorizationSuccess } = authorizationSlice.actions;
+export const { setUserObject } = authorizationSlice.actions;
 
 export default authorizationSlice.reducer

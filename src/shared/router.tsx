@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
-import { LoginPage, RedirectLoginPage } from "../features";
+import { LoginPage, RedirectLoginPage, SearchBar } from "../features";
 import Layout from "./components/Layout";
 
 const router = createBrowserRouter([
@@ -17,7 +17,7 @@ const router = createBrowserRouter([
         children: [
             {
                 path: "browsing",
-                element: <div></div>
+                element: <SearchBar />
             }
         ]
     }
