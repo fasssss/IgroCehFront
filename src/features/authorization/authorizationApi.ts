@@ -33,6 +33,8 @@ export type GetUserObjectResponse = {
 export const { 
     useLazyGetDiscordApiLinkQuery,
     useGetDiscordApiLinkQuery,
+    useLazyAuthorizeByCodeQuery,
     useAuthorizeByCodeQuery,
-    useGetUserObjectQuery,
+    useLazyGetUserObjectQuery,
+    useGetUserObjectQuery
 } = authorizationApi;

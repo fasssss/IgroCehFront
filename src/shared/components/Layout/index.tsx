@@ -4,23 +4,29 @@ import { useDispatch, useSelector } from 'react-redux';
 import { SvgIcon } from '@mui/material'
 import { RootState } from 'root/shared/store';
 import { SvgSelector } from 'root/shared/components/SvgSelector';
-import { useGetUserObjectQuery } from 'root/features/authorization/authorizationApi';
+import { useLazyGetUserObjectQuery } from 'root/features/authorization/authorizationApi';
 import { setUserObject } from 'root/features/authorization/authorizationSlice';
 import './styles.scss';
 
 function Layout() {
   var userInfo = useSelector((state: RootState) => state.authorizationReducer);
-  var getUserObject = useGetUserObjectQuery();
+  var [getUserObject, userObject] = useLazyGetUserObjectQuery();
   var dispatch = useDispatch();
   useEffect(() => {
-    if(getUserObject.isSuccess){
+    if(!userInfo.userName && !userInfo.email && !userInfo.avatarUrl) {
+      getUserObject();
+    }
+  }, [])
+
+  useEffect(() => {
+    if(userObject.isSuccess){
       dispatch(setUserObject({
-        email: getUserObject.data.email,
-        userName: getUserObject.data.userName,
-        avatarUrl: getUserObject.data.avatarUrl
+        email: userObject.data.email,
+        userName: userObject.data.userName,
+        avatarUrl: userObject.data.avatarUrl
       }))
     }
-  }, [getUserObject.isSuccess])
+  }, [userObject.isSuccess])
   return (
     <>
       <div className="layout">
