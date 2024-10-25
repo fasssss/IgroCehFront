@@ -1,0 +1,115 @@
+@use '../../../../shared/default.module.scss' as default;
+
+.search-bar {
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+}
+
+.search-bar__field {
+    border-radius: default.$border-radius_large;
+    height: 56px;
+    min-width: 230px;
+}
+
+.search-bar__input {
+    background-color: default.$grey;
+    width: -moz-available;
+    width: -webkit-fill-available;
+    color: white;
+    font-size: 16px;
+    height: inherit;
+    border-radius: default.$border-radius_large;
+    padding: default.$padding_big;
+    padding-right: 48px;
+    transition: background-color 0.2s ease-in-out;
+    border: none;
+    caret-shape: underscore;
+}
+
+.search-bar__input:focus {
+    outline: none;
+    size: 24px;
+    background-color: default.$light-grey;
+}
+
+.search-bar__icon {
+    position: relative;
+    left: calc(100% - 38px);
+    bottom: 38px;
+    pointer-events: none;
+    cursor: pointer;
+}
+
+.search-bar__dropdown {
+    min-height: 100px;
+    width: 100%;
+    border-radius: default.$border-radius_big default.$border-radius_small default.$border-radius_small default.$border-radius_big;
+    background-color: default.$grey;
+    max-height: 50vh;
+    overflow-y: scroll;
+    min-width: 230px;
+}
+
+@-moz-document url-prefix() {
+    .search-bar__dropdown {
+        scrollbar-width: thin;
+        scrollbar-color: default.$dark-grey;
+    }
+}
+
+.search-bar__dropdown::-webkit-scrollbar {
+    width: 10px;
+}
+
+.search-bar__dropdown::-webkit-scrollbar-track {
+    background: default.$light-grey;
+    border-radius: default.$border-radius_big;
+}
+
+.search-bar__dropdown::-webkit-scrollbar-thumb {
+    background: default.$dark-grey;
+    border-radius: default.$border-radius_big;
+  }
+
+.search-bar__option {
+    height: 100px;
+    width: 100%;
+    background-color: default.$grey;
+    display: flex;
+    align-items: center;
+    padding: default.$padding_small;
+}
+
+.search-bar__option:hover {
+    background-color: default.$light-grey;
+}
+
+.search-bar__option-image {
+    height: 80px;
+    width: 80px;
+    border-radius: default.$border-radius_big;
+    margin-right: 8px;
+}
+
+.search-bar__option-image-placeholder {
+    height: 80px;
+    width: 80px;
+    background-color: default.$black;
+    color: white;
+    font-size: 18px;
+    border-radius: default.$border-radius_big;
+    margin-right: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.search-bar__option-loader {
+    display: flex;
+    align-items: center;
+    align-items: center;
+    justify-content: center;
+    height: 100px;
+    width: 100%;
+    background-color: default.$grey;
+}

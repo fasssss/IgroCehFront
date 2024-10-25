@@ -23,7 +23,7 @@ const RedirectLoginPage = () => {
                     email: sendAuthCode.data.email,
                     avatarUrl: sendAuthCode.data.avatarUrl
                 }));
-                navigate("/browsing");
+                navigate("/");
             }
         }, [sendAuthCode.isSuccess]);
     }

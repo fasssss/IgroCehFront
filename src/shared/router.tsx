@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
-import { LoginPage, RedirectLoginPage, SearchBar } from "../features";
+import { LoginPage, RedirectLoginPage, GuildsBrowsingPage } from "../features";
 import Layout from "./components/Layout";
 
 const router = createBrowserRouter([
@@ -16,8 +16,8 @@ const router = createBrowserRouter([
         element: <Layout />,
         children: [
             {
-                path: "browsing",
-                element: <SearchBar />
+                path: "/",
+                element: <GuildsBrowsingPage />
             }
         ]
     }

@@ -1,8 +1,11 @@
 import { CircularProgress, SvgIcon } from '@mui/material';
+import { useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { CommonButton } from 'root/shared/components/CommonButton';
 import { SvgSelector } from 'root/shared/components/SvgSelector';
-import { useGetDiscordApiLinkQuery } from '../../authorizationApi';
+import { router } from 'root/shared/router';
+import { useGetDiscordApiLinkQuery, useGetUserObjectQuery } from '../../authorizationApi';
+import { setUserObject } from '../../authorizationSlice';
 import './styles.scss'
 
 const LoginPage = () => {
@@ -23,6 +26,18 @@ const LoginPage = () => {
     // End of code section for page animated background
 
     const getDiscordApiLink = useGetDiscordApiLinkQuery();
+    const dispatch = useDispatch();
+    const getUserObject = useGetUserObjectQuery();
+    useEffect(() => {
+        if(getUserObject.isSuccess) {
+            dispatch(setUserObject({
+                userName: getUserObject.data.userName,
+                email: getUserObject.data.email,
+                avatarUrl: getUserObject.data.avatarUrl
+            }));
+            router.navigate("/");
+        }
+    }, [getUserObject.isSuccess])
 
     const authByDiscord = () => {
         window.location.href = getDiscordApiLink.data?.discordApiLink

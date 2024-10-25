@@ -11,6 +11,12 @@ const authorizationApi = igroCehApi.injectEndpoints({
                 credentials: 'include'
             }),
         }),
+        getIsAuthorized: build.query<boolean, void>({
+            query: () => ({
+                url: `/api/getIsAuthorized`,
+                credentials: 'include'
+            }),
+        }),
         getUserObject: build.query<GetUserObjectResponse, void>({
             query: () => ({
                 url: `/api/getUserObject`,
@@ -35,6 +41,7 @@ export const {
     useGetDiscordApiLinkQuery,
     useLazyAuthorizeByCodeQuery,
     useAuthorizeByCodeQuery,
+    useGetIsAuthorizedQuery,
     useLazyGetUserObjectQuery,
     useGetUserObjectQuery
 } = authorizationApi;
