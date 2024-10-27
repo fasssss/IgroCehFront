@@ -4,11 +4,13 @@ import { useLazyGetSearchedGuildsQuery } from '../../guildsBrowsingApi';
 import './styles.scss';
 import { CircularProgress } from '@mui/material';
 import { useOnMount } from 'root/shared/hooks/useOnMount';
+import { useNavigate } from 'react-router-dom';
 
 const SearchBar = () => {
     const [searchBar, searchResult] = useLazyGetSearchedGuildsQuery();
     const [searchBarText, setSearchBarText] = useState('');
     const [isSearchFocused, setSearchFocused] = useState(false);
+    const navigate = useNavigate();
     const searchBarHandler = (e: ChangeEvent<HTMLInputElement>) => {
         setSearchBarText(e.target.value);
         if(e.target.value){
@@ -27,6 +29,10 @@ const SearchBar = () => {
         }
     });
 
+    const handleOptionClick = (guildId: string) => {
+        navigate(`guild/${guildId}`)
+    };
+
     return(
         <div className="search-bar">
             <div className="search-bar__field">
@@ -44,7 +50,7 @@ const SearchBar = () => {
                         :
                         searchResult.data?.guildObjects?.map((value) => {
                             return (
-                                <div key={value.id} className='search-bar__option'>
+                                <div key={value.id} onClick={() => handleOptionClick(value.id)} className='search-bar__option'>
                                     {
                                         value.iconUrl ?
                                         <img className='search-bar__option-image' src={value.iconUrl} />

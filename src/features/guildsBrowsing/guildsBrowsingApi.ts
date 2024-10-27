@@ -20,10 +20,10 @@ export type GetSearchedGuildsResponse = {
 }
 
 export type GuildObject = {
-    id: number
+    id: string
     name: string | null,
     iconUrl: string | null,
-    ownerId: number
+    ownerId: string
 }
 
 export const { 

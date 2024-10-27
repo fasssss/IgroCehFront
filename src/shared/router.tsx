@@ -1,5 +1,10 @@
 import { createBrowserRouter } from "react-router-dom";
-import { LoginPage, RedirectLoginPage, GuildsBrowsingPage } from "../features";
+import { 
+    LoginPage, 
+    RedirectLoginPage, 
+    GuildsBrowsingPage,
+    GuildPage
+} from "../features";
 import Layout from "./components/Layout";
 
 const router = createBrowserRouter([
@@ -18,6 +23,10 @@ const router = createBrowserRouter([
             {
                 path: "/",
                 element: <GuildsBrowsingPage />
+            },
+            {
+                path: "guild/:guildId",
+                element: <GuildPage />
             }
         ]
     }
