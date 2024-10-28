@@ -1,0 +1,43 @@
+@use '../../../../shared/default.module.scss' as default;
+
+.guild-page {
+    height: 100%;
+}
+
+.guild-page__header {
+    min-height: fit-content;
+    padding: 0 default.$padding_small default.$padding_small default.$padding_small;
+    display: flex;
+    justify-content: space-between;
+}
+
+.guild-page__body {
+    min-height: calc(100% - 136px);
+    background-color: default.$grey;
+    margin-left: default.$margin_small;
+    margin-right: default.$margin_small;
+    border-radius: default.$border-radius_small default.$border-radius_small 0 0;
+}
+
+.guild-page__guild-badge {
+    height: 128px;
+    display: flex;
+}
+
+.guild-page__guild-icon {
+    border-radius: default.$border-radius_small;
+    margin-right: default.$margin_small;
+    height: 128px;
+}
+
+.guild-page__guild-name {
+    font-weight: 800;
+    font-size: 32px;
+    display: flex;
+    align-items: end;
+}
+
+.guild-page__actions {
+    display: flex;
+    align-items: end;
+}

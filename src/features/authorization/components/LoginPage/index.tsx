@@ -54,7 +54,7 @@ const LoginPage = () => {
             <div className="login-page__container">
                 <h1>Show thyself</h1>
                 {
-                    !getDiscordApiLink.isLoading ?
+                    !getDiscordApiLink.isLoading && !getUserObject.isLoading ?
                     <CommonButton onClick={authByDiscord} endIcon={<SvgIcon><SvgSelector iconName='discord-icon' /></SvgIcon>}>
                         Login with
                     </CommonButton>

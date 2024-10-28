@@ -1,5 +1,9 @@
 @import './shared/default.module.scss';
 
+body {
+    overflow-y: auto;
+}
+
 h1,h2,h3,h4,h5,h6{ 
     font-family: 'Akrobat';
     font-weight: 800;

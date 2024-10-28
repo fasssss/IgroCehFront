@@ -1,5 +1,4 @@
 import { createTheme } from "@mui/material/styles";
-import AkrobatRegular from "root/assets/AkrobatFont/Akrobat-Regular.ttf"
 import styles from 'root/shared/default.module.scss';
 
 //can be customized like on this Docs page https://mui.com/material-ui/customization/palette/
@@ -15,7 +14,7 @@ export const themes = createTheme({
   },
   typography: {
     fontFamily: [
-      'AkrobatRegular',
+      'Akrobat',
       '-apple-system',
       'BlinkMacSystemFont',
       '"Segoe UI"',
@@ -27,18 +26,5 @@ export const themes = createTheme({
       '"Segoe UI Emoji"',
       '"Segoe UI Symbol"',
     ].join(','),
-  },
-  components: {
-    MuiCssBaseline: {
-      styleOverrides: `
-        @font-face {
-          font-family: 'AkrobatRegular';
-          font-style: normal;
-          font-display: swap;
-          font-weight: 400;
-          src: local('AkrobatRegular'), local('Akrobat-Regular'), url(${AkrobatRegular}) format('ttf');
-        }
-      `,
-    },
   },
 });
