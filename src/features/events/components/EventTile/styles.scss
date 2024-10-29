@@ -1,0 +1,8 @@
+@use '../../../../shared/default.module.scss' as default;
+
+.event-title {
+    height: 96px;
+    width: 100%;
+    border-radius: default.$border-radius_small;
+    background-color: default.$dark-grey;
+}

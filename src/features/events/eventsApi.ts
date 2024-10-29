@@ -1,11 +1,21 @@
 import { igroCehApi } from "root/shared/igroCehApi";
 
-const eventsBrowsingApi = igroCehApi.injectEndpoints({
+const eventsApi = igroCehApi.injectEndpoints({
     endpoints: (build) => ({
         getGuildById: build.query<GuildObjectResponse, GetGuildByIdRequest>({
             query: (request) => ({
                 url: `/api/getGuildById?guildId=${request.guildId}`,
                 credentials: 'include'
+            }),
+        }),
+        postNewEvent: build.mutation<void, PostNewEventRequest>({
+            query: (request) => ({
+                url: `/api/postNewEvent`,
+                credentials: 'include',
+                body: {
+                    guildId: request.guildId,
+                    eventName: request.eventName
+                }
             }),
         })
     })
@@ -24,7 +34,13 @@ export type GuildObjectResponse = {
     }
 }
 
+export type PostNewEventRequest = {
+    guildId: string | undefined,
+    eventName: string
+}
+
 export const { 
     useLazyGetGuildByIdQuery,
-    useGetGuildByIdQuery
-} = eventsBrowsingApi;
+    useGetGuildByIdQuery,
+    usePostNewEventMutation
+} = eventsApi;

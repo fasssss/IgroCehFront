@@ -1,6 +1,6 @@
 import { igroCehApi } from "root/shared/igroCehApi";
 
-const guildsBrowsingApi = igroCehApi.injectEndpoints({
+const guildsApi = igroCehApi.injectEndpoints({
     endpoints: (build) => ({
         getSearchedGuilds: build.query<GetSearchedGuildsResponse, GetSearchedGuildsRequest>({
             query: (filter) => ({
@@ -29,4 +29,4 @@ export type GuildObject = {
 export const { 
     useLazyGetSearchedGuildsQuery,
     useGetSearchedGuildsQuery
-} = guildsBrowsingApi;
+} = guildsApi;

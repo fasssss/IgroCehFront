@@ -1,0 +1,35 @@
+@use '../../default.module.scss' as default;
+
+.common-modal {
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.7);
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+}
+
+.common-modal__container {
+    max-height: 50%;
+    max-width: 50%;
+    min-width: 300px;
+    background-color: default.$grey;
+    border-radius: default.$border-radius_big;
+    padding: default.$padding_small;
+    margin: auto;
+}
+
+.common-modal__header {
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.common-modal__body {
+    padding: default.$padding_big 0 default.$padding_big 0;
+}
+
+.common-modal__actions {
+    display: flex;
+    justify-content: space-between;
+}

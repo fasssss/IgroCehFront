@@ -1,6 +1,6 @@
 import SearchIcon from '@mui/icons-material/Search';
 import { ChangeEvent, useState } from 'react';
-import { useLazyGetSearchedGuildsQuery } from '../../guildsBrowsingApi';
+import { useLazyGetSearchedGuildsQuery } from '../../guildsApi';
 import './styles.scss';
 import { CircularProgress } from '@mui/material';
 import { useOnMount } from 'root/shared/hooks/useOnMount';
