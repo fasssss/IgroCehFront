@@ -12,6 +12,7 @@ const eventsApi = igroCehApi.injectEndpoints({
             query: (request) => ({
                 url: `/api/postNewEvent`,
                 credentials: 'include',
+                method: 'POST',
                 body: {
                     guildId: request.guildId,
                     eventName: request.eventName
