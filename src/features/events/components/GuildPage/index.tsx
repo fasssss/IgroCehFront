@@ -2,18 +2,25 @@ import { useParams } from "react-router-dom";
 import AddIcon from '@mui/icons-material/Add';
 import { CommonButton } from "root/shared/components/CommonButton";
 import { CommonModal } from "root/shared/components/CommonModal";
-import { useGetGuildByIdQuery, usePostNewEventMutation } from "../../eventsApi";
+import { useGetGuildByIdQuery, usePostNewEventMutation, useGetEventsByGuildIdQuery } from "../../eventsApi";
 import { EventTile } from "../EventTile";
 import './styles.scss';
-import { useState } from "react";
-import { TextField } from "@mui/material";
+import { useEffect, useState } from "react";
+import { CircularProgress, TextField } from "@mui/material";
 
 const GuildPage = () => {
     const { guildId } = useParams()
     const getGuildById = useGetGuildByIdQuery({ guildId: guildId });
-    const [postNewEvent] = usePostNewEventMutation();
+    const [postNewEvent, postNewEventResult] = usePostNewEventMutation();
+    const getEventsList = useGetEventsByGuildIdQuery({ guildId: guildId }); 
     const [isCreateNewOpened, setIsCreateNewOpened] = useState(false);
     const [eventToCreate, setEventToCreate] = useState({ eventName: "" });
+
+    useEffect(() => {
+        if(postNewEventResult.isSuccess){
+            console.log(getEventsList.data);
+        }
+    }, [postNewEventResult.isSuccess]);
 
     return (
         <div className="guild-page">
@@ -32,7 +39,22 @@ const GuildPage = () => {
                 </div>
             </div>
             <div className="guild-page__body">
-                <EventTile />
+                {
+                    postNewEventResult.isLoading || getEventsList.isFetching ?
+                    <CircularProgress color="primary"/>
+                    :
+                    getEventsList.data?.eventsList.map((value) => {
+                        return(
+                            <EventTile key={value.id}
+                             name={value.name} 
+                             creatorName={value.creatorUserName} 
+                             statusCode={value.statusId} 
+                             startDate={value.startDate}
+                             endDate={value.endDate}
+                            />
+                        );
+                    })
+                }
             </div>
             {
                 isCreateNewOpened &&

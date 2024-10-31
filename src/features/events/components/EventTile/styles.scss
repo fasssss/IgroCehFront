@@ -1,8 +1,63 @@
 @use '../../../../shared/default.module.scss' as default;
 
-.event-title {
-    height: 96px;
+.event-tile {
+    height: 144px;
     width: 100%;
     border-radius: default.$border-radius_small;
     background-color: default.$dark-grey;
+    padding: default.$padding_small;
+    padding-left: default.$padding_big;
+    padding-right: default.$padding_big;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.event-tile__left-side {
+    height: fit-content;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+}
+
+.event-tile__title {
+    font-size: 28px;
+    font-weight: 800px;
+    margin-right: default.$padding_big;
+    width: fit-content;
+}
+
+.event-tile__chip {
+    height: 100%;
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.event-tile__creator-name {
+    font-size: 17px;
+    height: fit-content;
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: default.$yellow;
+}
+
+.event-tile__right-side {
+    height: fit-content;
+    width: 40%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.event-tile__date-time {
+    display: flex;
+    align-items: center;
+}
+
+.event-tile__date-time > * {
+    margin-right: 8px;
 }

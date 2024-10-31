@@ -18,7 +18,9 @@
     margin-left: default.$margin_small;
     margin-right: default.$margin_small;
     border-radius: default.$border-radius_small default.$border-radius_small 0 0;
-    padding: default.$padding_big;
+    padding-top: default.$padding_big;
+    padding-left: default.$padding_large;
+    padding-right: default.$padding_large;
 }
 
 .guild-page__guild-badge {

@@ -10,6 +10,9 @@ export const themes = createTheme({
     mode: 'dark',
     primary: {
       main: styles.discordBluerple,
+    },
+    warning: {
+      main: styles.yellow
     }
   },
   typography: {
