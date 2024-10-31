@@ -6,7 +6,8 @@ import { SvgSelector } from 'root/shared/components/SvgSelector';
 import { router } from 'root/shared/router';
 import { useGetDiscordApiLinkQuery, useGetUserObjectQuery } from '../../authorizationApi';
 import { setUserObject } from '../../authorizationSlice';
-import './styles.scss'
+import { useTranslation } from 'react-i18next';
+import './styles.scss';
 
 const LoginPage = () => {
 
@@ -25,6 +26,7 @@ const LoginPage = () => {
     }, []);
     // End of code section for page animated background
 
+    const { t } = useTranslation()
     const getDiscordApiLink = useGetDiscordApiLinkQuery();
     const dispatch = useDispatch();
     const getUserObject = useGetUserObjectQuery();
@@ -52,11 +54,11 @@ const LoginPage = () => {
                 <div className="line"></div>
             </div>
             <div className="login-page__container">
-                <h1>Show thyself</h1>
+                <h1>{t('Show Thyself')}</h1>
                 {
                     !getDiscordApiLink.isLoading && !getUserObject.isLoading ?
                     <CommonButton onClick={authByDiscord} endIcon={<SvgIcon><SvgSelector iconName='discord-icon' /></SvgIcon>}>
-                        Login with
+                        {t('Login')}
                     </CommonButton>
                     : 
                     <CircularProgress color="primary" />

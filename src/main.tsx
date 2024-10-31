@@ -7,6 +7,7 @@ import { themes } from './shared/themes'
 import { router } from './shared/router'
 import { Provider } from 'react-redux'
 import { store } from './shared/store'
+import './shared/localization';
 import './index.css'
 
 createRoot(document.getElementById('root')!).render(
