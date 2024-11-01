@@ -23,6 +23,14 @@
     padding-right: default.$padding_large;
 }
 
+.guild-page__to-top-button {
+    position: fixed;
+    bottom: 0px;
+    right: 8px;
+    opacity: 0;
+    transition: opacity 0.2s, bottom 0.5s cubic-bezier(0.18, 0.89, 0.32, 4) 0s;
+}
+
 .guild-page__guild-badge {
     height: 128px;
     display: flex;
