@@ -5,12 +5,14 @@ import './styles.scss';
 import { CircularProgress } from '@mui/material';
 import { useOnMount } from 'root/shared/hooks/useOnMount';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const SearchBar = () => {
     const [searchBar, searchResult] = useLazyGetSearchedGuildsQuery();
     const [searchBarText, setSearchBarText] = useState('');
     const [isSearchFocused, setSearchFocused] = useState(false);
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const searchBarHandler = (e: ChangeEvent<HTMLInputElement>) => {
         setSearchBarText(e.target.value);
         if(e.target.value){
@@ -36,7 +38,7 @@ const SearchBar = () => {
     return(
         <div className="search-bar">
             <div className="search-bar__field">
-                <input list='guilds' value={searchBarText} placeholder="Search guild..." onChange={searchBarHandler} className='search-bar__input' type="text" />
+                <input list='guilds' value={searchBarText} placeholder={t('Search guild...')} onChange={searchBarHandler} className='search-bar__input' type="text" />
                 <SearchIcon className='search-bar__icon'/>
             </div>
             {

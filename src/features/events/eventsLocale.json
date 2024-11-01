@@ -1,0 +1,18 @@
+{
+    "en": {
+        "Create event": "Create event",
+        "Share": "Share",
+        "Players registration": "Players registration",
+        "Auction": "Auction",
+        "Active": "Active",
+        "Finished": "Finished"
+    },
+    "ru": {
+        "Create event": "Создать событие",
+        "Share": "Поделиться",
+        "Players registration": "Регистрация участников",
+        "Auction": "Аукцион",
+        "Active": "Активное",
+        "Finished": "Завершено"
+    }
+}

@@ -7,9 +7,11 @@ import { EventTile } from "../EventTile";
 import './styles.scss';
 import { useEffect, useState } from "react";
 import { CircularProgress, TextField } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 const GuildPage = () => {
-    const { guildId } = useParams()
+    const { guildId } = useParams();
+    const { t } = useTranslation();
     const getGuildById = useGetGuildByIdQuery({ guildId: guildId });
     const [postNewEvent, postNewEventResult] = usePostNewEventMutation();
     const getEventsList = useGetEventsByGuildIdQuery({ guildId: guildId }); 
@@ -34,7 +36,7 @@ const GuildPage = () => {
                 }
                 <div className="guild-page__actions">
                     <CommonButton color="success" onClick={() => setIsCreateNewOpened(true)} startIcon={<AddIcon />}>
-                        Create event
+                        {t("Create event")}
                     </CommonButton>
                 </div>
             </div>

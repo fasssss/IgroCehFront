@@ -45,6 +45,46 @@
   padding-top: default.$padding_large;
 }
 
+.layout__language {
+  margin-right: 24px;
+  width: 100px;
+}
+
+.layout__language-button {
+  border-bottom: solid white 2px;
+  user-select: none;
+  padding-left: 2px;
+  padding-right: 2px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background-color .1s, border-bottom .1s;
+}
+
+.layout__language-button:active {
+  border-bottom: solid rgba(255, 255, 255, 0.5) 2px;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.layout__language-selector {
+  background-color: default.$dark-grey;
+  position: absolute;
+  width: 100px;
+  padding-left: 2px;
+  padding-right: 2px;
+  border-radius: 0 0 2px 2px;
+  transition: opacity 0.1s , display 0.1s allow-discrete;
+}
+
+.layout__language-option:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.layout__language-flag {
+  display: flex;
+  justify-content: space-between;
+}
+
 #layout__decoration-1 {
   position: fixed;
   top: 16px;
