@@ -19,15 +19,27 @@ const eventsApi = igroCehApi.enhanceEndpoints({
                     guildId: request.guildId,
                     eventName: request.eventName
                 }
-            }),
-            invalidatesTags: ['EventsList']
+            })
         }),
         getEventsByGuildId: build.query<GetEventsByGuildIdResponse, GetEventsByGuildIdRequest>({
             query: (request) => ({
-                url: `/api/getEventsByGuildId?guildId=${request.guildId}`,
+                url: `/api/getEventsByGuildId?guildId=${request.guildId}&startFrom=${request.skip}`,
                 credentials: 'include',
             }),
-            providesTags: ['EventsList']
+            serializeQueryArgs: ({ endpointName }) => {
+                return endpointName
+            },
+            merge: (currentCache, responseItems, { arg }) => {
+                if(arg.clearCache) {
+                    currentCache.eventsList = responseItems.eventsList
+                }
+                else {
+                    currentCache.eventsList.push(...responseItems.eventsList);
+                }
+            },
+            forceRefetch({ currentArg, previousArg }) {
+                return currentArg !== previousArg
+            }
         }),
     })
 })
@@ -51,7 +63,9 @@ export type PostNewEventRequest = {
 }
 
 export type GetEventsByGuildIdRequest = {
-    guildId: string | undefined
+    guildId: string | undefined,
+    skip: number,
+    clearCache: boolean
 }
 
 export type GetEventsByGuildIdResponse = {

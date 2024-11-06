@@ -3,7 +3,7 @@ import AddIcon from '@mui/icons-material/Add';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 import { CommonButton } from "root/shared/components/CommonButton";
 import { CommonModal } from "root/shared/components/CommonModal";
-import { useGetGuildByIdQuery, usePostNewEventMutation, useGetEventsByGuildIdQuery } from "../../eventsApi";
+import { useGetGuildByIdQuery, usePostNewEventMutation, useLazyGetEventsByGuildIdQuery } from "../../eventsApi";
 import { EventTile } from "../EventTile";
 import './styles.scss';
 import { useEffect, useState } from "react";
@@ -16,17 +16,30 @@ const GuildPage = () => {
     const { t } = useTranslation();
     const getGuildById = useGetGuildByIdQuery({ guildId: guildId });
     const [postNewEvent, postNewEventResult] = usePostNewEventMutation();
-    const getEventsList = useGetEventsByGuildIdQuery({ guildId: guildId }); 
+    const [getEventsList, eventsList] = useLazyGetEventsByGuildIdQuery(); 
     const [isCreateNewOpened, setIsCreateNewOpened] = useState(false);
     const [eventToCreate, setEventToCreate] = useState({ eventName: "" });
     const [isScrollUpButtonShown, setIsScrollUpButtonShown] = useState(false);
+    const [isScrolledDown, setIsScrolledDown] = useState(false);
 
     useOnMount(() => {
         const handleScroll = () => {
-            if (document.body.scrollTop > 1000 || document.documentElement.scrollTop > 1000) {
+            if (document.documentElement.scrollTop > 1000) {
                 setIsScrollUpButtonShown(true);
             } else {
                 setIsScrollUpButtonShown(false);
+            }
+
+            const isScrolledBottom = Math.abs(
+                document.documentElement.scrollHeight - 
+                document.documentElement.clientHeight - 
+                document.documentElement.scrollTop
+            ) < 1
+
+            if(isScrolledBottom) {
+                setIsScrolledDown(true);
+            } else {
+                setIsScrolledDown(false);
             }
         };
 
@@ -36,11 +49,27 @@ const GuildPage = () => {
         };
     });
 
+    useOnMount(() => {
+        getEventsList({ guildId: guildId, skip: 0, clearCache: true })
+    });
+
     useEffect(() => {
-        if(postNewEventResult.isSuccess){
-            console.log(getEventsList.data);
+        if(eventsList.isSuccess || eventsList.isError){
+            setIsScrolledDown(false);
         }
-    }, [postNewEventResult.isSuccess]);
+    }, [eventsList.isSuccess, eventsList.isError]);
+
+    useEffect(() => {
+        if(!eventsList.isFetching && !eventsList.isUninitialized && isScrolledDown){
+            getEventsList({ guildId: guildId, clearCache: false, skip: eventsList.data?.eventsList.length || 0 })
+        }
+    }, [isScrolledDown]);
+
+    useEffect(() => {
+        if(postNewEventResult.isSuccess || postNewEventResult.isError){
+            getEventsList({ guildId: guildId, clearCache: true, skip: 0 })
+        }
+    }, [postNewEventResult.isSuccess, postNewEventResult.isError]);
 
     return (
         <div className="guild-page">
@@ -60,10 +89,8 @@ const GuildPage = () => {
             </div>
             <div className="guild-page__body">
                 {
-                    postNewEventResult.isLoading || getEventsList.isFetching ?
-                    <CircularProgress color="primary"/>
-                    :
-                    getEventsList.data?.eventsList.map((value) => {
+                    eventsList.data &&
+                    eventsList.data?.eventsList.map((value) => {
                         return(
                             <EventTile key={value.id}
                              name={value.name} 
@@ -74,6 +101,10 @@ const GuildPage = () => {
                             />
                         );
                     })
+                }
+                {
+                    (postNewEventResult.isLoading || eventsList.isFetching) &&
+                    <CircularProgress color="primary"/>
                 }
             </div>
                 <div className="guild-page__to-top-button" 
