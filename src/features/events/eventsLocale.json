@@ -5,7 +5,11 @@
         "Players registration": "Players registration",
         "Auction": "Auction",
         "Active": "Active",
-        "Finished": "Finished"
+        "Finished": "Finished",
+        "Confirm": "Confirm",
+        "Close": "Close",
+        "Event name": "Event name",
+        "Create new event": "Create new event"
     },
     "ru": {
         "Create event": "Создать событие",
@@ -13,6 +17,10 @@
         "Players registration": "Регистрация участников",
         "Auction": "Аукцион",
         "Active": "Активное",
-        "Finished": "Завершено"
+        "Finished": "Завершено",
+        "Confirm": "Продолжить",
+        "Close": "Закрыть",
+        "Event name": "Название события",
+        "Create new event": "Создать событие"
     }
 }

@@ -102,10 +102,12 @@ const GuildPage = () => {
                         );
                     })
                 }
-                {
-                    (postNewEventResult.isLoading || eventsList.isFetching) &&
-                    <CircularProgress color="primary"/>
-                }
+                <div className="guild-page__body-loader">
+                    {
+                        (postNewEventResult.isLoading || eventsList.isFetching) &&
+                        <CircularProgress color="primary"/>
+                    }
+                </div>
             </div>
                 <div className="guild-page__to-top-button" 
                     style={isScrollUpButtonShown ? {opacity: 1, bottom: '8px'} : {}} 
@@ -116,7 +118,7 @@ const GuildPage = () => {
                 </div>
             {
                 isCreateNewOpened &&
-                <CommonModal name="Create new event" 
+                <CommonModal name={ t("Create new event") }
                     onClose={() => setIsCreateNewOpened(false)} 
                     onConfirm={() => {
                         postNewEvent({ guildId: guildId, eventName: eventToCreate.eventName });
@@ -126,7 +128,7 @@ const GuildPage = () => {
                     <TextField value={eventToCreate.eventName} 
                         onChange={(e) => setEventToCreate({ eventName: e.target.value })} 
                         fullWidth variant="outlined" 
-                        label="Event name" 
+                        label={ t("Event name") } 
                     />
                 </CommonModal>
             }

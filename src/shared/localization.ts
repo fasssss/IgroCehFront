@@ -4,6 +4,7 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import loginLocale from '../features/authorization/loginLocale.json';
 import guildsLocale from '../features/guilds/guildsLocale.json';
 import eventsLocale from '../features/events/eventsLocale.json';
+import sharedLocale from './sharedLocale.json';
 
 function getDefaults() {
   return {
@@ -23,14 +24,16 @@ const resources = {
     translations: {
         ...loginLocale.en,
         ...guildsLocale.en,
-        ...eventsLocale.en
+        ...eventsLocale.en,
+        ...sharedLocale.en
     }
   },
   ru: {
     translations: {
         ...loginLocale.ru,
         ...guildsLocale.ru,
-        ...eventsLocale.ru
+        ...eventsLocale.ru,
+        ...sharedLocale.ru
     }
   }
 };
