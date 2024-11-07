@@ -1,15 +1,15 @@
 import { useParams } from "react-router-dom";
 import AddIcon from '@mui/icons-material/Add';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
-import { CommonButton } from "root/shared/components/CommonButton";
-import { CommonModal } from "root/shared/components/CommonModal";
-import { useGetGuildByIdQuery, usePostNewEventMutation, useLazyGetEventsByGuildIdQuery } from "../../eventsApi";
-import { EventTile } from "../EventTile";
-import './styles.scss';
 import { useEffect, useState } from "react";
 import { CircularProgress, Fab, TextField } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { CommonButton } from "root/shared/components/CommonButton";
+import { CommonModal } from "root/shared/components/CommonModal";
 import { useOnMount } from "root/shared/hooks/useOnMount";
+import { useGetGuildByIdQuery, usePostNewEventMutation, useLazyGetEventsByGuildIdQuery } from "../../eventsApi";
+import { EventTile } from "../EventTile";
+import './styles.scss';
 
 const GuildPage = () => {
     const { guildId } = useParams();
@@ -92,12 +92,8 @@ const GuildPage = () => {
                     eventsList.data &&
                     eventsList.data?.eventsList.map((value) => {
                         return(
-                            <EventTile key={value.id}
-                             name={value.name} 
-                             creatorName={value.creatorUserName} 
-                             statusCode={value.statusId} 
-                             startDate={value.startDate}
-                             endDate={value.endDate}
+                            <EventTile key={value.id} 
+                            {...value}
                             />
                         );
                     })
