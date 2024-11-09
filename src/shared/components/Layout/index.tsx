@@ -37,7 +37,8 @@ function Layout() {
       dispatch(setUserObject({
         email: userObject.data.email,
         userName: userObject.data.userName,
-        avatarUrl: userObject.data.avatarUrl
+        avatarUrl: userObject.data.avatarUrl,
+        id: userObject.data.id
       }))
     }
   }, [userObject.isSuccess])

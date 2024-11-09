@@ -1,17 +1,27 @@
 import { Chip, IconButton, TextField } from '@mui/material';
+import { useSelector } from 'react-redux';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { useTranslation } from 'react-i18next';
-import { MouseEventHandler, useState } from 'react';
+import { MouseEventHandler, useEffect, useState } from 'react';
 import { ContentCopy } from '@mui/icons-material';
 import { CommonButton } from 'root/shared/components/CommonButton';
 import { CommonModal } from 'root/shared/components/CommonModal';
 import ShareIcon from '@mui/icons-material/Share';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { EVENT_STATUS, EVENT_STATUS_COLOR } from 'root/shared/constants';
+import { RootState } from 'root/shared/store';
+import { useJoinEventMutation } from '../../eventsApi';
 import './styles.scss';
 
-const EventTile = ({ id, name, creatorUserName, statusId, startDate, endDate }: EventTilePropType) => {
+const EventTile = ({ id, name, creatorUserName, statusId, startDate, endDate, participantsIds }: EventTilePropType) => {
     const { t } = useTranslation();
     const [eventToShare, setEventToShare] = useState({ eventLink: "" });
+    const userInfo = useSelector((state: RootState) => state.authorizationReducer);
+    const [joinEvent, _] = useJoinEventMutation();
+
+    useEffect(() => {
+        console.log(participantsIds?.some(id => id === "247011820533972993"))
+    })
 
     return(
         <div className='event-tile'>
@@ -30,13 +40,22 @@ const EventTile = ({ id, name, creatorUserName, statusId, startDate, endDate }: 
                 <div className='event-tile__players-count'></div>
                 <div className='event-tile__button'>
                     {
-                        EVENT_STATUS[statusId] === 'Players registration' &&
-                        <CommonButton color='success' 
-                        onClick={() => setEventToShare({ eventLink: `${window.location.href}/join/${id}`} )} 
-                        startIcon={<ShareIcon />}
-                        >
-                            { t('Share') }
-                        </CommonButton>
+                        EVENT_STATUS[statusId] === 'Players registration' && (
+                            participantsIds?.some(id => id === userInfo.id) ?
+                            <CommonButton color='success' 
+                            onClick={() => setEventToShare({ eventLink: `${window.location.href}/event/${id}`} )} 
+                            startIcon={<ShareIcon />}
+                            >
+                                { t('Share') }
+                            </CommonButton>
+                            :
+                            <CommonButton color='success' 
+                            onClick={() => joinEvent({ eventId: id })} 
+                            startIcon={<PersonAddIcon />}
+                            >
+                                { t('Join') }
+                            </CommonButton>
+                        )
                     }
                 </div>
             </div>
@@ -72,6 +91,7 @@ type EventTilePropType = {
     statusId: number
     startDate: Date,
     endDate: Date,
+    participantsIds?: Array<string>,
     onButtonClick?: MouseEventHandler<HTMLButtonElement>
 }
 

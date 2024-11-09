@@ -21,7 +21,8 @@ const RedirectLoginPage = () => {
                 dispatch(setUserObject({
                     userName: sendAuthCode.data.userName,
                     email: sendAuthCode.data.email,
-                    avatarUrl: sendAuthCode.data.avatarUrl
+                    avatarUrl: sendAuthCode.data.avatarUrl,
+                    id: sendAuthCode.data.id
                 }));
                 navigate("/");
             }

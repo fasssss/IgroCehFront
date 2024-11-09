@@ -33,7 +33,8 @@ export type GetDiscordAuthLinkResponse = {
 export type GetUserObjectResponse = {
     userName: string,
     email: string,
-    avatarUrl: string | null
+    avatarUrl: string | null,
+    id: string | null
 }
 
 export const { 

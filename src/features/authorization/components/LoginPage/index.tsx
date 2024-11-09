@@ -35,7 +35,8 @@ const LoginPage = () => {
             dispatch(setUserObject({
                 userName: getUserObject.data.userName,
                 email: getUserObject.data.email,
-                avatarUrl: getUserObject.data.avatarUrl
+                avatarUrl: getUserObject.data.avatarUrl,
+                id: getUserObject.data.id
             }));
             router.navigate("/");
         }

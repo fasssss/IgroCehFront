@@ -21,6 +21,16 @@ const eventsApi = igroCehApi.enhanceEndpoints({
                 }
             })
         }),
+        joinEvent: build.mutation<void, JoinEventRequest>({
+            query: (request) => ({
+                url: `/api/joinEvent`,
+                credentials: 'include',
+                method: 'POST',
+                body: {
+                    eventId: request.eventId
+                }
+            }),
+        }),
         getEventsByGuildId: build.query<GetEventsByGuildIdResponse, GetEventsByGuildIdRequest>({
             query: (request) => ({
                 url: `/api/getEventsByGuildId?guildId=${request.guildId}&startFrom=${request.skip}`,
@@ -77,7 +87,12 @@ export type GetEventsByGuildIdResponse = {
         endDate: Date,
         guildName: string,
         statusId: number,
+        participantsIds: Array<string>
     }>
+}
+
+export type JoinEventRequest = {
+    eventId: string,
 }
 
 export const { 
@@ -85,5 +100,6 @@ export const {
     useGetGuildByIdQuery,
     usePostNewEventMutation,
     useLazyGetEventsByGuildIdQuery,
-    useGetEventsByGuildIdQuery
+    useGetEventsByGuildIdQuery,
+    useJoinEventMutation
 } = eventsApi;
