@@ -23,7 +23,7 @@ const EventTile = ({ id, name, creatorUserName, statusId, startDate, endDate, pa
         <div className='event-tile'>
             <div className='event-tile__left-side'>
                 <div className='event-tile__title'>
-                    {name} {statusId != null && <Chip className='event-tile__chip' label={ t(EVENT_STATUS[statusId]) } color={EVENT_STATUS_COLOR[EVENT_STATUS[statusId]]} />}
+                    {name} {statusId != null && <Chip sx={{fontSize: "medium"}} className='event-tile__chip' label={ t(EVENT_STATUS[statusId]) } color={EVENT_STATUS_COLOR[EVENT_STATUS[statusId]]} />}
                 </div>
                 <div className='event-tile__creator-name'>{ creatorUserName }</div>
             </div>
