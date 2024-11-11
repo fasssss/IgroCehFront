@@ -56,7 +56,6 @@ const GuildPage = () => {
     }, []);
 
     useEffect(() => {
-        console.log(eventsList)
         if(eventsList.isSuccess || eventsList.isError){
             setIsScrolledDown(false);
         }
