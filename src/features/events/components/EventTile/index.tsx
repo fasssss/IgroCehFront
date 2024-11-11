@@ -2,7 +2,7 @@ import { Chip, IconButton, TextField } from '@mui/material';
 import { useSelector } from 'react-redux';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { useTranslation } from 'react-i18next';
-import { MouseEventHandler, useEffect, useState } from 'react';
+import { MouseEventHandler, useState } from 'react';
 import { ContentCopy } from '@mui/icons-material';
 import { CommonButton } from 'root/shared/components/CommonButton';
 import { CommonModal } from 'root/shared/components/CommonModal';
@@ -18,10 +18,6 @@ const EventTile = ({ id, name, creatorUserName, statusId, startDate, endDate, pa
     const [eventToShare, setEventToShare] = useState({ eventLink: "" });
     const userInfo = useSelector((state: RootState) => state.authorizationReducer);
     const [joinEvent, _] = useJoinEventMutation();
-
-    useEffect(() => {
-        console.log(participantsIds?.some(id => id === "247011820533972993"))
-    })
 
     return(
         <div className='event-tile'>

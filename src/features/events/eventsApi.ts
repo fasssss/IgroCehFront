@@ -1,7 +1,6 @@
 import { igroCehApi } from "root/shared/igroCehApi";
 
 const eventsApi = igroCehApi.enhanceEndpoints({
-    addTagTypes: ['EventsList'],
 }).injectEndpoints({
     endpoints: (build) => ({
         getGuildById: build.query<GuildObjectResponse, GetGuildByIdRequest>({
@@ -36,6 +35,7 @@ const eventsApi = igroCehApi.enhanceEndpoints({
                 url: `/api/getEventsByGuildId?guildId=${request.guildId}&startFrom=${request.skip}`,
                 credentials: 'include',
             }),
+            keepUnusedDataFor: 5,
             serializeQueryArgs: ({ endpointName }) => {
                 return endpointName
             },

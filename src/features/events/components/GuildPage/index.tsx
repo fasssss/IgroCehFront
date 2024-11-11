@@ -7,7 +7,9 @@ import { useTranslation } from "react-i18next";
 import { CommonButton } from "root/shared/components/CommonButton";
 import { CommonModal } from "root/shared/components/CommonModal";
 import { useOnMount } from "root/shared/hooks/useOnMount";
-import { useGetGuildByIdQuery, usePostNewEventMutation, useLazyGetEventsByGuildIdQuery } from "../../eventsApi";
+import { useGetGuildByIdQuery, 
+    usePostNewEventMutation, 
+    useLazyGetEventsByGuildIdQuery } from "../../eventsApi";
 import { EventTile } from "../EventTile";
 import './styles.scss';
 
@@ -16,7 +18,7 @@ const GuildPage = () => {
     const { t } = useTranslation();
     const getGuildById = useGetGuildByIdQuery({ guildId: guildId });
     const [postNewEvent, postNewEventResult] = usePostNewEventMutation();
-    const [getEventsList, eventsList] = useLazyGetEventsByGuildIdQuery(); 
+    const [getEventsList, eventsList] = useLazyGetEventsByGuildIdQuery();
     const [isCreateNewOpened, setIsCreateNewOpened] = useState(false);
     const [eventToCreate, setEventToCreate] = useState({ eventName: "" });
     const [isScrollUpButtonShown, setIsScrollUpButtonShown] = useState(false);
@@ -49,18 +51,19 @@ const GuildPage = () => {
         };
     });
 
-    useOnMount(() => {
+    useEffect(() => {
         getEventsList({ guildId: guildId, skip: 0, clearCache: true })
-    });
+    }, []);
 
     useEffect(() => {
+        console.log(eventsList)
         if(eventsList.isSuccess || eventsList.isError){
             setIsScrolledDown(false);
         }
-    }, [eventsList.isSuccess, eventsList.isError]);
+    }, [eventsList.isFetching]);
 
     useEffect(() => {
-        if(!eventsList.isFetching && !eventsList.isUninitialized && isScrolledDown){
+        if(!eventsList.isUninitialized && isScrolledDown){
             getEventsList({ guildId: guildId, clearCache: false, skip: eventsList.data?.eventsList.length || 0 })
         }
     }, [isScrolledDown]);
@@ -89,8 +92,7 @@ const GuildPage = () => {
             </div>
             <div className="guild-page__body">
                 {
-                    eventsList.data &&
-                    eventsList.data?.eventsList.map((value) => {
+                    eventsList.data?.eventsList?.map((value) => {
                         return(
                             <EventTile key={value.id} 
                             {...value}
