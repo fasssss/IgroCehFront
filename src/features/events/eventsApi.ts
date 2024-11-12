@@ -9,7 +9,13 @@ const eventsApi = igroCehApi.enhanceEndpoints({
                 credentials: 'include'
             }),
         }),
-        postNewEvent: build.mutation<void, PostNewEventRequest>({
+        getEventById: build.query<EventObjectResponse, GetEventByIdRequest>({
+            query: (request) => ({
+                url: `/api/getEventById?eventId=${request.eventId}`,
+                credentials: 'include'
+            }),
+        }),
+        postNewEvent: build.mutation<PostNewEventResponse, PostNewEventRequest>({
             query: (request) => ({
                 url: `/api/postNewEvent`,
                 credentials: 'include',
@@ -35,7 +41,7 @@ const eventsApi = igroCehApi.enhanceEndpoints({
                 url: `/api/getEventsByGuildId?guildId=${request.guildId}&startFrom=${request.skip}`,
                 credentials: 'include',
             }),
-            keepUnusedDataFor: 5,
+            keepUnusedDataFor: 2,
             serializeQueryArgs: ({ endpointName }) => {
                 return endpointName
             },
@@ -67,9 +73,43 @@ export type GuildObjectResponse = {
     }
 }
 
+export type GetEventByIdRequest = {
+    eventId: string | undefined
+}
+
+export type EventObjectResponse = {
+    Id: string,
+    eventName: string,
+    statusId: number
+    eventRecords: {
+        id: string,
+        participant: {
+            id: string,
+            userName: string,
+            avatarUrl: string | undefined
+        },
+        toUser: {
+            id: string,
+            userName: string,
+            avatarUrl: string | undefined
+        } | undefined,
+        game: {
+            id: string,
+            name: string,
+            description: string | undefined,
+            avatarUrl: string | undefined,
+            steamUrl: string | undefined
+        } | undefined
+    }[]
+}
+
 export type PostNewEventRequest = {
     guildId: string | undefined,
     eventName: string
+}
+
+export type PostNewEventResponse = {
+    eventId: string
 }
 
 export type GetEventsByGuildIdRequest = {
@@ -101,5 +141,7 @@ export const {
     usePostNewEventMutation,
     useLazyGetEventsByGuildIdQuery,
     useGetEventsByGuildIdQuery,
-    useJoinEventMutation
+    useJoinEventMutation,
+    useLazyGetEventByIdQuery,
+    useGetEventByIdQuery
 } = eventsApi;

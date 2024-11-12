@@ -1,23 +1,24 @@
-import { Chip, IconButton, TextField } from '@mui/material';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { MouseEventHandler, useState } from 'react';
 import { ContentCopy } from '@mui/icons-material';
-import { CommonButton } from 'root/shared/components/CommonButton';
-import { CommonModal } from 'root/shared/components/CommonModal';
 import ShareIcon from '@mui/icons-material/Share';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import { Chip, IconButton, TextField } from '@mui/material';
+import { CommonButton } from 'root/shared/components/CommonButton';
+import { CommonModal } from 'root/shared/components/CommonModal';
 import { EVENT_STATUS, EVENT_STATUS_COLOR } from 'root/shared/constants';
 import { RootState } from 'root/shared/store';
-import { useJoinEventMutation } from '../../eventsApi';
 import './styles.scss';
 
 const EventTile = ({ id, name, creatorUserName, statusId, startDate, endDate, participantsIds }: EventTilePropType) => {
     const { t } = useTranslation();
+    const { guildId } = useParams();
     const [eventToShare, setEventToShare] = useState({ eventLink: "" });
     const userInfo = useSelector((state: RootState) => state.authorizationReducer);
-    const [joinEvent, _] = useJoinEventMutation();
+    const navigate = useNavigate();
 
     return(
         <div className='event-tile'>
@@ -46,7 +47,7 @@ const EventTile = ({ id, name, creatorUserName, statusId, startDate, endDate, pa
                             </CommonButton>
                             :
                             <CommonButton color='success' 
-                            onClick={() => joinEvent({ eventId: id })} 
+                            onClick={() => navigate(`/guild/${guildId}/event/${id}`)} 
                             startIcon={<PersonAddIcon />}
                             >
                                 { t('Join') }
@@ -81,14 +82,13 @@ const EventTile = ({ id, name, creatorUserName, statusId, startDate, endDate, pa
 };
 
 type EventTilePropType = {
-    id: string
+    id: string,
     name: string,
     creatorUserName: string,
     statusId: number
     startDate: Date,
     endDate: Date,
-    participantsIds?: Array<string>,
-    onButtonClick?: MouseEventHandler<HTMLButtonElement>
+    participantsIds?: Array<string>
 }
 
 export { EventTile }

@@ -3,7 +3,8 @@ import {
     LoginPage, 
     RedirectLoginPage, 
     GuildsBrowsingPage,
-    GuildPage
+    GuildPage,
+    EventPage
 } from "../features";
 import Layout from "./components/Layout";
 
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
             {
                 path: "guild/:guildId",
                 element: <GuildPage />
+            },
+            {
+                path: "guild/:guildId/event/:eventId",
+                element: <EventPage />
             }
         ]
     }

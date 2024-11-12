@@ -7,7 +7,8 @@ const CommonModal = ({
     name, 
     onConfirm, 
     onConfirmText, 
-    onClose, 
+    onClose,
+    onCloseText, 
     children
 }: PropsWithChildren<CommonModalProps> ) => {
     const { t } = useTranslation();
@@ -23,7 +24,7 @@ const CommonModal = ({
                 </div>
                 <div className="common-modal__actions">
                     <CommonButton color='error' onClick={onClose}>
-                        { t("Close") }
+                        { onCloseText || t("Close") }
                     </CommonButton>
                     {
                         onConfirm &&
@@ -42,6 +43,7 @@ type CommonModalProps = {
     onConfirm?: MouseEventHandler<HTMLButtonElement>,
     onConfirmText?: string,
     onClose: MouseEventHandler<HTMLButtonElement>
+    onCloseText?: string
 }
 
 export { CommonModal }

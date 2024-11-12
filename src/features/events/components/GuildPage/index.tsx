@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import AddIcon from '@mui/icons-material/Add';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 import { useEffect, useState } from "react";
@@ -16,6 +16,7 @@ import './styles.scss';
 const GuildPage = () => {
     const { guildId } = useParams();
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const getGuildById = useGetGuildByIdQuery({ guildId: guildId });
     const [postNewEvent, postNewEventResult] = usePostNewEventMutation();
     const [getEventsList, eventsList] = useLazyGetEventsByGuildIdQuery();
@@ -69,7 +70,7 @@ const GuildPage = () => {
 
     useEffect(() => {
         if(postNewEventResult.isSuccess || postNewEventResult.isError){
-            getEventsList({ guildId: guildId, clearCache: true, skip: 0 })
+            navigate(`/guild/${guildId}/event/${postNewEventResult.data?.eventId}`);
         }
     }, [postNewEventResult.isSuccess, postNewEventResult.isError]);
 
@@ -119,14 +120,20 @@ const GuildPage = () => {
                     onClose={() => setIsCreateNewOpened(false)} 
                     onConfirm={() => {
                         postNewEvent({ guildId: guildId, eventName: eventToCreate.eventName });
-                        setIsCreateNewOpened(false);
                     }}
                 >
-                    <TextField value={eventToCreate.eventName} 
+                    {
+                        !postNewEventResult.isLoading ?
+                        <TextField value={eventToCreate.eventName} 
                         onChange={(e) => setEventToCreate({ eventName: e.target.value })} 
                         fullWidth variant="outlined" 
                         label={ t("Event name") } 
-                    />
+                        />
+                        :
+                        <div className="guild-page__create-event-spinner">
+                            <CircularProgress color="primary" />
+                        </div>
+                    }
                 </CommonModal>
             }
         </div>
