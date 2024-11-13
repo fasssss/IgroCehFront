@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { CommonModal } from "root/shared/components/CommonModal";
 import { RootState } from "root/shared/store";
 import { EventUserCard } from "../EventUserCard";
-import { useGetEventByIdQuery, useGetGuildByIdQuery } from "../../eventsApi";
+import { useGetEventByIdQuery, useGetGuildByIdQuery, useJoinEventMutation } from "../../eventsApi";
 import './styles.scss';
 
 const EventPage = () => {
@@ -13,6 +13,7 @@ const EventPage = () => {
     const getEventById = useGetEventByIdQuery({ eventId });
     const getGuildById = useGetGuildByIdQuery({ guildId });
     const userInfo = useSelector((state: RootState) => state.authorizationReducer);
+    const [joinEvent, _] = useJoinEventMutation();
 
     useEffect(() => {
         if(getEventById.isSuccess && userInfo.id !== null) {
@@ -46,7 +47,10 @@ const EventPage = () => {
                 name="Hark, noble wayfarer 🧙‍♂️"
                 onConfirmText="Yes"
                 onCloseText="No"
-                onConfirm={() => { setIsJoinProposalShown(false) }}
+                onConfirm={() => { 
+                    setIsJoinProposalShown(false);
+                    joinEvent({ eventId: eventId || "" })
+                }}
                 onClose={() => { setIsJoinProposalShown(false) }}>
                     Do you want to join this event?
                 </CommonModal>

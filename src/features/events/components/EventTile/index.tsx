@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ContentCopy } from '@mui/icons-material';
+import { ContentCopy, Person, Search } from '@mui/icons-material';
 import ShareIcon from '@mui/icons-material/Share';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
@@ -33,28 +33,37 @@ const EventTile = ({ id, name, creatorUserName, statusId, startDate, endDate, pa
                     <CalendarMonthIcon />
                     {new Date(startDate).toLocaleString('default', { day: 'numeric', month: 'long' })}
                     &nbsp;-&nbsp;
-                    {new Date(endDate).toLocaleString('default', { day: 'numeric', month: 'long' })}</div>
-                <div className='event-tile__players-count'></div>
-                <div className='event-tile__button'>
-                    {
-                        EVENT_STATUS[statusId] === 'Players registration' && (
-                            participantsIds?.some(id => id === userInfo.id) ?
+                    {new Date(endDate).toLocaleString('default', { day: 'numeric', month: 'long' })}
+                </div>
+                <div className='event-tile__players-count'><Person /> { participantsIds?.length }</div>
+                {
+                    EVENT_STATUS[statusId] === 'Players registration' && (
+                        participantsIds?.some(id => id === userInfo.id) ?
+                        <div className='event-tile__buttons'>
                             <CommonButton color='success' 
                             onClick={() => setEventToShare({ eventLink: `${window.location.href}/event/${id}`} )} 
                             startIcon={<ShareIcon />}
                             >
                                 { t('Share') }
                             </CommonButton>
-                            :
+                            <CommonButton color='success'
+                            onClick={() => navigate(`/guild/${guildId}/event/${id}`)}
+                            startIcon={<Search />}
+                            >
+                                { t('Inspect') }
+                            </CommonButton>
+                        </div>
+                        :
+                        <div className='event-tile__buttons'>
                             <CommonButton color='success' 
                             onClick={() => navigate(`/guild/${guildId}/event/${id}`)} 
                             startIcon={<PersonAddIcon />}
                             >
                                 { t('Join') }
                             </CommonButton>
-                        )
-                    }
-                </div>
+                        </div>
+                    )
+                }
             </div>
             {
                 eventToShare.eventLink &&

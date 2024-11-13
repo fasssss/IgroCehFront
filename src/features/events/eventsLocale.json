@@ -2,6 +2,7 @@
     "en": {
         "Create event": "Create event",
         "Share": "Share",
+        "Inspect": "Inspect",
         "Join": "Join",
         "Players registration": "Players registration",
         "Auction": "Auction",
@@ -15,6 +16,7 @@
     "ru": {
         "Create event": "Создать событие",
         "Share": "Поделиться",
+        "Inspect": "Просмотреть",
         "Join": "Присоединиться",
         "Players registration": "Регистрация участников",
         "Auction": "Аукцион",
