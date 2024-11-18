@@ -16,7 +16,7 @@ export default defineConfig({
       usePolling: true
     },
     hmr: {
-      port: 443,
+      port: 6436,
 
     },
     https: {

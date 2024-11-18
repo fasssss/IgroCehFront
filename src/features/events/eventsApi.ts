@@ -26,7 +26,8 @@ const eventsApi = igroCehApi.enhanceEndpoints({
                 };
 
                 try {
-                    ensureConnection();
+                    //setTimeout(() => ensureConnection(), 1000);
+                    ensureConnection()
                     await cacheDataLoaded
                     await addRoom(arg.eventId || "", listener)
 
