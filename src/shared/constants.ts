@@ -1,4 +1,5 @@
 export const igroCehApiBaseUrl: string = import.meta.env.VITE_IGRO_CEH_API;
+export const igroCehWebSocketBaseUrl: string = import.meta.env.VITE_IGRO_CEH_WEB_SOCKET;
 
 export const EVENT_STATUS = [
     'Players registration',

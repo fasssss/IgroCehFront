@@ -15,6 +15,10 @@ export default defineConfig({
     watch: {
       usePolling: true
     },
+    hmr: {
+      port: 443,
+
+    },
     https: {
       key: fs.readFileSync('../localhost-key.pem'),
       cert: fs.readFileSync('../localhost.pem'),

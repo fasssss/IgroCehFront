@@ -1,4 +1,5 @@
 import { igroCehApi } from "root/shared/igroCehApi";
+import { addRoom, ensureConnection, leaveRoom } from "root/shared/helpers/webSocketHelper";
 
 const eventsApi = igroCehApi.enhanceEndpoints({
 }).injectEndpoints({
@@ -14,6 +15,27 @@ const eventsApi = igroCehApi.enhanceEndpoints({
                 url: `/api/getEventById?eventId=${request.eventId}`,
                 credentials: 'include'
             }),
+            keepUnusedDataFor: 5,
+            async onCacheEntryAdded(arg, { updateCachedData, cacheDataLoaded, cacheEntryRemoved }) {
+                const listener = (event: MessageEvent) => {
+                    const data = JSON.parse(event.data)
+                    if (data.channel !== arg) return
+                
+                    console.log(data);
+                    updateCachedData(() => {});
+                };
+
+                try {
+                    ensureConnection();
+                    await cacheDataLoaded
+                    await addRoom(arg.eventId || "", listener)
+
+                    await cacheEntryRemoved
+                    await leaveRoom(arg.eventId || "", listener);
+                } catch(e) {
+                    console.log(e);
+                }
+            }
         }),
         postNewEvent: build.mutation<PostNewEventResponse, PostNewEventRequest>({
             query: (request) => ({
