@@ -18,21 +18,19 @@ const eventsApi = igroCehApi.enhanceEndpoints({
             keepUnusedDataFor: 5,
             async onCacheEntryAdded(arg, { updateCachedData, cacheDataLoaded, cacheEntryRemoved }) {
                 const listener = (event: MessageEvent) => {
-                    const data = JSON.parse(event.data)
-                    if (data.channel !== arg) return
-                
-                    console.log(data);
-                    updateCachedData(() => {});
+                    const data: EventRecord = JSON.parse(event.data)
+                    updateCachedData((draft) => {
+                        draft.eventRecords.push(data);
+                    });
                 };
 
                 try {
-                    //setTimeout(() => ensureConnection(), 1000);
                     ensureConnection()
                     await cacheDataLoaded
-                    await addRoom(arg.eventId || "", listener)
+                    await addRoom(`event${arg.eventId}` || "", listener)
 
                     await cacheEntryRemoved
-                    await leaveRoom(arg.eventId || "", listener);
+                    await leaveRoom(`event${arg.eventId}` || "", listener);
                 } catch(e) {
                     console.log(e);
                 }
@@ -49,7 +47,7 @@ const eventsApi = igroCehApi.enhanceEndpoints({
                 }
             })
         }),
-        joinEvent: build.mutation<void, JoinEventRequest>({
+        joinEvent: build.mutation<JoinEventResponse, JoinEventRequest>({
             query: (request) => ({
                 url: `/api/joinEvent`,
                 credentials: 'include',
@@ -58,6 +56,17 @@ const eventsApi = igroCehApi.enhanceEndpoints({
                     eventId: request.eventId
                 }
             }),
+            async onQueryStarted({ eventId }, { dispatch, queryFulfilled }) {
+                try {
+                  const { data: newEventRecord } = await queryFulfilled
+                  dispatch(
+                    eventsApi.util.updateQueryData('getEventById', { eventId }, (draft) => {
+                      console.log(newEventRecord);
+                      draft.eventRecords.push(newEventRecord.eventRecordObject)
+                    })
+                  )
+                } catch {}
+              },
         }),
         getEventsByGuildId: build.query<GetEventsByGuildIdResponse, GetEventsByGuildIdRequest>({
             query: (request) => ({
@@ -104,26 +113,32 @@ export type EventObjectResponse = {
     Id: string,
     eventName: string,
     statusId: number
-    eventRecords: {
+    eventRecords: EventRecord[]
+}
+
+type EventRecord = {
+    id: string,
+    participant: {
         id: string,
-        participant: {
-            id: string,
-            userName: string,
-            avatarUrl: string | undefined
-        },
-        toUser: {
-            id: string,
-            userName: string,
-            avatarUrl: string | undefined
-        } | undefined,
-        game: {
-            id: string,
-            name: string,
-            description: string | undefined,
-            avatarUrl: string | undefined,
-            steamUrl: string | undefined
-        } | undefined
-    }[]
+        userName: string,
+        avatarUrl: string | undefined
+    },
+    toUser: {
+        id: string,
+        userName: string,
+        avatarUrl: string | undefined
+    } | undefined,
+    game: {
+        id: string,
+        name: string,
+        description: string | undefined,
+        avatarUrl: string | undefined,
+        steamUrl: string | undefined
+    } | undefined
+}
+
+type JoinEventResponse = {
+    eventRecordObject: EventRecord
 }
 
 export type PostNewEventRequest = {

@@ -24,7 +24,6 @@ export const ensureConnection = () => {
     const state = store.getState().webSocketReducer;
     if(!state.webSocketInstance || state.webSocketInstance.readyState !== WebSocket.OPEN) {
         store.dispatch(establishConnection());
-        console.log(state);
     }
 };
 
