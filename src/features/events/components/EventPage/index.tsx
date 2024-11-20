@@ -6,6 +6,8 @@ import { RootState } from "root/shared/store";
 import { EventUserCard } from "../EventUserCard";
 import { useGetEventByIdQuery, useGetGuildByIdQuery, useJoinEventMutation } from "../../eventsApi";
 import './styles.scss';
+import { CommonButton } from "root/shared/components/CommonButton";
+import { ArrowForwardIos, Logout } from "@mui/icons-material";
 
 const EventPage = () => {
     const { guildId, eventId } = useParams();
@@ -25,8 +27,24 @@ const EventPage = () => {
     return (
         <div className="event-page">
             <div className="event-page__header">
-                <img className="event-page__guild-image" src={getGuildById.data?.guildObject.iconUrl} />
-                <div className="event-page__event-name">{ getEventById.data?.eventName }</div>
+                <div className="event-page__header-badge">
+                    <img className="event-page__guild-image" src={getGuildById.data?.guildObject.iconUrl} />
+                    <div className="event-page__event-name">{ getEventById.data?.eventName }</div>
+                </div>
+                <div className="event-page__header-buttons">
+                    {
+                        getEventById.data?.eventCreatorId === userInfo.id &&
+                        <CommonButton color="success" endIcon={<ArrowForwardIos />}>
+                            Travel to Auction!
+                        </CommonButton>  
+                    }
+                    {
+                        getEventById.data?.eventCreatorId !== userInfo.id &&
+                        <CommonButton color="error" endIcon={<Logout />}>
+                            Leave Event
+                        </CommonButton> 
+                    }
+                </div>
             </div>
             <div className="event-page__body">
                 {

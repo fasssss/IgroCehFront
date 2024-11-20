@@ -18,10 +18,12 @@ const eventsApi = igroCehApi.enhanceEndpoints({
             keepUnusedDataFor: 5,
             async onCacheEntryAdded(arg, { updateCachedData, cacheDataLoaded, cacheEntryRemoved }) {
                 const listener = (event: MessageEvent) => {
-                    const data: EventRecord = JSON.parse(event.data)
-                    updateCachedData((draft) => {
-                        draft.eventRecords.push(data);
-                    });
+                    const data: EventWebSocketMessage = JSON.parse(event.data)
+                    if(data.type === "addUserToEvent") {
+                        updateCachedData((draft) => {
+                            draft.eventRecords.push(data.payload);
+                        });
+                    }
                 };
 
                 try {
@@ -112,7 +114,8 @@ export type GetEventByIdRequest = {
 export type EventObjectResponse = {
     Id: string,
     eventName: string,
-    statusId: number
+    eventCreatorId: string,
+    statusId: number,
     eventRecords: EventRecord[]
 }
 
@@ -139,6 +142,11 @@ type EventRecord = {
 
 type JoinEventResponse = {
     eventRecordObject: EventRecord
+}
+
+type EventWebSocketMessage = {
+    type: string,
+    payload: EventRecord
 }
 
 export type PostNewEventRequest = {

@@ -1,7 +1,7 @@
 @use "../../../../shared/default.module.scss" as default;
 
 .user-card {
-    max-width: 250px;
+    width: 250px;
     height: 350px;
     background-color: default.$grey;
     border-radius: default.$border-radius_big;

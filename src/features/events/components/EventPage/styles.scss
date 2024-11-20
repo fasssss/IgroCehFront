@@ -9,6 +9,17 @@
     padding-top: 0;
     display: flex;
     height: 136px;
+    justify-content: space-between;
+    align-items: end;
+}
+
+.event-page__header-badge {
+    display: flex;
+}
+
+.event-page__header-buttons {
+    display: flex;
+    height: fit-content;
 }
 
 .event-page__guild-image {
@@ -24,6 +35,9 @@
 
 .event-page__body {
     padding: default.$padding_big;
+    display:flex;
+    flex-wrap: wrap;
+    gap: default.$margin_big;
 }
 
 .event-page__guild-image {
