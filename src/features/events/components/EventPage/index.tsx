@@ -68,6 +68,7 @@ const EventPage = () => {
                         return(
                             <EventUserCard 
                             key={ record.id }
+                            userId={record.participant.id}
                             avatarUrl={ record.participant.avatarUrl } 
                             userName={ record.participant.userName }
                             />
