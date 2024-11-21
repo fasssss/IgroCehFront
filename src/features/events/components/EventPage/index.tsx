@@ -1,13 +1,18 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { useSelector } from "react-redux";
+import { ArrowForwardIos, Logout } from "@mui/icons-material";
 import { CommonModal } from "root/shared/components/CommonModal";
 import { RootState } from "root/shared/store";
-import { EventUserCard } from "../EventUserCard";
-import { useGetEventByIdQuery, useGetGuildByIdQuery, useJoinEventMutation } from "../../eventsApi";
-import './styles.scss';
 import { CommonButton } from "root/shared/components/CommonButton";
-import { ArrowForwardIos, Logout } from "@mui/icons-material";
+import { EventUserCard } from "../EventUserCard";
+import { 
+    useGetEventByIdQuery, 
+    useGetGuildByIdQuery, 
+    useJoinEventMutation, 
+    useRemoveFromEventMutation 
+} from "../../eventsApi";
+import './styles.scss';
 
 const EventPage = () => {
     const { guildId, eventId } = useParams();
@@ -15,7 +20,9 @@ const EventPage = () => {
     const getEventById = useGetEventByIdQuery({ eventId });
     const getGuildById = useGetGuildByIdQuery({ guildId });
     const userInfo = useSelector((state: RootState) => state.authorizationReducer);
-    const [joinEvent, _] = useJoinEventMutation();
+    const navigate = useNavigate();
+    const [joinEvent] = useJoinEventMutation();
+    const [removeFromEvent, removeFromEventResult] = useRemoveFromEventMutation();
 
     useEffect(() => {
         if(getEventById.isSuccess && userInfo.id !== null) {
@@ -23,6 +30,12 @@ const EventPage = () => {
                 setIsJoinProposalShown(true);
         }
     }, [getEventById.isSuccess, userInfo]);
+
+    useEffect(() => {
+        if(removeFromEventResult.isSuccess) {
+            navigate(`/guild/${guildId}`);
+        }
+    }, [removeFromEventResult.isSuccess]);
 
     return (
         <div className="event-page">
@@ -40,7 +53,10 @@ const EventPage = () => {
                     }
                     {
                         getEventById.data?.eventCreatorId !== userInfo.id &&
-                        <CommonButton color="error" endIcon={<Logout />}>
+                        <CommonButton 
+                        onClick={() => removeFromEvent({ userId: userInfo.id || "", eventId: eventId || "" })} 
+                        color="error" 
+                        endIcon={<Logout />}>
                             Leave Event
                         </CommonButton> 
                     }

@@ -24,6 +24,13 @@ const eventsApi = igroCehApi.enhanceEndpoints({
                             draft.eventRecords.push(data.payload);
                         });
                     }
+
+                    if(data.type === "removeUserFromEvent") {
+                        updateCachedData((draft) => {
+                            draft.eventRecords = draft.eventRecords
+                            .filter(item => item.id !== data.payload.id);
+                        });
+                    }
                 };
 
                 try {
@@ -63,8 +70,29 @@ const eventsApi = igroCehApi.enhanceEndpoints({
                   const { data: newEventRecord } = await queryFulfilled
                   dispatch(
                     eventsApi.util.updateQueryData('getEventById', { eventId }, (draft) => {
-                      console.log(newEventRecord);
                       draft.eventRecords.push(newEventRecord.eventRecordObject)
+                    })
+                  )
+                } catch {}
+              },
+        }),
+        removeFromEvent: build.mutation<RemoveFromEventResponse, RemoveFromEventRequest>({
+            query: (request) => ({
+                url: `/api/removeFromEvent`,
+                credentials: 'include',
+                method: 'POST',
+                body: {
+                    userId: request.userId,
+                    eventId: request.eventId
+                }
+            }),
+            async onQueryStarted({ eventId }, { dispatch, queryFulfilled }) {
+                try {
+                  const { data: removedEventRecordData } = await queryFulfilled
+                  dispatch(
+                    eventsApi.util.updateQueryData('getEventById', { eventId }, (draft) => {
+                      draft.eventRecords = draft.eventRecords
+                      .filter(item => item.id !== removedEventRecordData.eventRecordObject.id);
                     })
                   )
                 } catch {}
@@ -75,7 +103,7 @@ const eventsApi = igroCehApi.enhanceEndpoints({
                 url: `/api/getEventsByGuildId?guildId=${request.guildId}&startFrom=${request.skip}`,
                 credentials: 'include',
             }),
-            keepUnusedDataFor: 2,
+            keepUnusedDataFor: 1,
             serializeQueryArgs: ({ endpointName }) => {
                 return endpointName
             },
@@ -149,6 +177,15 @@ type EventWebSocketMessage = {
     payload: EventRecord
 }
 
+type RemoveFromEventRequest = {
+    userId: string,
+    eventId: string
+}
+
+type RemoveFromEventResponse = {
+    eventRecordObject: EventRecord
+}
+
 export type PostNewEventRequest = {
     guildId: string | undefined,
     eventName: string
@@ -188,6 +225,7 @@ export const {
     useLazyGetEventsByGuildIdQuery,
     useGetEventsByGuildIdQuery,
     useJoinEventMutation,
+    useRemoveFromEventMutation,
     useLazyGetEventByIdQuery,
     useGetEventByIdQuery
 } = eventsApi;

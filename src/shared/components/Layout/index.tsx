@@ -84,7 +84,6 @@ function Layout() {
                       <div key={value} 
                         onClick={() => {
                           i18n.changeLanguage(value);
-                          console.log(i18n.languages);
                           setIsLanguageSelectorOpened(false)
                         }} 
                         className='layout__language-option'
