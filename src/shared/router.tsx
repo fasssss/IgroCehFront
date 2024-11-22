@@ -4,7 +4,8 @@ import {
     RedirectLoginPage, 
     GuildsBrowsingPage,
     GuildPage,
-    EventPage
+    EventPage,
+    AuctionOrderingStagePage
 } from "../features";
 import Layout from "./components/Layout";
 
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
             {
                 path: "guild/:guildId/event/:eventId",
                 element: <EventPage />
+            },
+            {
+                path: "guild/:guildId/event/:eventId/ordering-stage",
+                element: <AuctionOrderingStagePage />
             }
         ]
     }

@@ -58,3 +58,8 @@ export const leaveRoom = async (roomId: string, listener: any) => {
         }
     }
 };
+
+export type WebSocketMessage<T> = {
+    type: string,
+    payload: T
+}

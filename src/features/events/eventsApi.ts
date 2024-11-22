@@ -1,5 +1,5 @@
 import { igroCehApi } from "root/shared/igroCehApi";
-import { addRoom, ensureConnection, leaveRoom } from "root/shared/helpers/webSocketHelper";
+import { addRoom, ensureConnection, leaveRoom, WebSocketMessage } from "root/shared/helpers/webSocketHelper";
 
 const eventsApi = igroCehApi.enhanceEndpoints({
 }).injectEndpoints({
@@ -18,7 +18,7 @@ const eventsApi = igroCehApi.enhanceEndpoints({
             keepUnusedDataFor: 5,
             async onCacheEntryAdded(arg, { updateCachedData, cacheDataLoaded, cacheEntryRemoved }) {
                 const listener = (event: MessageEvent) => {
-                    const data: EventWebSocketMessage = JSON.parse(event.data)
+                    const data: WebSocketMessage<EventRecord> = JSON.parse(event.data)
                     if(data.type === "addUserToEvent") {
                         updateCachedData((draft) => {
                             draft.eventRecords.push(data.payload);
@@ -119,6 +119,16 @@ const eventsApi = igroCehApi.enhanceEndpoints({
                 return currentArg !== previousArg
             }
         }),
+        moveEventToNextStage: build.mutation<void, MoveEventToNextStageRequest>({
+            query: (request) => ({
+                url: `/api/moveEventToNextStage`,
+                credentials: 'include',
+                method: 'POST',
+                body: {
+                    eventId: request.eventId
+                }
+            }),
+        }),
     })
 })
 
@@ -172,11 +182,6 @@ type JoinEventResponse = {
     eventRecordObject: EventRecord
 }
 
-type EventWebSocketMessage = {
-    type: string,
-    payload: EventRecord
-}
-
 type RemoveFromEventRequest = {
     userId: string,
     eventId: string
@@ -218,6 +223,14 @@ export type JoinEventRequest = {
     eventId: string,
 }
 
+export type MoveEventToNextStageRequest = {
+    eventId: string
+}
+
+export type MoveEventToNextStageResponse = {
+    moveToStage: number
+}
+
 export const { 
     useLazyGetGuildByIdQuery,
     useGetGuildByIdQuery,
@@ -227,5 +240,6 @@ export const {
     useJoinEventMutation,
     useRemoveFromEventMutation,
     useLazyGetEventByIdQuery,
-    useGetEventByIdQuery
+    useGetEventByIdQuery,
+    useMoveEventToNextStageMutation,
 } = eventsApi;

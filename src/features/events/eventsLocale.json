@@ -11,7 +11,10 @@
         "Confirm": "Confirm",
         "Close": "Close",
         "Event name": "Event name",
-        "Create new event": "Create new event"
+        "Create new event": "Create new event",
+        "Leave Event": "Leave Event",
+        "Travel to Auction!": "Travel to Auction!",
+        "Kick from event": "Kick from event"
     },
     "ru": {
         "Create event": "Создать событие",
@@ -25,6 +28,9 @@
         "Confirm": "Продолжить",
         "Close": "Закрыть",
         "Event name": "Название события",
-        "Create new event": "Создать событие"
+        "Create new event": "Создать событие",
+        "Leave Event": "Покинуть событие",
+        "Travel to Auction!": "Вперед на Аукцион!",
+        "Kick from event": "Выгнать с события"
     }
 }

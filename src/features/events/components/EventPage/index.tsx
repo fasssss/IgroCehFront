@@ -7,12 +7,16 @@ import { RootState } from "root/shared/store";
 import { CommonButton } from "root/shared/components/CommonButton";
 import { EventUserCard } from "../EventUserCard";
 import { 
+    MoveEventToNextStageResponse,
     useGetEventByIdQuery, 
     useGetGuildByIdQuery, 
     useJoinEventMutation, 
+    useMoveEventToNextStageMutation, 
     useRemoveFromEventMutation 
 } from "../../eventsApi";
 import './styles.scss';
+import { useTranslation } from "react-i18next";
+import { addRoom, leaveRoom, WebSocketMessage } from "root/shared/helpers/webSocketHelper";
 
 const EventPage = () => {
     const { guildId, eventId } = useParams();
@@ -23,6 +27,8 @@ const EventPage = () => {
     const navigate = useNavigate();
     const [joinEvent] = useJoinEventMutation();
     const [removeFromEvent, removeFromEventResult] = useRemoveFromEventMutation();
+    const [moveEventToNextStage, moveEventToNextStageResult] = useMoveEventToNextStageMutation()
+    const { t } = useTranslation()
 
     useEffect(() => {
         if(getEventById.isSuccess && userInfo.id !== null) {
@@ -37,6 +43,26 @@ const EventPage = () => {
         }
     }, [removeFromEventResult.isSuccess]);
 
+    useEffect(() => {
+        const changeStatusEventListener = (event: MessageEvent) => {
+            const data: WebSocketMessage<MoveEventToNextStageResponse> = JSON.parse(event.data);
+            if (data.payload.moveToStage === 1) {
+                navigate(`/guild/${guildId}/event/${eventId}/ordering-stage`);
+            }
+        }
+
+        addRoom("updateEventStage", changeStatusEventListener);
+        return(() => {
+            leaveRoom("updateEventStage", changeStatusEventListener)
+        })
+    }, []);
+
+    useEffect(() => {
+        if(moveEventToNextStageResult.isSuccess) {
+            navigate(`/guild/${guildId}/event/${eventId}/ordering-stage`);
+        }
+    }, [moveEventToNextStageResult.isSuccess]);
+
     return (
         <div className="event-page">
             <div className="event-page__header">
@@ -47,8 +73,11 @@ const EventPage = () => {
                 <div className="event-page__header-buttons">
                     {
                         getEventById.data?.eventCreatorId === userInfo.id &&
-                        <CommonButton color="success" endIcon={<ArrowForwardIos />}>
-                            Travel to Auction!
+                        <CommonButton 
+                        onClick={() => moveEventToNextStage({ eventId: eventId || "" })}
+                        color="success" 
+                        endIcon={<ArrowForwardIos />}>
+                            {t("Travel to Auction!")}
                         </CommonButton>  
                     }
                     {
@@ -57,7 +86,7 @@ const EventPage = () => {
                         onClick={() => removeFromEvent({ userId: userInfo.id || "", eventId: eventId || "" })} 
                         color="error" 
                         endIcon={<Logout />}>
-                            Leave Event
+                            {t("Leave Event")}
                         </CommonButton> 
                     }
                 </div>

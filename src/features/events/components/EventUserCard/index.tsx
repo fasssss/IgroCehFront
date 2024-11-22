@@ -6,12 +6,14 @@ import { RootState } from 'root/shared/store';
 import { CommonButton } from 'root/shared/components/CommonButton';
 import { useGetEventByIdQuery, useRemoveFromEventMutation } from '../../eventsApi';
 import './styles.scss';
+import { useTranslation } from 'react-i18next';
 
 const EventUserCard = ({ avatarUrl, userName, userId }: EventUserCardPropType) => {
     const { eventId } = useParams();
     const getEventById = useGetEventByIdQuery({ eventId });
     const authorizedUserInfo = useSelector((state: RootState) => state.authorizationReducer);
     const [removeFromEvent] = useRemoveFromEventMutation();
+    const {t} = useTranslation();
 
     return(
         <Tilt 
@@ -33,7 +35,7 @@ const EventUserCard = ({ avatarUrl, userName, userId }: EventUserCardPropType) =
                     onClick={() => removeFromEvent({ userId: userId || "", eventId: eventId || "" })} 
                     color="error" 
                     endIcon={<Logout />}>
-                        Kick from event
+                        {t("Kick from event")}
                     </CommonButton> 
                 }
             </div>
