@@ -4,7 +4,7 @@ import {
     //useShuffleUsersMutation
 } from "../../eventsApi";
 import './styles.scss';
-import { EventUserCard } from "../EventUserCard";
+import { CustomCard } from "root/shared/components/CustomCard";
 import { useEffect, useState } from "react";
 
 const AuctionShufflingStagePage = () => {
@@ -26,19 +26,13 @@ const AuctionShufflingStagePage = () => {
             getEventById.data?.eventRecords.map((record, index) => {
                 return(
                     <div key={record.id}  className="players-shuffle__card-container">
-                        <div className={`players-shuffle__card ${isCardsShown[index] ? "" : "flipped"}`}
-                        onClick={() => { setIsCardsShown(isCardsShown.map((val, shownIndex) => index === shownIndex)) }}>
-                            <div className="players-shuffle__card-back">
-
-                            </div>
-                            <div className="players-shuffle__card-front">
-                                <EventUserCard
-                                key={ record.id }
-                                avatarUrl={ record.participant.avatarUrl } 
-                                userName={ record.participant.userName }
-                                />
-                            </div>
-                        </div>
+                        <CustomCard
+                        onClick={() => setIsCardsShown(isCardsShown.map((val, shownIndex) => true))}
+                        key={ record.id }
+                        imageUrl={ record.participant.avatarUrl } 
+                        name={ record.participant.userName }
+                        isShown={isCardsShown[index]}
+                        />
                         {
                             index < (getEventById.data?.eventRecords.length || 0) - 1 &&
                             <div className="players-shuffle__direction-arrow"/>

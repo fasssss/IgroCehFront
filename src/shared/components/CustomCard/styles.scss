@@ -1,0 +1,59 @@
+@use "../../default.module.scss" as default;
+
+.custom-card__face {
+    width: 250px;
+    height: 350px;
+    background-color: default.$grey;
+    border-radius: default.$border-radius_big;
+    padding: default.$padding_small;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform-style: preserve-3d;
+}
+
+.custom-card__image {
+    position: relative;
+    width: fit-content;
+    border-radius: 50rem;
+    transform: translateZ(10px);
+    margin-bottom: default.$margin_small;
+}
+
+.custom-card__name {
+    font-size: x-large;
+}
+
+.custom-card__body {
+    z-index: 1;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.custom-card__card {
+    perspective: 1000px;
+    width: 250px;
+    height: 350px;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.5s;
+}
+
+.custom-card__card.flipped {
+    transform: rotateY(180deg);
+}
+
+.custom-card__card-back,
+.custom-card__card-front {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    backface-visibility: hidden;
+}
+
+.custom-card__card-back {
+    background-color: default.$grey;
+    border-radius: default.$border-radius_big;
+    transform: rotateY(180deg);
+}

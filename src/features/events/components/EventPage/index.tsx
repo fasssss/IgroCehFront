@@ -5,7 +5,7 @@ import { ArrowForwardIos, Logout } from "@mui/icons-material";
 import { CommonModal } from "root/shared/components/CommonModal";
 import { RootState } from "root/shared/store";
 import { CommonButton } from "root/shared/components/CommonButton";
-import { EventUserCard } from "../EventUserCard";
+import { CustomCard } from "root/shared/components/CustomCard";
 import { 
     MoveEventToNextStageResponse,
     useGetEventByIdQuery, 
@@ -95,10 +95,10 @@ const EventPage = () => {
                 {
                     getEventById.data?.eventRecords.map(record => {
                         return(
-                            <EventUserCard 
+                            <CustomCard 
                             key={ record.id }
-                            avatarUrl={ record.participant.avatarUrl } 
-                            userName={ record.participant.userName }
+                            imageUrl={ record.participant.avatarUrl } 
+                            name={ record.participant.userName }
                             >
                                 {
                                     getEventById.data?.eventCreatorId === userInfo.id && 
@@ -110,7 +110,7 @@ const EventPage = () => {
                                         {t("Kick from event")}
                                     </CommonButton> 
                                 }
-                            </EventUserCard>
+                            </CustomCard>
                         );
                     })
                 }

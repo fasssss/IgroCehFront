@@ -8,33 +8,6 @@
     gap: default.$margin_big;
 }
 
-.players-shuffle__card {
-    perspective: 1000px;
-    width: 250px;
-    height: 350px;
-    position: relative;
-    transform-style: preserve-3d;
-    transition: transform 0.5s;
-}
-
-.players-shuffle__card.flipped {
-    transform: rotateY(180deg);
-}
-
-.players-shuffle__card-back,
-.players-shuffle__card-front {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    backface-visibility: hidden;
-}
-
-.players-shuffle__card-back {
-    background-color: default.$grey;
-    border-radius: default.$border-radius_big;
-    transform: rotateY(180deg);
-}
-
 .players-shuffle__card-container {
     display: flex;
     align-items: center;
