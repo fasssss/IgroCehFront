@@ -97,10 +97,20 @@ const EventPage = () => {
                         return(
                             <EventUserCard 
                             key={ record.id }
-                            userId={record.participant.id}
                             avatarUrl={ record.participant.avatarUrl } 
                             userName={ record.participant.userName }
-                            />
+                            >
+                                {
+                                    getEventById.data?.eventCreatorId === userInfo.id && 
+                                    getEventById.data?.eventCreatorId !== record.participant.id &&
+                                    <CommonButton 
+                                    onClick={() => removeFromEvent({ userId: userInfo.id || "", eventId: eventId || "" })} 
+                                    color="error" 
+                                    endIcon={<Logout />}>
+                                        {t("Kick from event")}
+                                    </CommonButton> 
+                                }
+                            </EventUserCard>
                         );
                     })
                 }

@@ -1,19 +1,8 @@
 import Tilt from 'react-parallax-tilt';
-import { useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { Logout } from '@mui/icons-material';
-import { RootState } from 'root/shared/store';
-import { CommonButton } from 'root/shared/components/CommonButton';
-import { useGetEventByIdQuery, useRemoveFromEventMutation } from '../../eventsApi';
+import { PropsWithChildren } from 'react';
 import './styles.scss';
-import { useTranslation } from 'react-i18next';
 
-const EventUserCard = ({ avatarUrl, userName, userId }: EventUserCardPropType) => {
-    const { eventId } = useParams();
-    const getEventById = useGetEventByIdQuery({ eventId });
-    const authorizedUserInfo = useSelector((state: RootState) => state.authorizationReducer);
-    const [removeFromEvent] = useRemoveFromEventMutation();
-    const {t} = useTranslation();
+const EventUserCard = ({ avatarUrl, userName, children }: PropsWithChildren<EventUserCardPropType>) => {
 
     return(
         <Tilt 
@@ -29,14 +18,7 @@ const EventUserCard = ({ avatarUrl, userName, userId }: EventUserCardPropType) =
             </div>
             <div className="user-card__body">
                 {
-                    getEventById.data?.eventCreatorId === authorizedUserInfo.id && 
-                    getEventById.data?.eventCreatorId !== userId &&
-                    <CommonButton 
-                    onClick={() => removeFromEvent({ userId: userId || "", eventId: eventId || "" })} 
-                    color="error" 
-                    endIcon={<Logout />}>
-                        {t("Kick from event")}
-                    </CommonButton> 
+                    children
                 }
             </div>
         </Tilt>
@@ -45,8 +27,7 @@ const EventUserCard = ({ avatarUrl, userName, userId }: EventUserCardPropType) =
 
 type EventUserCardPropType = {
     avatarUrl?: string | undefined,
-    userName: string,
-    userId: string
+    userName: string
 }
 
 export { EventUserCard }
