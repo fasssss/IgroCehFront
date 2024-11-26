@@ -129,6 +129,26 @@ const eventsApi = igroCehApi.enhanceEndpoints({
                 }
             }),
         }),
+        shuffleUsers: build.mutation<ShuffleUsersResponse, ShuffleUsersRequest>({
+            query: (request) => ({
+                url: `/api/shuffleUsers`,
+                credentials: 'include',
+                method: 'POST',
+                body: {
+                    eventId: request.eventId
+                }
+            }),
+            async onQueryStarted({ eventId }, { dispatch, queryFulfilled }) {
+                try {
+                  const { data: shuffledEventRecordData } = await queryFulfilled
+                  dispatch(
+                    eventsApi.util.updateQueryData('getEventById', { eventId }, (draft) => {
+                      draft.eventRecords = shuffledEventRecordData.eventRecordObjects
+                    })
+                  )
+                } catch {}
+              },
+        }),
     })
 })
 
@@ -231,6 +251,14 @@ export type MoveEventToNextStageResponse = {
     moveToStage: number
 }
 
+export type ShuffleUsersRequest = {
+    eventId: string | undefined
+}
+
+export type ShuffleUsersResponse = {
+    eventRecordObjects: EventRecord[]
+}
+
 export const { 
     useLazyGetGuildByIdQuery,
     useGetGuildByIdQuery,
@@ -242,4 +270,5 @@ export const {
     useLazyGetEventByIdQuery,
     useGetEventByIdQuery,
     useMoveEventToNextStageMutation,
+    useShuffleUsersMutation
 } = eventsApi;

@@ -3,9 +3,18 @@
 .players-shuffle {
     height: 100%;
     padding: default.$padding_big;
+}
+
+.players-shuffle__header {
+    width: 100%;
+}
+
+.players-shuffle__body {
+    width: 100%;
     display:flex;
     flex-wrap: wrap;
     gap: default.$margin_big;
+    padding-top: default.$padding_big;
 }
 
 .players-shuffle__card-container {
