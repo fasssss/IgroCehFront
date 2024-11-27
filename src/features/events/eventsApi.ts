@@ -15,7 +15,7 @@ const eventsApi = igroCehApi.enhanceEndpoints({
                 url: `/api/getEventById?eventId=${request.eventId}`,
                 credentials: 'include'
             }),
-            keepUnusedDataFor: 5,
+            keepUnusedDataFor: 1,
             async onCacheEntryAdded(arg, { updateCachedData, cacheDataLoaded, cacheEntryRemoved }) {
                 const listener = (event: MessageEvent) => {
                     const data: WebSocketMessage<EventRecord> = JSON.parse(event.data)

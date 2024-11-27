@@ -1,5 +1,14 @@
-import { store } from "../store";
-import { closeConnection, establishConnection, updateRooms } from "./webSocketSlice";
+import { igroCehWebSocketBaseUrl } from "../constants";
+
+type WebSocketState = {
+    webSocketInstance: WebSocket | null,
+    rooms: string[]
+}
+
+const state: WebSocketState = {
+    webSocketInstance: null,
+    rooms: []
+}
 
 const waitForOpenConnection = (socket: WebSocket | null): Promise<void> => {
     return new Promise((resolve, reject) => {
@@ -21,40 +30,38 @@ const waitForOpenConnection = (socket: WebSocket | null): Promise<void> => {
 }
 
 export const ensureConnection = () => {
-    const state = store.getState().webSocketReducer;
     if(!state.webSocketInstance || state.webSocketInstance.readyState !== WebSocket.OPEN) {
-        store.dispatch(establishConnection());
+        state.webSocketInstance = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
     }
 };
 
 export const addRoom = async (roomId: string, listener: any) => {
-    const state = store.getState().webSocketReducer;
-
-    const newRoomsList = [...state.rooms];
-    newRoomsList.push(roomId);
-    store.dispatch(updateRooms(newRoomsList))
-    
     await waitForOpenConnection(state.webSocketInstance)
-    state.webSocketInstance?.send(JSON.stringify({ type: "join", payload: roomId }));
+    const newRoomsList = [...state.rooms];
+    if(newRoomsList.indexOf(roomId) === -1) {
+        state.webSocketInstance?.send(JSON.stringify({ type: "join", payload: roomId }));
+    }
+    
+    newRoomsList.push(roomId);
+    state.rooms = newRoomsList;
+    console.log(state.rooms);
     state.webSocketInstance?.addEventListener("message", listener);
 };
 
 export const leaveRoom = async (roomId: string, listener: any) => {
-    const state = store.getState().webSocketReducer;
     if(state.webSocketInstance && state.webSocketInstance.readyState === WebSocket.OPEN) {
-        if(state.rooms.indexOf(roomId) === -1) {
-            return;
-        }
-
         const newRooms = state.rooms.filter(room => room !== roomId);
-
-        await waitForOpenConnection(state.webSocketInstance)
-        store.dispatch(updateRooms(newRooms));
-        state.webSocketInstance?.send(JSON.stringify({ type: "leave", payload: roomId }));
+        state.rooms = newRooms;
+        await waitForOpenConnection(state.webSocketInstance);
+        if(newRooms.indexOf(roomId) === -1) {
+            state.webSocketInstance?.send(JSON.stringify({ type: "leave", payload: roomId }));
+        }
+        
         state.webSocketInstance?.removeEventListener("message", listener);
         if(newRooms.length === 0) {
             state.webSocketInstance.close();
-            store.dispatch(closeConnection());
+            state.webSocketInstance = null;
+            state.rooms = [];
         }
     }
 };

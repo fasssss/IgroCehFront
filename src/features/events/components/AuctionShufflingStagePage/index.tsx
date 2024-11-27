@@ -1,28 +1,55 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
 import { CustomCard } from "root/shared/components/CustomCard";
 import { CommonButton } from "root/shared/components/CommonButton";
+import { RootState } from "root/shared/store";
+import { addRoom, ensureConnection, leaveRoom, WebSocketMessage } from "root/shared/helpers/webSocketHelper";
 import { 
     useGetEventByIdQuery,
+    //useLazyGetEventByIdQuery,
     useShuffleUsersMutation
 } from "../../eventsApi";
 import './styles.scss';
 
 const AuctionShufflingStagePage = () => {
     const { eventId } = useParams();
-    const getEventById = useGetEventByIdQuery({ eventId });
+    const initialMount = useRef(false);
+    const eventById = useGetEventByIdQuery({ eventId });
+    const userInfo = useSelector((state: RootState) => state.authorizationReducer);
     const [isCardsShown, setIsCardsShown] = useState([] as boolean[]);
     const [shuffleUsers, shuffleUsersResult] = useShuffleUsersMutation();
 
     useEffect(() => {
-        if(getEventById.data) {
-            setIsCardsShown(Array(getEventById.data.eventRecords.length).fill(false));
-        }
-    }, [getEventById.isSuccess, shuffleUsersResult.isLoading]);
+        ensureConnection();
+        const shuffleWebsocketHandler = (event: MessageEvent) => {
+            //getEventById({ eventId });
+            const data: WebSocketMessage<boolean> = JSON.parse(event.data);
+            if(data.type === "shuffleUsers" && data.payload) {
+                const isShown = [...isCardsShown];
+                isShown[isShown.indexOf(false)] = true;
+                setIsCardsShown(isShown);
+            }
+        };
 
-    useEffect(() => {                                                           //useEffect for sequenced animation flipping of cards
-        if(shuffleUsersResult.isSuccess && 
+        if(!initialMount.current){
+            addRoom(`event${eventId}`, shuffleWebsocketHandler);
+        }
+        initialMount.current = true;
+        return(() => {
+            leaveRoom(`event${eventId}`, shuffleWebsocketHandler)
+        });
+    }, []);
+
+    useEffect(() => {
+        if(eventById.data) {
+            setIsCardsShown(Array(eventById.data.eventRecords.length).fill(false));
+        }
+    }, [eventById.isSuccess, shuffleUsersResult.isLoading]);
+
+    useEffect(() => {     //useEffect for sequenced animation flipping of cards
+        if(shuffleUsersResult.isSuccess &&
             !shuffleUsersResult.isLoading && 
             isCardsShown.indexOf(false) !== -1
         ) {
@@ -37,17 +64,21 @@ const AuctionShufflingStagePage = () => {
     
     return(
     <div className="players-shuffle">
+        {eventById.data?.eventCreatorId.toString()}
         <div className="players-shuffle__header">
-            <CommonButton 
-            endIcon={<DoubleArrowIcon />}
-            onClick={() => shuffleUsers({ eventId })}>
-                Let's dance... I mean shuffle
-            </CommonButton>
+            {
+                userInfo.id === eventById.data?.eventCreatorId && 
+                <CommonButton 
+                endIcon={<DoubleArrowIcon />}
+                onClick={() => shuffleUsers({ eventId })}>
+                    Let's dance... I mean shuffle
+                </CommonButton>
+            }
         </div>
         <div className="players-shuffle__body">
             {
-                getEventById.data && isCardsShown.length && 
-                getEventById.data?.eventRecords.map((record, index) => {
+                eventById.data && isCardsShown.length && 
+                eventById.data?.eventRecords.map((record, index) => {
                     return(
                         <div key={record.id}  className="players-shuffle__card-container">
                             <CustomCard
@@ -57,7 +88,7 @@ const AuctionShufflingStagePage = () => {
                             isShown={isCardsShown[index]}
                             />
                             {
-                                index < (getEventById.data?.eventRecords.length || 0) - 1 &&
+                                index < (eventById.data?.eventRecords.length || 0) - 1 &&
                                 <div className="players-shuffle__direction-arrow"/>
                             }
                         </div>

@@ -44,12 +44,18 @@
     transform: rotateY(180deg);
 }
 
+.flipped .custom-card__card-front {
+    transform: rotateY(180deg);
+    //display: none;
+}
+
 .custom-card__card-back,
 .custom-card__card-front {
     width: 100%;
     height: 100%;
     position: absolute;
     backface-visibility: hidden;
+    //display: block;
 }
 
 .custom-card__card-back {
