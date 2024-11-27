@@ -64,7 +64,6 @@ const AuctionShufflingStagePage = () => {
     
     return(
     <div className="players-shuffle">
-        {eventById.data?.eventCreatorId.toString()}
         <div className="players-shuffle__header">
             {
                 userInfo.id === eventById.data?.eventCreatorId && 
