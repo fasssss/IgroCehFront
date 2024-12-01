@@ -22,6 +22,7 @@ const AuctionShufflingStagePage = () => {
     const [shuffleUsers, shuffleUsersResult] = useShuffleUsersMutation();
 
     useEffect(() => {
+        ensureConnection();
         const shuffleWebsocketHandler = (event: MessageEvent) => {
             getEventById({ eventId });
             const data: WebSocketMessage<boolean> = JSON.parse(event.data);
