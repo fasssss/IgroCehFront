@@ -11,6 +11,7 @@ const CommonButton = (props: PropsWithChildren<ButtonProps>) => {
             endIcon={props.endIcon} 
             onClick={props.onClick}
             color={props.color || "primary"}
+            disabled={props.disabled}
         >
             <span className="common-button__text-alignment">
                 { props.children }
@@ -22,7 +23,8 @@ const CommonButton = (props: PropsWithChildren<ButtonProps>) => {
 type ButtonProps = {
     startIcon?: ReactNode,
     endIcon?: ReactNode,
-    onClick?: MouseEventHandler<HTMLButtonElement>
+    onClick?: MouseEventHandler<HTMLButtonElement>,
+    disabled?: boolean,
     color?: OverridableStringUnion<"inherit" | "primary" | "secondary" | "success" | "error" | "info" | "warning", ButtonPropsColorOverrides> | undefined
 }
 

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
+import StyleIcon from '@mui/icons-material/Style';
 import { CustomCard } from "root/shared/components/CustomCard";
 import { CommonButton } from "root/shared/components/CommonButton";
 import { RootState } from "root/shared/store";
@@ -69,9 +70,19 @@ const AuctionShufflingStagePage = () => {
             {
                 userInfo.id === eventById.data?.eventCreatorId && 
                 <CommonButton 
-                endIcon={<DoubleArrowIcon />}
+                endIcon={<StyleIcon />}
                 onClick={() => shuffleUsers({ eventId })}>
                     Let's dance... I mean shuffle
+                </CommonButton>
+            }
+            {
+                userInfo.id === eventById.data?.eventCreatorId &&
+                <CommonButton 
+                endIcon={<DoubleArrowIcon />}
+                onClick={() => shuffleUsers({ eventId })}
+                color="success"
+                disabled={!isCardsShown[isCardsShown.length - 1]}>
+                    Move next stage
                 </CommonButton>
             }
         </div>
