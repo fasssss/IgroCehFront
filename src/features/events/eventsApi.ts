@@ -43,6 +43,20 @@ const eventsApi = igroCehApi.enhanceEndpoints({
                 } catch(e) {
                     console.log(e);
                 }
+            },
+            transformResponse: (response: EventObjectResponse) => {
+                for (let i = 0; i < response.eventRecords.length - 1; i++) {  // sorting users in order of "from who" -> "to"
+                    if(!response.eventRecords[i].toUser) {
+                        break;
+                    }
+
+                    const toUserIndex = response.eventRecords.findIndex(item => item.participant.id === response.eventRecords[i].toUser?.id);
+                    const temp: EventRecord = {...response.eventRecords[i + 1]};
+                    response.eventRecords[i + 1] = response.eventRecords[toUserIndex];
+                    response.eventRecords[toUserIndex] = temp;
+                }
+                
+                return response;
             }
         }),
         postNewEvent: build.mutation<PostNewEventResponse, PostNewEventRequest>({

@@ -7,8 +7,8 @@ import { CommonButton } from "root/shared/components/CommonButton";
 import { RootState } from "root/shared/store";
 import { addRoom, ensureConnection, leaveRoom, WebSocketMessage } from "root/shared/helpers/webSocketHelper";
 import { 
-    useGetEventByIdQuery,
-    //useLazyGetEventByIdQuery,
+    //useGetEventByIdQuery,
+    useLazyGetEventByIdQuery,
     useShuffleUsersMutation
 } from "../../eventsApi";
 import './styles.scss';
@@ -16,15 +16,14 @@ import './styles.scss';
 const AuctionShufflingStagePage = () => {
     const { eventId } = useParams();
     const initialMount = useRef(false);
-    const eventById = useGetEventByIdQuery({ eventId });
+    const [getEventById, eventById] = useLazyGetEventByIdQuery();
     const userInfo = useSelector((state: RootState) => state.authorizationReducer);
     const [isCardsShown, setIsCardsShown] = useState([] as boolean[]);
     const [shuffleUsers, shuffleUsersResult] = useShuffleUsersMutation();
 
     useEffect(() => {
-        ensureConnection();
         const shuffleWebsocketHandler = (event: MessageEvent) => {
-            //getEventById({ eventId });
+            getEventById({ eventId });
             const data: WebSocketMessage<boolean> = JSON.parse(event.data);
             if(data.type === "shuffleUsers" && data.payload) {
                 const isShown = [...isCardsShown];
@@ -33,6 +32,7 @@ const AuctionShufflingStagePage = () => {
             }
         };
 
+        getEventById({ eventId });
         if(!initialMount.current){
             addRoom(`event${eventId}`, shuffleWebsocketHandler);
         }
@@ -76,14 +76,14 @@ const AuctionShufflingStagePage = () => {
         </div>
         <div className="players-shuffle__body">
             {
-                eventById.data && isCardsShown.length && 
+                eventById.data && 
                 eventById.data?.eventRecords.map((record, index) => {
                     return(
-                        <div key={record.id}  className="players-shuffle__card-container">
+                        <div key={record?.id}  className="players-shuffle__card-container">
                             <CustomCard
-                            key={ record.id }
-                            imageUrl={ record.participant.avatarUrl } 
-                            name={ record.participant.userName }
+                            key={ record?.id }
+                            imageUrl={ record?.participant.avatarUrl } 
+                            name={ record?.participant.userName }
                             isShown={isCardsShown[index]}
                             />
                             {

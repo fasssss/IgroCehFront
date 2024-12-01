@@ -46,7 +46,7 @@
 
 .flipped .custom-card__card-front {
     transform: rotateY(180deg);
-    //display: none;
+    display: none;
 }
 
 .custom-card__card-back,
@@ -55,7 +55,7 @@
     height: 100%;
     position: absolute;
     backface-visibility: hidden;
-    //display: block;
+    display: block;
 }
 
 .custom-card__card-back {

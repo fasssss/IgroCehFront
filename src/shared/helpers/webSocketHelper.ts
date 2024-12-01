@@ -44,7 +44,6 @@ export const addRoom = async (roomId: string, listener: any) => {
     
     newRoomsList.push(roomId);
     state.rooms = newRoomsList;
-    console.log(state.rooms);
     state.webSocketInstance?.addEventListener("message", listener);
 };
 
