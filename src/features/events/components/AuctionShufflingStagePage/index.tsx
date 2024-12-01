@@ -79,7 +79,7 @@ const AuctionShufflingStagePage = () => {
                 userInfo.id === eventById.data?.eventCreatorId &&
                 <CommonButton 
                 endIcon={<DoubleArrowIcon />}
-                onClick={() => shuffleUsers({ eventId })}
+                onClick={() => {}}
                 color="success"
                 disabled={!isCardsShown[isCardsShown.length - 1]}>
                     Move next stage

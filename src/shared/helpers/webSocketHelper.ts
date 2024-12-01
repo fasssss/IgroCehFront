@@ -1,4 +1,5 @@
 import { igroCehWebSocketBaseUrl } from "../constants";
+import { router } from "../router";
 
 type WebSocketState = {
     webSocketInstance: WebSocket | null,
@@ -12,14 +13,15 @@ const state: WebSocketState = {
 
 const waitForOpenConnection = (socket: WebSocket | null): Promise<void> => {
     return new Promise((resolve, reject) => {
-        const maxNumberOfAttempts = 10
-        const intervalTime = 200 //ms
+        const maxNumberOfAttempts = 20
+        const intervalTime = 400 //ms
 
         let currentAttempt = 0
         const interval = setInterval(() => {
             if (currentAttempt > maxNumberOfAttempts - 1) {
                 clearInterval(interval)
                 reject(new Error('Maximum number of attempts exceeded'))
+                router.navigate(0);
             } else if (socket?.readyState === socket?.OPEN) {
                 clearInterval(interval)
                 resolve()
@@ -51,7 +53,8 @@ export const leaveRoom = async (roomId: string, listener: any) => {
     if(state.webSocketInstance && state.webSocketInstance.readyState === WebSocket.OPEN) {
         const newRooms = state.rooms.filter(room => room !== roomId);
         state.rooms = newRooms;
-        await waitForOpenConnection(state.webSocketInstance);
+        console.log(state.webSocketInstance);
+        //await waitForOpenConnection(state.webSocketInstance);
         if(newRooms.indexOf(roomId) === -1) {
             state.webSocketInstance?.send(JSON.stringify({ type: "leave", payload: roomId }));
         }
