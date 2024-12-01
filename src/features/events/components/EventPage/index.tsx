@@ -78,7 +78,7 @@ const EventPage = () => {
                     {
                         getEventById.data?.eventCreatorId === userInfo.id &&
                         <CommonButton 
-                        onClick={() => moveEventToNextStage({ eventId: eventId || "" })}
+                        onClick={() => moveEventToNextStage({ eventId: eventId || "", statusId: 1 })}
                         color="success" 
                         endIcon={<ArrowForwardIos />}>
                             {t("Travel to Auction!")}

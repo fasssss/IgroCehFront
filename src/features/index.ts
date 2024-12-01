@@ -6,3 +6,4 @@ export * from './events/components/GuildPage';
 export * from './events/components/EventTile';
 export * from './events/components/EventPage';
 export * from './events/components/AuctionShufflingStagePage';
+export * from './events/components/GameGuessPage';

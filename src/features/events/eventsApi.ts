@@ -139,7 +139,8 @@ const eventsApi = igroCehApi.enhanceEndpoints({
                 credentials: 'include',
                 method: 'POST',
                 body: {
-                    eventId: request.eventId
+                    eventId: request.eventId,
+                    stageId: request.statusId
                 }
             }),
         }),
@@ -258,7 +259,8 @@ export type JoinEventRequest = {
 }
 
 export type MoveEventToNextStageRequest = {
-    eventId: string
+    eventId: string,
+    statusId: number
 }
 
 export type MoveEventToNextStageResponse = {

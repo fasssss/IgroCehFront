@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
 import StyleIcon from '@mui/icons-material/Style';
 import { CustomCard } from "root/shared/components/CustomCard";
@@ -10,17 +10,20 @@ import { addRoom, ensureConnection, leaveRoom, WebSocketMessage } from "root/sha
 import { 
     //useGetEventByIdQuery,
     useLazyGetEventByIdQuery,
+    useMoveEventToNextStageMutation,
     useShuffleUsersMutation
 } from "../../eventsApi";
 import './styles.scss';
 
 const AuctionShufflingStagePage = () => {
-    const { eventId } = useParams();
+    const { guildId, eventId } = useParams();
     const initialMount = useRef(false);
     const [getEventById, eventById] = useLazyGetEventByIdQuery();
     const userInfo = useSelector((state: RootState) => state.authorizationReducer);
     const [isCardsShown, setIsCardsShown] = useState([] as boolean[]);
     const [shuffleUsers, shuffleUsersResult] = useShuffleUsersMutation();
+    const navigate = useNavigate();
+    const [moveEventToNextStage, moveEventToNextStageResult] = useMoveEventToNextStageMutation();
 
     useEffect(() => {
         ensureConnection();
@@ -63,6 +66,12 @@ const AuctionShufflingStagePage = () => {
             });
         }
     }, [shuffleUsersResult.isLoading, isCardsShown]);
+
+    useEffect(() => {
+        if(moveEventToNextStageResult.isSuccess) {
+            navigate(`/guild/${guildId}/event/${eventId}/guessing-stage`);
+        }
+    }, [moveEventToNextStageResult.isSuccess]);
     
     return(
     <div className="players-shuffle">
@@ -79,7 +88,7 @@ const AuctionShufflingStagePage = () => {
                 userInfo.id === eventById.data?.eventCreatorId &&
                 <CommonButton 
                 endIcon={<DoubleArrowIcon />}
-                onClick={() => {}}
+                onClick={() => moveEventToNextStage({ eventId: eventId || "", statusId: 2 })}
                 color="success"
                 disabled={!isCardsShown[isCardsShown.length - 1]}>
                     Move next stage
