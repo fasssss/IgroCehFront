@@ -1,0 +1,21 @@
+@use '../../../../shared/default.module.scss' as default;
+
+.game-guess {
+    height: 100%;
+    padding: default.$padding_big;
+}
+
+.game-guess__header {
+    width: 100%;
+}
+
+.game-guess__user-plate {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    font-size: x-large;
+}
+
+.game-guess__user-image {
+    border-radius: 50%;
+}
