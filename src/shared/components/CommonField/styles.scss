@@ -1,0 +1,33 @@
+@use '../../default.module.scss' as default;
+
+.common-field {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.common-field__field {
+    border-radius: default.$border-radius_small;
+    height: 56px;
+    min-width: 50px;
+}
+
+.common-field__input {
+    background-color: default.$grey;
+    width: -moz-available;
+    width: -webkit-fill-available;
+    color: white;
+    font-size: 16px;
+    height: inherit;
+    border-radius: default.$border-radius_small;
+    padding: default.$padding_big;
+    padding-right: 48px;
+    transition: background-color 0.2s ease-in-out;
+    border: none;
+    caret-shape: underscore;
+}
+
+.common-field__input:focus {
+    outline: none;
+    size: 24px;
+    background-color: default.$light-grey;
+}

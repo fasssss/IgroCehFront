@@ -19,3 +19,22 @@
 .game-guess__user-image {
     border-radius: 50%;
 }
+
+.game-guess__body {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
+
+.game-guess__body-buttons {
+    width: 100%;
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    padding: default.$padding_big;
+}
+
+.game-guess__name-field {
+    width: 500px;
+}
