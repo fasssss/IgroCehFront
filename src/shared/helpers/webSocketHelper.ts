@@ -13,8 +13,8 @@ const state: WebSocketState = {
 
 const waitForOpenConnection = (socket: WebSocket | null): Promise<void> => {
     return new Promise((resolve, reject) => {
-        const maxNumberOfAttempts = 20
-        const intervalTime = 400 //ms
+        const maxNumberOfAttempts = 10
+        const intervalTime = 200 //ms
 
         let currentAttempt = 0
         const interval = setInterval(() => {

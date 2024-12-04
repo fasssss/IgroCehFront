@@ -1,3 +1,4 @@
+import { ChangeEvent } from 'react';
 import './styles.scss';
 
 const CommonField = ({placeholder, value, onChange, className}: CommonFieldProps) => {
@@ -13,7 +14,7 @@ const CommonField = ({placeholder, value, onChange, className}: CommonFieldProps
 
 export type CommonFieldProps = {
     placeholder?: string,
-    onChange: any,
+    onChange: (e: ChangeEvent<HTMLInputElement>) => any,
     value: string,
     className?: string
 }

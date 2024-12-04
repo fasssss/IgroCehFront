@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { CommonButton } from "root/shared/components/CommonButton";
 import { useState } from "react";
 import { CommonField } from "root/shared/components/CommonField";
+import { DragNDropImage } from "root/shared/components/DragNDropImage";
 
 const GameGuessPage = () => {
     const { eventId } = useParams();
@@ -16,6 +17,7 @@ const GameGuessPage = () => {
     const userInfo = useSelector((state: RootState) => state.authorizationReducer);
     const selectedRecord = eventById.data?.eventRecords.find(record => record.participant.id === userInfo.id);
     const [isSearchInSteam, setIsSearchInSteam] = useState(true);
+    const [gameName, setGameName] = useState("");
 
     return(
     <div className="game-guess">
@@ -53,9 +55,11 @@ const GameGuessPage = () => {
                 <div>
                     <CommonField 
                     placeholder="Enter game name..."
-                    value={""}
+                    value={gameName}
                     className="game-guess__name-field"
-                    onChange={() => {}} />
+                    onChange={(e) => { setGameName(e.target.value) }} />
+                    <br />
+                    <DragNDropImage />
                 </div>
             }
         </div>

@@ -1,0 +1,30 @@
+@use "../../default.module.scss" as default;
+
+.drag-n-drop {
+    cursor: pointer;
+    width: fit-content;
+    height: fit-content;
+}
+
+.drag-n-drop__placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    color: default.$black;
+    height: 200px;
+    width: 170px;
+    background-color: default.$grey;
+    border-radius: default.$border-radius_small;
+}
+
+.image-icon {
+    fill: default.$light-grey;
+}
+
+img {
+    object-fit: contain;
+    max-height: 300px;
+    max-width: 300px;
+    border-radius: default.$border-radius_small;
+}
