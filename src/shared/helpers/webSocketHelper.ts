@@ -38,23 +38,23 @@ export const ensureConnection = () => {
 };
 
 export const addRoom = async (roomId: string, listener: any) => {
-    await waitForOpenConnection(state.webSocketInstance)
-    const newRoomsList = [...state.rooms];
-    if(newRoomsList.indexOf(roomId) === -1) {
-        state.webSocketInstance?.send(JSON.stringify({ type: "join", payload: roomId }));
+    await waitForOpenConnection(state.webSocketInstance);
+    if(state.webSocketInstance?.readyState === WebSocket.OPEN){
+        const newRoomsList = [...state.rooms];
+        if(newRoomsList.indexOf(roomId) === -1) {
+            state.webSocketInstance?.send(JSON.stringify({ type: "join", payload: roomId }));
+        }
+        
+        newRoomsList.push(roomId);
+        state.rooms = newRoomsList;
+        state.webSocketInstance?.addEventListener("message", listener);
     }
-    
-    newRoomsList.push(roomId);
-    state.rooms = newRoomsList;
-    state.webSocketInstance?.addEventListener("message", listener);
 };
 
 export const leaveRoom = async (roomId: string, listener: any) => {
     if(state.webSocketInstance && state.webSocketInstance.readyState === WebSocket.OPEN) {
         const newRooms = state.rooms.filter(room => room !== roomId);
         state.rooms = newRooms;
-        console.log(state.webSocketInstance);
-        //await waitForOpenConnection(state.webSocketInstance);
         if(newRooms.indexOf(roomId) === -1) {
             state.webSocketInstance?.send(JSON.stringify({ type: "leave", payload: roomId }));
         }

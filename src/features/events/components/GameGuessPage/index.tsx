@@ -52,14 +52,17 @@ const GameGuessPage = () => {
                 handleOptionClick={() => {}} 
                 optionsSelect={undefined} />
                 :
-                <div>
+                <div className="game-guess__custom-game">
+                    <DragNDropImage />
+                    <br />
                     <CommonField 
                     placeholder="Enter game name..."
                     value={gameName}
                     className="game-guess__name-field"
                     onChange={(e) => { setGameName(e.target.value) }} />
-                    <br />
-                    <DragNDropImage />
+                    <div className="game-guess__custom-game-submit">
+                        <CommonButton color="success">Guess game</CommonButton>
+                    </div>
                 </div>
             }
         </div>

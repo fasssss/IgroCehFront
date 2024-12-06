@@ -140,7 +140,7 @@ const eventsApi = igroCehApi.enhanceEndpoints({
                 method: 'POST',
                 body: {
                     eventId: request.eventId,
-                    stageId: request.statusId
+                    statusId: request.statusId
                 }
             }),
         }),

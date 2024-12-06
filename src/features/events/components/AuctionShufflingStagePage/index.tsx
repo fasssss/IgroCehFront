@@ -8,7 +8,7 @@ import { CommonButton } from "root/shared/components/CommonButton";
 import { RootState } from "root/shared/store";
 import { addRoom, ensureConnection, leaveRoom, WebSocketMessage } from "root/shared/helpers/webSocketHelper";
 import { 
-    //useGetEventByIdQuery,
+    MoveEventToNextStageResponse,
     useLazyGetEventByIdQuery,
     useMoveEventToNextStageMutation,
     useShuffleUsersMutation
@@ -37,13 +37,23 @@ const AuctionShufflingStagePage = () => {
             }
         };
 
+        const moveNextStageWebsocketHandler = (event: MessageEvent) => {
+            const data: WebSocketMessage<MoveEventToNextStageResponse> = JSON.parse(event.data);
+            console.log(data.payload);
+            if(data.payload.moveToStage === 2) {
+                navigate(`/guild/${guildId}/event/${eventId}/guessing-stage`);
+            }
+        };
+
         getEventById({ eventId });
         if(!initialMount.current){
             addRoom(`event${eventId}`, shuffleWebsocketHandler);
+            addRoom(`event${eventId}updateEventStage`, moveNextStageWebsocketHandler);
         }
         initialMount.current = true;
         return(() => {
             leaveRoom(`event${eventId}`, shuffleWebsocketHandler)
+            leaveRoom(`event${eventId}updateEventStage`, moveNextStageWebsocketHandler)
         });
     }, []);
 

@@ -1,10 +1,5 @@
 @use '../../default.module.scss' as default;
 
-.common-field {
-    margin-left: auto;
-    margin-right: auto;
-}
-
 .common-field__field {
     border-radius: default.$border-radius_small;
     height: 56px;
