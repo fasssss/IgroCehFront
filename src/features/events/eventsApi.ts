@@ -164,6 +164,14 @@ const eventsApi = igroCehApi.enhanceEndpoints({
                 } catch {}
               },
         }),
+        suggestGame: build.mutation<void, SuggestGameRequest>({
+            query: (request) => ({
+                url: `/api/suggestGame`,
+                credentials: 'include',
+                method: 'POST',
+                body: request.data,
+            }),
+        }),
     })
 })
 
@@ -275,6 +283,10 @@ export type ShuffleUsersResponse = {
     eventRecordObjects: EventRecord[]
 }
 
+export type SuggestGameRequest = {
+    data: FormData
+}
+
 export const { 
     useLazyGetGuildByIdQuery,
     useGetGuildByIdQuery,
@@ -286,5 +298,6 @@ export const {
     useLazyGetEventByIdQuery,
     useGetEventByIdQuery,
     useMoveEventToNextStageMutation,
-    useShuffleUsersMutation
+    useShuffleUsersMutation,
+    useSuggestGameMutation
 } = eventsApi;

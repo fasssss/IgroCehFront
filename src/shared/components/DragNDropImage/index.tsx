@@ -1,10 +1,8 @@
 import './styles.scss';
 import { SvgSelector } from '../SvgSelector';
-import { useEffect, useRef, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useRef } from 'react';
 
-const DragNDropImage = () => {
-    //const [hasImage, setHasImage] = useState(false);
-    const [imgSrc, setImgSrc] = useState("");
+const DragNDropImage = ({ value, stateMutator }: DragNDropProperty) => {
     const inputFile = useRef<HTMLInputElement | null>(null);
     const dragNDropElement = useRef<HTMLDivElement | null>(null);
 
@@ -13,7 +11,7 @@ const DragNDropImage = () => {
             var item = Array.from(e.clipboardData?.items || []).find(x => /^image\//.test(x.type));
             var blob = item?.getAsFile();
             if(blob) {
-                setImgSrc(URL.createObjectURL(blob || new Blob()));
+                stateMutator(blob || new Blob());
             }
         }
 
@@ -21,7 +19,7 @@ const DragNDropImage = () => {
             e.preventDefault();
             var blob = Array.from(e.dataTransfer?.files || []).find(x => /^image\//.test(x.type))
             if(blob) {
-                setImgSrc(URL.createObjectURL(blob || new Blob()));
+                stateMutator(blob || new Blob());
             }
         }
 
@@ -36,7 +34,7 @@ const DragNDropImage = () => {
         const handleDialogSubmit = (e: Event) => {
             var blob = Array.from((e.target as HTMLInputElement).files || []).find(x => /^image\//.test(x.type))
             if(blob) {
-                setImgSrc(URL.createObjectURL(blob || new Blob()));
+                stateMutator(blob || new Blob());
             }
         }
 
@@ -61,7 +59,7 @@ const DragNDropImage = () => {
     <div ref={dragNDropElement} className="drag-n-drop">
         <input type='file' id='file' ref={inputFile} style={{display: 'none'}}/>
         {
-            !imgSrc ?
+            !value ?
             <div className="drag-n-drop__placeholder">
                 {
                     <SvgSelector iconName="image-icon" />
@@ -69,10 +67,15 @@ const DragNDropImage = () => {
                 Drag or Ctrl-V to paste
             </div>
             :
-            <img src={imgSrc}/>
+            <img src={URL.createObjectURL(value)}/>
         }
     </div>
     );
 };
+
+type DragNDropProperty = {
+    value: Blob | undefined,
+    stateMutator: Dispatch<SetStateAction<Blob | undefined>>
+}
 
 export { DragNDropImage }
