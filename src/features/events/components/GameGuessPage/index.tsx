@@ -36,8 +36,14 @@ const GameGuessPage = () => {
     }, [createGameResult.isSuccess]);
 
     useEffect(() => {
-        if(findGameByNameResult.isSuccess && !findGameByNameResult.data.data.get("id")) {
-            suggestGame({ id: createGameResult.data?.id || "" });
+        if(findGameByNameResult.isSuccess && !findGameByNameResult.data.gameObject?.get("id")) {
+            const formData = new FormData();
+            formData.append("image", imgBlob || new Blob());
+            formData.append("eventRecordId", selectedRecord?.id || "");
+            formData.append("gameName", gameName);
+            createGame({ 
+                data: formData
+            });
         }
     }, [findGameByNameResult.isSuccess]);
 
@@ -93,7 +99,7 @@ const GameGuessPage = () => {
                     </div>
                     {
                         findGameByNameResult.isSuccess && 
-                        findGameByNameResult.data?.data.get("id") &&
+                        findGameByNameResult.data?.gameObject?.get("id") &&
                         <CommonModal 
                         name={"Game with such name already exist"} 
                         onClose={() => {

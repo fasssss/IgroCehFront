@@ -166,7 +166,7 @@ const eventsApi = igroCehApi.enhanceEndpoints({
         }),
         findGameByName: build.query<FindGameByNameResponse, FindGameByNameRequest>({
             query: (request) => ({
-                url: `/api/findGameByName?name=${request}`,
+                url: `/api/findGameByName?name=${request.name}`,
                 credentials: 'include',
                 method: 'GET'
             }),
@@ -305,7 +305,7 @@ export type FindGameByNameRequest = {
 }
 
 export type FindGameByNameResponse = {
-    data: FormData
+    gameObject: FormData
 }
 
 export type CreateGameRequest = {
