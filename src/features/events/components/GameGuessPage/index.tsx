@@ -1,8 +1,8 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { 
     useCreateGameMutation,
-    useGetEventByIdQuery,
     useLazyFindGameByNameQuery,
+    useLazyGetEventByIdQuery,
     useSuggestGameMutation
 } from "../../eventsApi";
 import { useSelector } from "react-redux";
@@ -20,7 +20,7 @@ import { EVENT_STATUS } from "root/shared/constants";
 const GameGuessPage = () => {
     const { guildId, eventId } = useParams();
     const { t } = useTranslation();
-    const eventById = useGetEventByIdQuery({ eventId });
+    const [getEventById, eventById] = useLazyGetEventByIdQuery();
     const [findGameByName, findGameByNameResult] = useLazyFindGameByNameQuery();
     const [createGame, createGameResult] = useCreateGameMutation();
     const [suggestGame, suggestGameResult] = useSuggestGameMutation();
@@ -34,25 +34,31 @@ const GameGuessPage = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const isUserAlreadySuggestedGame = eventById.data?.eventRecords
-        .find(record => record.participant.id == userInfo.id && record.game);
-        console.log(isUserAlreadySuggestedGame);
-        switch (eventById.data?.statusId) {
-            case EVENT_STATUS.indexOf('Players registration'):
-                navigate(`/guild/${guildId}/event/${eventId}`);
-                break;
-            case EVENT_STATUS.indexOf('Players shuffle'):
-                navigate(`/guild/${guildId}/event/${eventId}/ordering-stage`);
-                break;
-            case EVENT_STATUS.indexOf('Active'):
-                navigate(`/guild/${guildId}/event/${eventId}/active-stage`);
-                break;
-        }
+        getEventById({ eventId })
+    }, [])
 
-        if(isUserAlreadySuggestedGame) {
-            navigate(`/guild/${guildId}/event/${eventId}/active-stage`);
+    useEffect(() => {
+        if(eventById.isSuccess) {
+            const isUserAlreadySuggestedGame = eventById.data?.eventRecords
+            .find(record => record.participant.id == userInfo.id && record.game);
+            console.log(eventById.data);
+            switch (eventById.data?.statusId) {
+                case EVENT_STATUS.indexOf('Players registration'):
+                    navigate(`/guild/${guildId}/event/${eventId}`);
+                    break;
+                case EVENT_STATUS.indexOf('Players shuffle'):
+                    navigate(`/guild/${guildId}/event/${eventId}/ordering-stage`);
+                    break;
+                case EVENT_STATUS.indexOf('Active'):
+                    navigate(`/guild/${guildId}/event/${eventId}/active-stage`);
+                    break;
+            }
+    
+            if(isUserAlreadySuggestedGame) {
+                navigate(`/guild/${guildId}/event/${eventId}/active-stage`);
+            }
         }
-    }, [eventById.isSuccess]);
+    }, [eventById.isLoading]);
 
     useEffect(() => {
         if(!createGameResult.isLoading && 

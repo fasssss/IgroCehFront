@@ -64,6 +64,23 @@ const AuctionShufflingStagePage = () => {
         }
     }, [eventById.isSuccess, shuffleUsersResult.isLoading]);
 
+    useEffect(() => {
+        if(eventById.isSuccess) {
+            console.log(eventById.data?.statusId);
+            switch (eventById.data?.statusId) {
+                case EVENT_STATUS.indexOf('Players registration'):
+                    navigate(`/guild/${guildId}/event/${eventId}`);
+                    break;
+                case EVENT_STATUS.indexOf('Guessing games'):
+                    navigate(`/guild/${guildId}/event/${eventId}/guessing-stage`);
+                    break;
+                case EVENT_STATUS.indexOf('Active'):
+                    navigate(`/guild/${guildId}/event/${eventId}/active-stage`);
+                    break;
+            }
+        }
+    }, [eventById.isLoading])
+
     useEffect(() => {     //useEffect for sequenced animation flipping of cards
         if(shuffleUsersResult.isSuccess &&
             !shuffleUsersResult.isLoading && 
@@ -83,20 +100,6 @@ const AuctionShufflingStagePage = () => {
             navigate(`/guild/${guildId}/event/${eventId}/guessing-stage`);
         }
     }, [moveEventToNextStageResult.isSuccess]);
-
-    useEffect(() => {
-        switch (eventById.data?.statusId) {
-            case EVENT_STATUS.indexOf('Players registration'):
-                navigate(`/guild/${guildId}/event/${eventId}`);
-                break;
-            case EVENT_STATUS.indexOf('Guessing games'):
-                navigate(`/guild/${guildId}/event/${eventId}/guessing-stage`);
-                break;
-            case EVENT_STATUS.indexOf('Active'):
-                navigate(`/guild/${guildId}/event/${eventId}/active-stage`);
-                break;
-        }
-    }, [])
     
     return(
     <div className="players-shuffle">

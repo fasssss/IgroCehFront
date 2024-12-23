@@ -14,14 +14,13 @@ const state: WebSocketState = {
 const waitForOpenConnection = (socket: WebSocket | null): Promise<void> => {
     return new Promise((resolve, reject) => {
         const maxNumberOfAttempts = 10
-        const intervalTime = 200 //ms
+        const intervalTime = 100 //ms
 
         let currentAttempt = 0
         const interval = setInterval(() => {
             if (currentAttempt > maxNumberOfAttempts - 1) {
                 clearInterval(interval)
                 reject(new Error('Maximum number of attempts exceeded'))
-                router.navigate(0);
             } else if (socket?.readyState === socket?.OPEN) {
                 clearInterval(interval)
                 resolve()
@@ -38,7 +37,10 @@ export const ensureConnection = () => {
 };
 
 export const addRoom = async (roomId: string, listener: any) => {
-    await waitForOpenConnection(state.webSocketInstance);
+    await waitForOpenConnection(state.webSocketInstance).catch(async () => {
+        ensureConnection();
+        await waitForOpenConnection(state.webSocketInstance);
+    });
     if(state.webSocketInstance?.readyState === WebSocket.OPEN){
         const newRoomsList = [...state.rooms];
         if(newRoomsList.indexOf(roomId) === -1) {
