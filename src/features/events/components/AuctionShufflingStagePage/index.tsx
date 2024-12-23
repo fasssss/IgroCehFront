@@ -14,6 +14,7 @@ import {
     useShuffleUsersMutation
 } from "../../eventsApi";
 import './styles.scss';
+import { EVENT_STATUS } from "root/shared/constants";
 
 const AuctionShufflingStagePage = () => {
     const { guildId, eventId } = useParams();
@@ -82,6 +83,20 @@ const AuctionShufflingStagePage = () => {
             navigate(`/guild/${guildId}/event/${eventId}/guessing-stage`);
         }
     }, [moveEventToNextStageResult.isSuccess]);
+
+    useEffect(() => {
+        switch (eventById.data?.statusId) {
+            case EVENT_STATUS.indexOf('Players registration'):
+                navigate(`/guild/${guildId}/event/${eventId}`);
+                break;
+            case EVENT_STATUS.indexOf('Guessing games'):
+                navigate(`/guild/${guildId}/event/${eventId}/guessing-stage`);
+                break;
+            case EVENT_STATUS.indexOf('Active'):
+                navigate(`/guild/${guildId}/event/${eventId}/active-stage`);
+                break;
+        }
+    }, [])
     
     return(
     <div className="players-shuffle">

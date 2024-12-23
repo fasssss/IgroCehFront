@@ -42,6 +42,10 @@ const router = createBrowserRouter([
             {
                 path: "guild/:guildId/event/:eventId/guessing-stage",
                 element: <GameGuessPage />
+            },
+            {
+                path: "guild/:guildId/event/:eventId/active-stage",
+                element: <></>
             }
         ]
     }

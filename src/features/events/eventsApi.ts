@@ -305,7 +305,15 @@ export type FindGameByNameRequest = {
 }
 
 export type FindGameByNameResponse = {
-    gameObject: FormData
+    gameObject: {
+        id: string,
+        name: string,
+        description: string | null,
+        imageContent: string | null
+        imageType: string,
+        steamUrl: string | null,
+        creatorId: string
+    } | null
 }
 
 export type CreateGameRequest = {

@@ -17,6 +17,7 @@ import {
     useRemoveFromEventMutation 
 } from "../../eventsApi";
 import './styles.scss';
+import { EVENT_STATUS } from "root/shared/constants";
 
 const EventPage = () => {
     const initializedPage = useRef(false); // need to eleminate rerenders when page is mounted
@@ -30,6 +31,20 @@ const EventPage = () => {
     const [removeFromEvent, removeFromEventResult] = useRemoveFromEventMutation();
     const [moveEventToNextStage, moveEventToNextStageResult] = useMoveEventToNextStageMutation()
     const { t } = useTranslation()
+
+    useEffect(() => {
+        switch (getEventById.data?.statusId) {
+            case EVENT_STATUS.indexOf('Players shuffle'):
+                navigate(`/guild/${guildId}/event/${eventId}/ordering-stage`);
+                break;
+            case EVENT_STATUS.indexOf('Guessing games'):
+                navigate(`/guild/${guildId}/event/${eventId}/guessing-stage`);
+                break;
+            case EVENT_STATUS.indexOf('Active'):
+                navigate(`/guild/${guildId}/event/${eventId}/active-stage`);
+                break;
+        }
+    }, [])
 
     useEffect(() => {
         if(getEventById.isSuccess && userInfo.id !== null) {

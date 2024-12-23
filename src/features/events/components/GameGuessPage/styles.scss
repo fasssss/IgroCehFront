@@ -52,3 +52,14 @@
     padding-top: default.$padding_big;
     padding-bottom: default.$padding_big;
 }
+
+.create-additional-modal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.create-additional-modal h3{
+    margin-top: 0;
+    margin-bottom: 8px;
+}
