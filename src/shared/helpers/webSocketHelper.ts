@@ -1,5 +1,4 @@
 import { igroCehWebSocketBaseUrl } from "../constants";
-import { router } from "../router";
 
 type WebSocketState = {
     webSocketInstance: WebSocket | null,

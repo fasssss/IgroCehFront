@@ -31,6 +31,13 @@ const eventsApi = igroCehApi.enhanceEndpoints({
                             .filter(item => item.id !== data.payload.id);
                         });
                     }
+
+                    if(data.type === "suggestGame") {
+                        updateCachedData((draft) => {
+                            const eventRecordIndex = draft.eventRecords.findIndex(item => item.id === data.payload.id)
+                            draft.eventRecords[eventRecordIndex].game = data.payload.game;
+                        });
+                    }
                 };
 
                 try {
@@ -179,15 +186,28 @@ const eventsApi = igroCehApi.enhanceEndpoints({
                 body: request.data,
             }),
         }),
-        suggestGame: build.mutation<void, SuggestGameRequest>({
+        suggestGame: build.mutation<SuggestGameResponse, SuggestGameRequest>({
             query: (request) => ({
                 url: `/api/suggestGame`,
                 credentials: 'include',
                 method: 'POST',
                 body: {
-                    id: request.id,
+                    gameId: request.gameId,
+                    eventRecordId: request.eventRecordId,
+                    eventId: request.eventId
                 }
             }),
+            async onQueryStarted({ eventId }, { dispatch, queryFulfilled }) {
+                try {
+                  const { data: suggestGameResponse } = await queryFulfilled
+                  dispatch(
+                    eventsApi.util.updateQueryData('getEventById', { eventId }, (draft) => {
+                        const eventRecordIndex = draft.eventRecords.findIndex(item => item.id === suggestGameResponse.eventRecordObject.id)
+                        draft.eventRecords[eventRecordIndex].game = suggestGameResponse.eventRecordObject.game;
+                    })
+                  )
+                } catch {}
+              },
         }),
     })
 })
@@ -321,11 +341,17 @@ export type CreateGameRequest = {
 }
 
 export type CreateGameResponse = {
-    id: string
+    gameId: string
 }
 
 export type SuggestGameRequest = {
-    id: string
+    gameId: string,
+    eventRecordId: string,
+    eventId: string
+}
+
+export type SuggestGameResponse = {
+    eventRecordObject: EventRecord
 }
 
 export const { 

@@ -64,7 +64,13 @@ const GameGuessPage = () => {
         if(!createGameResult.isLoading && 
             createGameResult.isSuccess
         ) {
-            suggestGame({ id: createGameResult.data.id });
+            console.log(createGameResult.data.gameId);
+            suggestGame({ 
+                gameId: createGameResult.data.gameId, 
+                eventRecordId: eventById.data?.eventRecords
+                .find(record => record.participant.id == userInfo.id)?.id || "",
+                eventId: eventById.data?.Id || ""
+            });
         }
     }, [createGameResult.isLoading]);
 
@@ -173,7 +179,12 @@ const GameGuessPage = () => {
                         onCloseText="Create new one"
                         onConfirmText="Continue with existing"
                         onConfirm={() => {
-                            suggestGame({ id: findGameByNameResult.data?.gameObject?.id || "" });
+                            suggestGame({ 
+                                gameId: findGameByNameResult.data?.gameObject?.id || "", 
+                                eventRecordId: eventById.data?.eventRecords
+                                .find(record => record.participant.id == userInfo.id)?.id || "",
+                                eventId: eventById.data?.Id || ""
+                            });
                             setThisGameAlreadyExistModal(false);
                         }}>
                             <div className="create-additional-modal">

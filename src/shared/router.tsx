@@ -6,7 +6,8 @@ import {
     GuildPage,
     EventPage,
     AuctionShufflingStagePage,
-    GameGuessPage
+    GameGuessPage,
+    AuctionProgressPage
 } from "../features";
 import Layout from "./components/Layout";
 
@@ -45,7 +46,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "guild/:guildId/event/:eventId/active-stage",
-                element: <></>
+                element: <AuctionProgressPage />
             }
         ]
     }
