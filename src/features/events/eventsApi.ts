@@ -34,7 +34,7 @@ const eventsApi = igroCehApi.enhanceEndpoints({
 
                     if(data.type === "suggestGame") {
                         updateCachedData((draft) => {
-                            const eventRecordIndex = draft.eventRecords.findIndex(item => item.id === data.payload.id)
+                            const eventRecordIndex = draft.eventRecords.findIndex(item => item.id === data.payload.id);
                             draft.eventRecords[eventRecordIndex].game = data.payload.game;
                         });
                     }
@@ -329,8 +329,7 @@ export type FindGameByNameResponse = {
         id: string,
         name: string,
         description: string | null,
-        imageContent: string | null
-        imageType: string,
+        imageUrl: string | null,
         steamUrl: string | null,
         creatorId: string
     } | null

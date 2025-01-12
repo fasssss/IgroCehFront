@@ -30,7 +30,7 @@ const GameGuessPage = () => {
     const [gameName, setGameName] = useState("");
     const [thisGameAlreadyExistModal, setThisGameAlreadyExistModal] = useState(false);
     const [imgBlob, setImgBlob] = useState<Blob>();
-    const [imgUrlObject, setImgUrlObject] = useState<string>();
+    const [imgUrlObject] = useState<string>();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -41,7 +41,6 @@ const GameGuessPage = () => {
         if(eventById.isSuccess) {
             const isUserAlreadySuggestedGame = eventById.data?.eventRecords
             .find(record => record.participant.id == userInfo.id && record.game);
-            console.log(eventById.data);
             switch (eventById.data?.statusId) {
                 case EVENT_STATUS.indexOf('Players registration'):
                     navigate(`/guild/${guildId}/event/${eventId}`);
@@ -64,12 +63,11 @@ const GameGuessPage = () => {
         if(!createGameResult.isLoading && 
             createGameResult.isSuccess
         ) {
-            console.log(createGameResult.data.gameId);
             suggestGame({ 
                 gameId: createGameResult.data.gameId, 
                 eventRecordId: eventById.data?.eventRecords
                 .find(record => record.participant.id == userInfo.id)?.id || "",
-                eventId: eventById.data?.Id || ""
+                eventId: eventId || ""
             });
         }
     }, [createGameResult.isLoading]);
@@ -92,15 +90,15 @@ const GameGuessPage = () => {
             findGameByNameResult.isSuccess && 
             findGameByNameResult.data.gameObject?.id
         ) {
-            if(findGameByNameResult.data.gameObject.imageContent && findGameByNameResult.data.gameObject.imageType) {
-                fetch(`data:${findGameByNameResult.data.gameObject.imageType};base64,${findGameByNameResult.data.gameObject.imageContent}`)
-                .then(res => {
-                    res.blob()
-                    .then(blob => {
-                        setImgUrlObject(URL.createObjectURL(blob));
-                    });
-                });
-            }
+            // if(findGameByNameResult.data.gameObject.imageContent && findGameByNameResult.data.gameObject.imageType) {
+            //     fetch(`data:${findGameByNameResult.data.gameObject.imageType};base64,${findGameByNameResult.data.gameObject.imageContent}`)
+            //     .then(res => {
+            //         res.blob()
+            //         .then(blob => {
+            //             setImgUrlObject(URL.createObjectURL(blob));
+            //         });
+            //     });
+            // }
 
             setThisGameAlreadyExistModal(true);
         }
@@ -183,7 +181,7 @@ const GameGuessPage = () => {
                                 gameId: findGameByNameResult.data?.gameObject?.id || "", 
                                 eventRecordId: eventById.data?.eventRecords
                                 .find(record => record.participant.id == userInfo.id)?.id || "",
-                                eventId: eventById.data?.Id || ""
+                                eventId: eventId || ""
                             });
                             setThisGameAlreadyExistModal(false);
                         }}>

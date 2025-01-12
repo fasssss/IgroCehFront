@@ -1,21 +1,27 @@
 import { useParams } from "react-router-dom";
-import { useGetEventByIdQuery } from "../../eventsApi";
+import { useLazyGetEventByIdQuery } from "../../eventsApi";
 import { useEffect } from "react";
 
 const AuctionProgressPage = () => {
     const { eventId } = useParams();
-    const eventById = useGetEventByIdQuery({ eventId: eventId });
+    const [getEventById, getEventByIdResult] = useLazyGetEventByIdQuery();
 
     useEffect(() => {
-        
+        getEventById({ eventId: eventId });
     }, []);
+
+    useEffect(() => {
+        if(getEventByIdResult.isSuccess){
+            console.log(getEventByIdResult);
+        }
+    }, [getEventByIdResult.data]);
 
     return(
     <div>
-        {eventById.data?.eventRecords.map(record => {
+        {getEventByIdResult.data?.eventRecords.map(record => {
             return(
                 record.game &&
-                <div>
+                <div key={record.id}>
                     {record.game.name}
                 </div>
             )

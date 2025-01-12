@@ -40,7 +40,6 @@ const AuctionShufflingStagePage = () => {
 
         const moveNextStageWebsocketHandler = (event: MessageEvent) => {
             const data: WebSocketMessage<MoveEventToNextStageResponse> = JSON.parse(event.data);
-            console.log(data.payload);
             if(data.payload.moveToStage === 2) {
                 navigate(`/guild/${guildId}/event/${eventId}/guessing-stage`);
             }
@@ -66,7 +65,6 @@ const AuctionShufflingStagePage = () => {
 
     useEffect(() => {
         if(eventById.isSuccess) {
-            console.log(eventById.data?.statusId);
             switch (eventById.data?.statusId) {
                 case EVENT_STATUS.indexOf('Players registration'):
                     navigate(`/guild/${guildId}/event/${eventId}`);

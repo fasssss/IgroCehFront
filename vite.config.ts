@@ -12,6 +12,7 @@ export default defineConfig({
     }),
   ],
   server: {
+    host: "0.0.0.0",
     watch: {
       usePolling: true
     },
@@ -20,8 +21,8 @@ export default defineConfig({
 
     },
     https: {
-      key: fs.readFileSync('../localhost-key.pem'),
-      cert: fs.readFileSync('../localhost.pem'),
+      key: fs.readFileSync('./localhost-key.pem'),
+      cert: fs.readFileSync('./localhost.pem'),
     }
   },
   css: {
