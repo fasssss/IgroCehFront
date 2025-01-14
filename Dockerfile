@@ -3,7 +3,7 @@ FROM node:18-alpine
 
 # Install git
 RUN apk add --no-cache git
- 
+
 # Set the working directory inside the container
 WORKDIR /app
  
@@ -15,6 +15,9 @@ RUN npm install
  
 # Copy the rest of your application files
 COPY . .
+
+# Discard all possible changes that may occure after copying
+RUN git restore .
  
 # Expose the port your app runs on
 EXPOSE 5173
