@@ -1,5 +1,8 @@
 # Use the latest LTS version of Node.js
 FROM node:18-alpine
+
+# Install git
+RUN apk add --no-cache git
  
 # Set the working directory inside the container
 WORKDIR /app
