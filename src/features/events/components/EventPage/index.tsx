@@ -58,7 +58,9 @@ const EventPage = () => {
     }, [getEventById.isSuccess, userInfo]);
 
     useEffect(() => {
-        if(removeFromEventResult.isSuccess) {
+        if(removeFromEventResult.isSuccess && 
+            getEventById.data?.eventRecords.find(record => record.participant.id !== userInfo.id)
+        ) {
             navigate(`/guild/${guildId}`);
         }
 
@@ -127,7 +129,7 @@ const EventPage = () => {
                                     getEventById.data?.eventCreatorId === userInfo.id && 
                                     getEventById.data?.eventCreatorId !== record.participant.id &&
                                     <CommonButton 
-                                    onClick={() => removeFromEvent({ userId: userInfo.id || "", eventId: eventId || "" })} 
+                                    onClick={() => removeFromEvent({ userId: record.participant.id || "", eventId: eventId || "" })} 
                                     color="error" 
                                     endIcon={<Logout />}>
                                         {t("Kick from event")}
