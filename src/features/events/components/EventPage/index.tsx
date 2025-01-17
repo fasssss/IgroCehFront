@@ -33,10 +33,6 @@ const EventPage = () => {
     const { t } = useTranslation()
 
     useEffect(() => {
-
-    }, [])
-
-    useEffect(() => {
         if(getEventById.isSuccess && userInfo.id !== null) {
             !getEventById.data.eventRecords.some(record => record.participant.id === userInfo.id) &&
                 setIsJoinProposalShown(true);

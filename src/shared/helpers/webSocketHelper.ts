@@ -13,15 +13,17 @@ const state: WebSocketState = {
 const waitForOpenConnection = (socket: WebSocket | null): Promise<void> => {
     return new Promise((resolve, reject) => {
         const maxNumberOfAttempts = 10
-        const intervalTime = 100 //ms
+        const intervalTime = 300 //ms
 
         let currentAttempt = 0
         const interval = setInterval(() => {
             if (currentAttempt > maxNumberOfAttempts - 1) {
-                clearInterval(interval)
+                clearInterval(interval);
+                console.log(socket?.readyState);
                 reject(new Error('Maximum number of attempts exceeded'))
             } else if (socket?.readyState === socket?.OPEN) {
                 clearInterval(interval)
+                console.log("opened " + socket?.readyState);
                 resolve()
             }
             currentAttempt++
