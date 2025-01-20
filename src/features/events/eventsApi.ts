@@ -253,7 +253,7 @@ type EventRecord = {
         id: string,
         name: string,
         description: string | undefined,
-        avatarUrl: string | undefined,
+        imageUrl: string | undefined,
         steamUrl: string | undefined
     } | undefined
 }
