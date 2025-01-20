@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { useLazyGetEventByIdQuery } from "../../eventsApi";
 import { useEffect } from "react";
 import './styles.scss';
+import { igroCehApiBaseUrl } from "root/shared/constants";
 
 const AuctionProgressPage = () => {
     const { eventId } = useParams();
@@ -29,7 +30,7 @@ const AuctionProgressPage = () => {
                     </div>
                     <div className="auction-progress__item-game">
                         {record.game.name}
-                        <img src={record.game.imageUrl} className="auction-progress__item-game-image" />
+                        <img src={igroCehApiBaseUrl + record.game.imageUrl} />
                     </div>
                     <div className="auction-progress__item-to">
                         {record.toUser?.userName}
