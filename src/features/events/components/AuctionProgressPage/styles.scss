@@ -1,5 +1,16 @@
 @use '../../../../shared/default.module.scss' as default;
 
+.auction-progress__header {
+    display: flex;
+    justify-content: space-between;
+    padding: default.$padding-big;
+}
+
+.auction-progress__event-actions {
+    display: flex;
+    align-items: center;
+}
+
 .auction-progress__item-container{
     min-height: 150px;
     margin: default.$padding-big;

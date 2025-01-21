@@ -25,6 +25,16 @@ const AuctionProgressPage = () => {
 
     return(
     <div className="auction-progress">
+        <div className="auction-progress__header">
+            <div className="auction-progress__event-name">
+                <h1>{getEventByIdResult.data?.eventName}</h1>
+            </div>
+            <div className="auction-progress__event-actions">
+                <CommonButton color="warning">
+                    Summarize and finish
+                </CommonButton>
+            </div>
+        </div>
         {getEventByIdResult.data?.eventRecords.map(record => {
             return(
                 record.game &&
@@ -46,7 +56,7 @@ const AuctionProgressPage = () => {
                     <div className="auction-progress__status-part">
                         {record.reward ?
                             <div className="auction-progress__status-success">
-                                {record.reward}
+                                {record.reward}/3
                             </div>
                             :
                             <div className="auction-progress__status-progress">
