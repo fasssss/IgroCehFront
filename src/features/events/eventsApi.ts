@@ -209,6 +209,27 @@ const eventsApi = igroCehApi.enhanceEndpoints({
                 } catch {}
               },
         }),
+        submitPassing: build.mutation<SubmitPassingResponse, SubmitPassingRequest>({
+            query: (request) => ({
+                url: `/api/submitPassing`,
+                credentials: 'include',
+                method: 'POST',
+                body: {
+                    eventRecordId: request.eventRecordId
+                }
+            }),
+            async onQueryStarted({ eventId }, { dispatch, queryFulfilled }) {
+                try {
+                  const { data: submitPassingResponse } = await queryFulfilled
+                  dispatch(
+                    eventsApi.util.updateQueryData('getEventById', { eventId }, (draft) => {
+                        const eventRecordIndex = draft.eventRecords.findIndex(item => item.id === submitPassingResponse.eventRecordObject.id)
+                        draft.eventRecords[eventRecordIndex].reward = submitPassingResponse.eventRecordObject.reward;
+                    })
+                  )
+                } catch {}
+            },
+        }),
     })
 })
 
@@ -255,7 +276,8 @@ type EventRecord = {
         description: string | undefined,
         imageUrl: string | undefined,
         steamUrl: string | undefined
-    } | undefined
+    } | undefined,
+    reward: number | null
 }
 
 type JoinEventResponse = {
@@ -353,6 +375,15 @@ export type SuggestGameResponse = {
     eventRecordObject: EventRecord
 }
 
+export type SubmitPassingRequest = {
+    eventRecordId: string,
+    eventId: string
+}
+
+export type SubmitPassingResponse = {
+    eventRecordObject: EventRecord,
+}
+
 export const { 
     useLazyGetGuildByIdQuery,
     useGetGuildByIdQuery,
@@ -368,5 +399,6 @@ export const {
     useFindGameByNameQuery,
     useLazyFindGameByNameQuery,
     useCreateGameMutation,
-    useSuggestGameMutation
+    useSuggestGameMutation,
+    useSubmitPassingMutation,
 } = eventsApi;

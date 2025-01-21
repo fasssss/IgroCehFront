@@ -2,14 +2,51 @@
 
 .auction-progress__item-container{
     min-height: 150px;
+    margin: default.$padding-big;
+    display: flex;
+}
+
+.auction-progress__info-part {
     padding: default.$padding-big;
     display: flex;
     justify-content: space-evenly;
     align-items: center;
     background-color: default.$grey;
-    border-radius: default.$border-radius_big;
-    margin-bottom: default.$padding-big;
+    border-radius: default.$border-radius_big 0 0 default.$border-radius_big;
+    width: 80%;
 }
+
+.auction-progress__status-part {
+    background-color: default.$grey;
+    border-radius: 0 default.$border-radius_big default.$border-radius_big 0;
+    width: 20%;
+    display: flex;
+    align-items: stretch;
+}
+
+.auction-progress__status-success {
+    background-color: default.$green;
+    width: 100%;
+    border-radius: 0 default.$border-radius_big default.$border-radius_big 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: xxx-large;
+}
+
+.auction-progress__status-progress {
+    background-color: default.$yellow;
+    width: 100%;
+    border-radius: 0 default.$border-radius_big default.$border-radius_big 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.auction-progress__status-button {
+    font-size: xx-large;
+}
+
 .auction-progress__item-to,
 .auction-progress__item-game,
 .auction-progress__item-from{
@@ -23,4 +60,9 @@
 .auction-progress__item-from img{
     width: 128px;
     margin: auto;
+}
+
+.auction-progress__item-result {
+    width: 10%;
+    height: --fill-available;
 }
