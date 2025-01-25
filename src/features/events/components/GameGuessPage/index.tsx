@@ -57,7 +57,7 @@ const GameGuessPage = () => {
                 navigate(`/guild/${guildId}/event/${eventId}/active-stage`);
             }
         }
-    }, [eventById.isLoading]);
+    }, [eventById.isFetching]);
 
     useEffect(() => {
         if(!createGameResult.isLoading && 
