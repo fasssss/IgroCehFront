@@ -230,6 +230,17 @@ const eventsApi = igroCehApi.enhanceEndpoints({
                 } catch {}
             },
         }),
+
+        summarizeEvent: build.mutation<SummarizeEventResponse, SummarizeEventRequest>({
+            query: (request) => ({
+                url: `/api/summarizeEvent`,
+                credentials: 'include',
+                method: 'POST',
+                body: {
+                    eventId: request.eventId
+                }
+            }),
+        }),
     })
 })
 
@@ -384,6 +395,14 @@ export type SubmitPassingResponse = {
     eventRecordObject: EventRecord,
 }
 
+export type SummarizeEventRequest = {
+    eventId: string
+}
+
+export type SummarizeEventResponse = {
+
+}
+
 export const { 
     useLazyGetGuildByIdQuery,
     useGetGuildByIdQuery,
@@ -401,4 +420,5 @@ export const {
     useCreateGameMutation,
     useSuggestGameMutation,
     useSubmitPassingMutation,
+    useSummarizeEventMutation,
 } = eventsApi;

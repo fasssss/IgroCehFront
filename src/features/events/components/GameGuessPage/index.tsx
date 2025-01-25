@@ -90,16 +90,6 @@ const GameGuessPage = () => {
             findGameByNameResult.isSuccess && 
             findGameByNameResult.data.gameObject?.id
         ) {
-            // if(findGameByNameResult.data.gameObject.imageContent && findGameByNameResult.data.gameObject.imageType) {
-            //     fetch(`data:${findGameByNameResult.data.gameObject.imageType};base64,${findGameByNameResult.data.gameObject.imageContent}`)
-            //     .then(res => {
-            //         res.blob()
-            //         .then(blob => {
-            //             setImgUrlObject(URL.createObjectURL(blob));
-            //         });
-            //     });
-            // }
-
             setThisGameAlreadyExistModal(true);
         }
     }, [findGameByNameResult.isFetching]);

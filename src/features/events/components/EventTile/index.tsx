@@ -37,7 +37,7 @@ const EventTile = ({ id, name, creatorUserName, statusId, startDate, endDate, pa
                 </div>
                 <div className='event-tile__players-count'><Person /> { participantsIds?.length }</div>
                 {
-                    EVENT_STATUS[statusId] === 'Players registration' && (
+                    EVENT_STATUS[statusId] !== 'Finished' && (
                         participantsIds?.some(id => id === userInfo.id) ?
                         <div className='event-tile__buttons'>
                             <CommonButton color='success' 
