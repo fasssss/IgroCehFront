@@ -8,9 +8,9 @@ const guildsApi = igroCehApi.injectEndpoints({
                 credentials: 'include'
             }),
         }),
-        getScoresByGuild: build.query<GetScorsByGuildResponse, GetScorsByGuildRequest>({
+        getScoresByGuild: build.query<GetScoresByGuildResponse, GetScoresByGuildRequest>({
             query: (filter) => ({
-                url: `/api/getScorsByGuild?guildId=${filter.guildId}`,
+                url: `/api/getScoresByGuild?guildId=${filter.guildId}`,
                 credentials: 'include'
             }),
         }),
@@ -38,11 +38,11 @@ export type GuildObject = {
     ownerId: string
 }
 
-export type GetScorsByGuildRequest = {
+export type GetScoresByGuildRequest = {
     guildId: string
 }
 
-export type GetScorsByGuildResponse = {
+export type GetScoresByGuildResponse = {
     scores: Array<{
         userId: string,
         userName: string,
