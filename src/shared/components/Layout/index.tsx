@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { SvgIcon } from '@mui/material'
@@ -14,6 +14,7 @@ function Layout() {
   var [isLanguageSelectorOpened, setIsLanguageSelectorOpened] = useState(false);
   var userInfo = useSelector((state: RootState) => state.authorizationReducer);
   var [getUserObject, userObject] = useLazyGetUserObjectQuery();
+  var navigate = useNavigate()
   var dispatch = useDispatch();
   useEffect(() => {
     if(!userInfo.userName && !userInfo.email && !userInfo.avatarUrl) {
@@ -68,6 +69,9 @@ function Layout() {
         <div id='layout__decoration-4'/>
         <div id='layout__decoration-5'/>
         <div id='layout__decoration-6'/>
+        <div className='layout__logo' onClick={() => navigate('/')}>
+          <h2>Igro Ceh</h2>
+        </div>
         <div className='layout__user-badge'>
           <div className='layout__language'>
             <div onClick={() => setIsLanguageSelectorOpened(!isLanguageSelectorOpened)} className='layout__language-button'>

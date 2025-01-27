@@ -10,6 +10,12 @@
   z-index: 1000;
 }
 
+.layout__logo {
+  margin: default.$margin-small;
+  z-index: 1;
+  cursor: pointer;
+}
+
 .layout__user-badge {
   right: 0;
   padding-right: default.$padding_big;
