@@ -18,23 +18,28 @@ const LeaderBoardPage = () => {
                 <h1>{guild.data?.guildObject.name}</h1>
             </div>
             <div className="leader-board__body">
-                {leaderBoardData.data?.scores
-                .sort((firstScore, secondScore) => firstScore.score - secondScore.score)
+                {leaderBoardData.data?.scores &&
+                [...leaderBoardData.data?.scores]
+                .sort((firstScore, secondScore) => secondScore.score - firstScore.score)
                 .map((scoreData, index) => {
                     return(
                         <div key={scoreData.userId} className="leader-board__score-item">
-                            <div className="leader-board__score-item-position">
-                                #{index}.
+                            <div className="leader-board__score-item-left">
+                                <div className="leader-board__score-item-position">
+                                    <h2>#{index + 1}.</h2>
+                                </div>
+                                <div className="leader-board__score-item-user">
+                                    <img src={scoreData.avatarUrl} />
+                                    <h3>{scoreData.userName}</h3>
+                                </div>
                             </div>
-                            <div className="leader-board__score-item-user">
-                                {scoreData.avatarUrl}
-                                {scoreData.userName}
-                            </div>
-                            <div className="leader-board__score-item-score">
-                                {scoreData.score}
-                            </div>
-                            <div className="leader-board__score-item-events-played">
-                                {scoreData.eventsPlayed}
+                            <div className="leader-board__score-item-right">
+                                <div className="leader-board__score-item-score">
+                                    <h3>Total score: {scoreData.score}</h3>
+                                </div>
+                                <div className="leader-board__score-item-events-played">
+                                    <h3>Total games played: {scoreData.eventsPlayed}</h3>
+                                </div>
                             </div>
                         </div>
                     )

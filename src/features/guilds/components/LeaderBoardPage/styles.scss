@@ -1,0 +1,43 @@
+@use '../../../../shared/default.module.scss' as default;
+
+.leader-board__header {
+    display: flex;
+    padding: default.$padding_large;
+    align-items: end;
+    gap: default.$margin_small;
+}
+
+.leader-board__header h1 {
+    margin: 0;
+}
+
+.leader-board__score-item {
+    display: flex;
+    width: 60%;
+    margin: auto;
+    padding: default.$padding_large;
+    justify-content: space-between;
+    border-bottom: 1px solid default.$light-grey;
+}
+
+.leader-board__score-item-left {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.leader-board__score-item-position {
+    margin-right: default.$margin_big;
+}
+
+.leader-board__score-item-user {
+    display: flex;
+    align-items: center;
+    column-gap: default.$margin_big;
+}
+
+.leader-board__score-item-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}

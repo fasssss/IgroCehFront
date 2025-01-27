@@ -49,7 +49,7 @@ export type GetScoresByGuildResponse = {
         avatarUrl: string,
         score: number,
         eventsPlayed: number
-    }>
+    }> | undefined
 }
 
 export type GetGuildByIdRequest = {

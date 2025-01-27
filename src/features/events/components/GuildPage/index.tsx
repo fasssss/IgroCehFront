@@ -88,6 +88,9 @@ const GuildPage = () => {
                     <CommonButton color="success" onClick={() => setIsCreateNewOpened(true)} startIcon={<AddIcon />}>
                         {t("Create event")}
                     </CommonButton>
+                    <CommonButton color="success" onClick={() => navigate(`/guild/${guildId}/leader-board`)}>
+                        {t("See leader board")}
+                    </CommonButton>
                 </div>
             </div>
             <div className="guild-page__body">
