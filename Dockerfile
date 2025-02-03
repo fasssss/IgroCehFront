@@ -26,6 +26,7 @@ COPY ["./igroceh.xyz-key.pem", "/app/igroceh.xyz-key.pem"]
 
 # Expose the port your app runs on
 EXPOSE 5173
+EXPOSE 4173
 EXPOSE 6436
  
 # Define the command to run your app
