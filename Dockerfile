@@ -1,6 +1,8 @@
 # Use the latest LTS version of Node.js
 FROM node:18-alpine
 
+USER root
+
 # Install git
 RUN apk add --no-cache git
 
