@@ -21,8 +21,8 @@ COPY . .
 # Discard all possible changes that may occure after copying
 RUN git restore .
 
-COPY ["./localhost.pem", "/app/localhost.pem"]
-COPY ["./localhost-key.pem", "/app/localhost-key.pem"]
+COPY ["./igroceh.xyz.pem", "/app/igroceh.xyz.pem"]
+COPY ["./igroceh.xyz-key.pem", "/app/igroceh.xyz-key.pem"]
 
 # Expose the port your app runs on
 EXPOSE 5173

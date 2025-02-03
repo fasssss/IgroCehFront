@@ -22,8 +22,8 @@ export default defineConfig({
 
     // },
     https: {
-      key: fs.readFileSync('./localhost-key.pem'),
-      cert: fs.readFileSync('./localhost.pem'),
+      key: fs.readFileSync('./igroceh.xyz-key.pem'),
+      cert: fs.readFileSync('./igroceh.xyz.pem'),
     }
   },
   css: {
