@@ -29,4 +29,4 @@ EXPOSE 5173
 EXPOSE 6436
  
 # Define the command to run your app
-CMD ["npm", "start"]
+CMD "npm run preview"
