@@ -22,7 +22,7 @@ COPY . .
 RUN git restore .
 
 COPY ["./localhost.pem", "/app/localhost.pem"]
-COPY ["./localhost-key.crt", "/app/localhost-key.pem"]
+COPY ["./localhost-key.pem", "/app/localhost-key.pem"]
 
 # Expose the port your app runs on
 EXPOSE 5173
