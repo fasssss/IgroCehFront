@@ -18,7 +18,10 @@ COPY . .
 
 # Discard all possible changes that may occure after copying
 RUN git restore .
- 
+
+COPY ["IgroCehApp/IgroCehFrontend/localhost.pem", "/app/localhost.pem"]
+COPY ["IgroCehApp/IgroCehFrontend/localhost-key.crt", "/app/localhost-key.pem"]
+
 # Expose the port your app runs on
 EXPOSE 5173
 EXPOSE 6436
