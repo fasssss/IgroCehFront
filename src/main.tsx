@@ -10,10 +10,6 @@ import './shared/localization';
 import './shared/helpers/webSocketHelper';
 import './index.css';
 
-const socket = new WebSocket('wss://igroceh.xyz:60444/api/ws');
-
-setTimeout(() => {console.log(socket)}, 2000)
-
 createRoot(document.getElementById('root')!).render(
     <Provider store={store}>
       <ThemeProvider theme={themes}>
