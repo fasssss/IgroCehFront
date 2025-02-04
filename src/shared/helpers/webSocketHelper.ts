@@ -13,11 +13,11 @@ export const state: WebSocketState = {
 let retryConnection: any = null;
 
 let webSocketInstance: WebSocket | null = null;
-const onError = (ev: Event) => {
+const onError = () => {
     retryConnection = setInterval(initializeWebSocket, 5000)
 };
 
-const onOpen = (ev: Event) => {
+const onOpen = () => {
     clearInterval(retryConnection);
 }
 
