@@ -34,15 +34,11 @@ let webSocketInstance = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
 // }
 
 export const ensureConnection = () => {
-    let counter = 0;
     while (
         webSocketInstance.readyState === WebSocket.CLOSED ||
         webSocketInstance.readyState === WebSocket.CLOSING
     ) {
-        counter++;
-        webSocketInstance = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
-        console.log(webSocketInstance);
-        console.log("counter " + counter);
+        window.location.reload()
     }
 };
 
