@@ -38,35 +38,35 @@ export const ensureConnection = () => {
         webSocketInstance.readyState === WebSocket.CLOSED ||
         webSocketInstance.readyState === WebSocket.CLOSING
     ) {
-        window.location.reload()
+        window.location.reload();
     }
 };
 
 export const addRoom = async (roomId: string, listener: any) => {
     ensureConnection();
-    if(state.webSocketInstance?.readyState === WebSocket.OPEN){
+    if(webSocketInstance?.readyState === WebSocket.OPEN){
         const newRoomsList = [...state.rooms];
         if(newRoomsList.indexOf(roomId) === -1) {
-            state.webSocketInstance?.send(JSON.stringify({ type: "join", payload: roomId }));
+            webSocketInstance?.send(JSON.stringify({ type: "join", payload: roomId }));
         }
         
         newRoomsList.push(roomId);
         state.rooms = newRoomsList;
-        state.webSocketInstance?.addEventListener("message", listener);
+        webSocketInstance?.addEventListener("message", listener);
     }
 };
 
 export const leaveRoom = async (roomId: string, listener: any) => {
-    if(state.webSocketInstance && state.webSocketInstance.readyState === WebSocket.OPEN) {
+    if(webSocketInstance && webSocketInstance.readyState === WebSocket.OPEN) {
         const newRooms = state.rooms.filter(room => room !== roomId);
         state.rooms = newRooms;
         if(newRooms.indexOf(roomId) === -1) {
-            state.webSocketInstance?.send(JSON.stringify({ type: "leave", payload: roomId }));
+            webSocketInstance?.send(JSON.stringify({ type: "leave", payload: roomId }));
         }
         
-        state.webSocketInstance?.removeEventListener("message", listener);
+        webSocketInstance?.removeEventListener("message", listener);
         if(newRooms.length === 0) {
-            state.webSocketInstance.close();
+            webSocketInstance.close();
             state.webSocketInstance = null;
             state.rooms = [];
         }
