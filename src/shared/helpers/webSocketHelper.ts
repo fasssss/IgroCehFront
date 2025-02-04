@@ -32,14 +32,14 @@ const state: WebSocketState = {
 // }
 
 export const ensureConnection = () => {
-    while (!state.webSocketInstance || 
-        state.webSocketInstance.readyState === WebSocket.CLOSED ||
-        state.webSocketInstance.readyState === WebSocket.CLOSING
+    let socket;
+    while (!socket ||
+        (socket as WebSocket).readyState === WebSocket.CLOSED ||
+        (socket as WebSocket).readyState === WebSocket.CLOSING
     ) {
-        state.webSocketInstance = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
+        socket = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
+        console.log(socket);
     }
-
-    console.log(state.webSocketInstance);
 };
 
 export const addRoom = async (roomId: string, listener: any) => {
