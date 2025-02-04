@@ -38,6 +38,7 @@ export const ensureConnection = () => {
         webSocketInstance.readyState === WebSocket.CLOSED ||
         webSocketInstance.readyState === WebSocket.CLOSING
     ) {
+        webSocketInstance.close();
         window.location.reload();
     }
 };
