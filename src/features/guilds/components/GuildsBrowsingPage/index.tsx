@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { SearchBar } from "root/shared/components/SearchBar";
 import { useLazyGetSearchedGuildsQuery } from "../../guildsApi";
 import { useNavigate } from "react-router-dom";
-import { state, ensureConnection } from "root/shared/helpers/webSocketHelper";
+import { state } from "root/shared/helpers/webSocketHelper";
 import { useEffect } from "react";
 
 const GuildsBrowsingPage = () => {
@@ -10,12 +10,7 @@ const GuildsBrowsingPage = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     useEffect(() => {
-        while(!state.webSocketInstance ||
-            state.webSocketInstance.readyState === WebSocket.CLOSED ||
-            state.webSocketInstance.readyState === WebSocket.CLOSING
-        ){
-            ensureConnection();
-        }
+
     }, [state, state.webSocketInstance]);
 
 
