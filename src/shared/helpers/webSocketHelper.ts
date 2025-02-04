@@ -10,6 +10,8 @@ export const state: WebSocketState = {
     rooms: []
 }
 
+let webSocketInstance = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
+
 // const waitForOpenConnection = (socket: WebSocket | null): Promise<void> => {
 //     return new Promise((resolve, reject) => {
 //         const maxNumberOfAttempts = 10
@@ -33,16 +35,14 @@ export const state: WebSocketState = {
 
 export const ensureConnection = () => {
     let counter = 0;
-    let socket = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
-    while (socket.readyState === WebSocket.CONNECTING){}
     while (
-        socket.readyState !== WebSocket.OPEN
+        webSocketInstance.readyState === WebSocket.CLOSED ||
+        webSocketInstance.readyState === WebSocket.CLOSING
     ) {
         counter++;
-        socket = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
-        console.log(socket);
+        webSocketInstance = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
+        console.log(webSocketInstance);
         console.log("counter " + counter);
-        while (socket.readyState === WebSocket.CONNECTING){}
     }
 };
 
