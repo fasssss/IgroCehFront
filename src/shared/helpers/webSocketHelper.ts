@@ -5,7 +5,7 @@ type WebSocketState = {
     rooms: string[]
 }
 
-const state: WebSocketState = {
+export const state: WebSocketState = {
     webSocketInstance: null,
     rooms: []
 }
