@@ -12,7 +12,7 @@ const GuildsBrowsingPage = () => {
 
     useEffect(() => {
         console.log(socket);
-    }, [socket])
+    }, [socket, socket.readyState])
 
     return(
         <div className="guild-browser">
