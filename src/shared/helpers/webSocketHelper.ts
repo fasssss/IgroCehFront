@@ -38,6 +38,8 @@ export const ensureConnection = () => {
     ) {
         state.webSocketInstance = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
     }
+
+    console.log(state.webSocketInstance);
 };
 
 export const addRoom = async (roomId: string, listener: any) => {
