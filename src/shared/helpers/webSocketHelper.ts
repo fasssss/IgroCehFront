@@ -34,14 +34,15 @@ export const state: WebSocketState = {
 export const ensureConnection = () => {
     let counter = 0;
     let socket = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
+    while (socket.readyState === WebSocket.CONNECTING){}
     while (
-        socket.readyState === WebSocket.CLOSED ||
-        socket.readyState === WebSocket.CLOSING
+        socket.readyState !== WebSocket.OPEN
     ) {
         counter++;
         socket = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
         console.log(socket);
         console.log("counter " + counter);
+        while (socket.readyState === WebSocket.CONNECTING){}
     }
 };
 
