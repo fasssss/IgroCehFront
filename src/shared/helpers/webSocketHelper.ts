@@ -12,19 +12,28 @@ export const state: WebSocketState = {
 
 let retryConnection: any = null;
 
-let webSocketInstance: WebSocket | null = null;
+let webSocketInstance: WebSocket | null = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
+
+window.onbeforeunload = () => {
+    webSocketInstance?.close();
+};
+
 const onError = () => {
-    retryConnection = setInterval(initializeWebSocket, 5000)
+    retryConnection = setInterval(() => {
+        webSocketInstance?.close();
+        initializeWebSocket()
+    }, 5000)
 };
 
 const onOpen = () => {
     clearInterval(retryConnection);
 }
 
+webSocketInstance.onerror = onError;
+webSocketInstance.onopen = onOpen;
+
 const initializeWebSocket = () => {
  webSocketInstance = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
- webSocketInstance.onerror = onError;
- webSocketInstance.onopen = onOpen;
 }
 
 initializeWebSocket();
