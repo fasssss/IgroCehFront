@@ -2,11 +2,14 @@ import { useTranslation } from "react-i18next";
 import { SearchBar } from "root/shared/components/SearchBar";
 import { useLazyGetSearchedGuildsQuery } from "../../guildsApi";
 import { useNavigate } from "react-router-dom";
+import { ensureConnection } from "root/shared/helpers/webSocketHelper";
 
 const GuildsBrowsingPage = () => {
     const [searchBar, searchResult] = useLazyGetSearchedGuildsQuery();
     const { t } = useTranslation();
     const navigate = useNavigate();
+    ensureConnection();
+
 
     return(
         <div className="guild-browser">
