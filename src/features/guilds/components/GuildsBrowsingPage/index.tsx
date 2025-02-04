@@ -8,10 +8,13 @@ const GuildsBrowsingPage = () => {
     const [searchBar, searchResult] = useLazyGetSearchedGuildsQuery();
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const socket = new WebSocket('wss:/igroceh.xyz:60444/api/ws');
+    let socket = new WebSocket('wss:/igroceh.xyz:60444/api/ws');
 
     useEffect(() => {
         console.log(socket);
+        while (socket.readyState === WebSocket.CLOSED || socket.readyState === WebSocket.CLOSING) {
+            socket = new WebSocket('wss:/igroceh.xyz:60444/api/ws');
+        }
     }, [socket, socket.readyState])
 
     return(
