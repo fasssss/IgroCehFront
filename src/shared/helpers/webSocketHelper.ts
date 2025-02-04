@@ -34,7 +34,7 @@ let webSocketInstance = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
 // }
 
 export const ensureConnection = () => {
-    while (
+    if (
         webSocketInstance.readyState === WebSocket.CLOSED ||
         webSocketInstance.readyState === WebSocket.CLOSING
     ) {
