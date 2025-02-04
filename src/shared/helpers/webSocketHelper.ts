@@ -34,8 +34,7 @@ export const state: WebSocketState = {
 export const ensureConnection = () => {
     let counter = 0;
     while ( 
-        state.webSocketInstance.readyState != 1 &&
-        state.webSocketInstance.readyState != 0
+        state.webSocketInstance.readyState != 1
     ) {
         counter++;
         state.webSocketInstance = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
