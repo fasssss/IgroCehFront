@@ -10,7 +10,24 @@ export const state: WebSocketState = {
     rooms: []
 }
 
-let webSocketInstance = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
+let retryConnection: any = null;
+
+let webSocketInstance: WebSocket | null = null;
+const onError = (ev: Event) => {
+    retryConnection = setInterval(initializeWebSocket, 5000)
+};
+
+const onOpen = (ev: Event) => {
+    clearInterval(retryConnection);
+}
+
+const initializeWebSocket = () => {
+ webSocketInstance = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
+ webSocketInstance.onerror = onError;
+ webSocketInstance.onopen = onOpen;
+}
+
+initializeWebSocket();
 
 // const waitForOpenConnection = (socket: WebSocket | null): Promise<void> => {
 //     return new Promise((resolve, reject) => {
@@ -33,18 +50,18 @@ let webSocketInstance = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
 //     })
 // }
 
-export const ensureConnection = () => {
-    if (
-        webSocketInstance.readyState === WebSocket.CLOSED ||
-        webSocketInstance.readyState === WebSocket.CLOSING
-    ) {
-        webSocketInstance.close();
-        window.location.reload();
-    }
-};
+// export const ensureConnection = () => {
+//     if (
+//         webSocketInstance.readyState === WebSocket.CLOSED ||
+//         webSocketInstance.readyState === WebSocket.CLOSING
+//     ) {
+//         webSocketInstance.close();
+//         window.location.reload();
+//     }
+// };
 
 export const addRoom = async (roomId: string, listener: any) => {
-    ensureConnection();
+    //ensureConnection();
     if(webSocketInstance?.readyState === WebSocket.OPEN){
         const newRoomsList = [...state.rooms];
         if(newRoomsList.indexOf(roomId) === -1) {
