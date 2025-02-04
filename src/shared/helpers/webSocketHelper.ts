@@ -43,10 +43,7 @@ export const ensureConnection = () => {
 };
 
 export const addRoom = async (roomId: string, listener: any) => {
-    await waitForOpenConnection(state.webSocketInstance).catch(async () => {
-        ensureConnection();
-        await waitForOpenConnection(state.webSocketInstance);
-    });
+    ensureConnection();
     if(state.webSocketInstance?.readyState === WebSocket.OPEN){
         const newRoomsList = [...state.rooms];
         if(newRoomsList.indexOf(roomId) === -1) {
