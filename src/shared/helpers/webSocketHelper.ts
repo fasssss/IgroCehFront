@@ -1,12 +1,12 @@
 import { igroCehWebSocketBaseUrl } from "../constants";
 
 type WebSocketState = {
-    webSocketInstance: WebSocket,
+    webSocketInstance: WebSocket | null,
     rooms: string[]
 }
 
 export const state: WebSocketState = {
-    webSocketInstance: new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`),
+    webSocketInstance: null,
     rooms: []
 }
 
@@ -33,13 +33,14 @@ export const state: WebSocketState = {
 
 export const ensureConnection = () => {
     let counter = 0;
-    while ( 
-        state.webSocketInstance.readyState != 1 &&
-        counter < 2000
+    let socket = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
+    while (
+        socket.readyState === WebSocket.CLOSED ||
+        socket.readyState === WebSocket.CLOSING
     ) {
         counter++;
-        state.webSocketInstance = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
-        console.log(state.webSocketInstance);
+        socket = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
+        console.log(socket);
         console.log("counter " + counter);
     }
 };
@@ -69,6 +70,7 @@ export const leaveRoom = async (roomId: string, listener: any) => {
         state.webSocketInstance?.removeEventListener("message", listener);
         if(newRooms.length === 0) {
             state.webSocketInstance.close();
+            state.webSocketInstance = null;
             state.rooms = [];
         }
     }
