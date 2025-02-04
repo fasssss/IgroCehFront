@@ -32,7 +32,10 @@ const waitForOpenConnection = (socket: WebSocket | null): Promise<void> => {
 }
 
 export const ensureConnection = () => {
-    if(!state.webSocketInstance || state.webSocketInstance.readyState === WebSocket.CLOSED) {
+    while (!state.webSocketInstance || 
+        state.webSocketInstance.readyState === WebSocket.CLOSED ||
+        state.webSocketInstance.readyState === WebSocket.CLOSING
+    ) {
         state.webSocketInstance = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
     }
 };
