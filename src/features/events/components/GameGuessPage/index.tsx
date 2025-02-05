@@ -38,7 +38,7 @@ const GameGuessPage = () => {
     }, [])
 
     useEffect(() => {
-        if(eventById.isSuccess) {
+        if(eventById.isSuccess && !eventById.isFetching) {
             const isUserAlreadySuggestedGame = eventById.data?.eventRecords
             .find(record => record.participant.id == userInfo.id && record.game);
             switch (eventById.data?.statusId) {
@@ -46,6 +46,7 @@ const GameGuessPage = () => {
                     navigate(`/guild/${guildId}/event/${eventId}`);
                     break;
                 case EVENT_STATUS.indexOf('Players shuffle'):
+                    console.log(eventById.data);
                     navigate(`/guild/${guildId}/event/${eventId}/ordering-stage`);
                     break;
                 case EVENT_STATUS.indexOf('Active'):
