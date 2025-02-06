@@ -74,7 +74,7 @@ const initializeWebSocket = () => {
 export const addRoom = async (roomId: string, listener: any) => {
     //ensureConnection();
     if(webSocketInstance?.readyState !== WebSocket.OPEN){
-        webSocketInstance = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
+        //webSocketInstance = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
     }
 
     if(webSocketInstance?.readyState === WebSocket.OPEN){
