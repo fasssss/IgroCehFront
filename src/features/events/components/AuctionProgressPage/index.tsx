@@ -64,8 +64,8 @@ const AuctionProgressPage = () => {
                             </div>
                             :
                             <div className="auction-progress__status-progress">
-                                {userInfo.id === record.participant.id ||
-                                 userInfo.id === getEventByIdResult.data?.eventCreatorId &&
+                                {(userInfo.id === record.participant.id ||
+                                 userInfo.id === getEventByIdResult.data?.eventCreatorId) &&
                                     <CommonButton 
                                     color="success"
                                     onClick={() => {
