@@ -73,10 +73,11 @@ const waitForOpenConnection = (socket: WebSocket | null): Promise<void> => {
 
 export const addRoom = async (roomId: string, listener: any) => {
     //ensureConnection();
-    if(webSocketInstance?.readyState !== WebSocket.OPEN){
+    if(webSocketInstance?.readyState === WebSocket.CLOSED){
         webSocketInstance = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
-        waitForOpenConnection(webSocketInstance)
     }
+
+    waitForOpenConnection(webSocketInstance);
 
     if(webSocketInstance?.readyState === WebSocket.OPEN){
         const newRoomsList = [...state.rooms];
