@@ -2,18 +2,11 @@ import { useTranslation } from "react-i18next";
 import { SearchBar } from "root/shared/components/SearchBar";
 import { useLazyGetSearchedGuildsQuery } from "../../guildsApi";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 
 const GuildsBrowsingPage = () => {
     const [searchBar, searchResult] = useLazyGetSearchedGuildsQuery();
     const { t } = useTranslation();
     const navigate = useNavigate();
-
-    let webSock = new WebSocket('wss://igroceh.xyz:60444/api/ws');
-
-    useEffect(() => {
-        console.log(webSock.readyState);
-    }, [webSock.readyState]);
 
     return(
         <div className="guild-browser">

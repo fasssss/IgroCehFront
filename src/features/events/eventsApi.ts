@@ -43,10 +43,10 @@ const eventsApi = igroCehApi.enhanceEndpoints({
                 try {
                     //ensureConnection()
                     await cacheDataLoaded
-                    await addRoom(`event${arg.eventId}` || "", listener)
+                    //await addRoom(`event${arg.eventId}` || "", listener)
 
                     await cacheEntryRemoved
-                    await leaveRoom(`event${arg.eventId}` || "", listener);
+                    //await leaveRoom(`event${arg.eventId}` || "", listener);
                 } catch(e) {
                     console.log(e);
                 }
