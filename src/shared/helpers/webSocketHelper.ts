@@ -36,8 +36,6 @@ const initializeWebSocket = () => {
  webSocketInstance = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
 }
 
-initializeWebSocket();
-
 // const waitForOpenConnection = (socket: WebSocket | null): Promise<void> => {
 //     return new Promise((resolve, reject) => {
 //         const maxNumberOfAttempts = 10
