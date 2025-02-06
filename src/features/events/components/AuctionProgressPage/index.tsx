@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useLazyGetEventByIdQuery, useSubmitPassingMutation, useSummarizeEventMutation } from "../../eventsApi";
 import { useEffect } from "react";
 import './styles.scss';
@@ -12,11 +12,18 @@ const AuctionProgressPage = () => {
     const userInfo = useSelector((state: RootState) => state.authorizationReducer);
     const [getEventById, getEventByIdResult] = useLazyGetEventByIdQuery();
     const [submitPassing] = useSubmitPassingMutation();
-    const [summarizeEvent] = useSummarizeEventMutation();
+    const [summarizeEvent, summarizeEventResult] = useSummarizeEventMutation();
+    const navigate = useNavigate();
 
     useEffect(() => {
         getEventById({ eventId: eventId });
     }, []);
+
+    useEffect(() => {
+        if(summarizeEventResult.isSuccess && !summarizeEventResult.isLoading) {
+            navigate(`/`);
+        }
+    }, [summarizeEventResult.isLoading]);
 
     useEffect(() => {
         if(getEventByIdResult.isSuccess){
@@ -31,12 +38,14 @@ const AuctionProgressPage = () => {
                 <h1>{getEventByIdResult.data?.eventName}</h1>
             </div>
             <div className="auction-progress__event-actions">
-                <CommonButton 
+                { userInfo.id === getEventByIdResult.data?.eventCreatorId &&
+                    <CommonButton 
                     color="warning"
                     onClick={() => summarizeEvent({ eventId: eventId || "" })}
-                >
-                    Summarize and finish
-                </CommonButton>
+                    >
+                        Summarize and finish
+                    </CommonButton>
+                }
             </div>
         </div>
         {getEventByIdResult.data?.eventRecords.map(record => {
