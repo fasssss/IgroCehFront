@@ -25,6 +25,12 @@ const GuildPage = () => {
     const [isScrollUpButtonShown, setIsScrollUpButtonShown] = useState(false);
     const [isScrolledDown, setIsScrolledDown] = useState(false);
 
+    let webSock = new WebSocket('wss://igroceh.xyz:60444/api/ws');
+
+    useEffect(() => {
+        console.log(webSock.readyState);
+    }, [webSock.readyState]);
+
     useOnMount(() => {
         const handleScroll = () => {
             if (document.documentElement.scrollTop > 1000) {
