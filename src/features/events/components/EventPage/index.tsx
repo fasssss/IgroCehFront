@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom"
 import { useSelector } from "react-redux";
 import { ArrowForwardIos, Logout } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
-import { addRoom, leaveRoom, WebSocketMessage } from "root/shared/helpers/webSocketHelper";
+import { webSocketInstance, addRoom, leaveRoom, WebSocketMessage } from "root/shared/helpers/webSocketHelper";
 import { CommonModal } from "root/shared/components/CommonModal";
 import { RootState } from "root/shared/store";
 import { CommonButton } from "root/shared/components/CommonButton";
@@ -71,7 +71,7 @@ const EventPage = () => {
         }
         
         if(!initializedPage.current)
-            addRoom(`event${eventId}updateEventStage`, changeStatusEventListener);
+            addRoom(webSocketInstance, `event${eventId}updateEventStage`, changeStatusEventListener);
         initializedPage.current = true;
         return (() => {
             leaveRoom(`event${eventId}updateEventStage`, changeStatusEventListener);
