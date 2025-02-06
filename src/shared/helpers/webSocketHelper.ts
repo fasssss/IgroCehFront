@@ -10,7 +10,7 @@ export const state: WebSocketState = {
     rooms: []
 }
 
-let retryConnection: any = null;
+//let retryConnection: any = null;
 
 export let webSocketInstance: WebSocket | null = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
 
@@ -26,15 +26,15 @@ window.onbeforeunload = () => {
 //     }, 5000)
 // };
 
-const onOpen = () => {
-    clearInterval(retryConnection);
-    setInterval(() => {
-        webSocketInstance?.send(JSON.stringify({ type: "ping", payload: true }));
-    }, 5000);
-}
+// const onOpen = () => {
+//     clearInterval(retryConnection);
+//     setInterval(() => {
+//         webSocketInstance?.send(JSON.stringify({ type: "ping", payload: true }));
+//     }, 5000);
+// }
 
 //webSocketInstance.onerror = onError;
-webSocketInstance.onopen = onOpen;
+//webSocketInstance.onopen = onOpen;
 
 // const initializeWebSocket = () => {
 //  webSocketInstance = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
