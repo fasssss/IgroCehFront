@@ -1,5 +1,5 @@
 import { igroCehApi } from "root/shared/igroCehApi";
-import { addRoom, leaveRoom, WebSocketMessage } from "root/shared/helpers/webSocketHelper";
+import { addRoom, /*leaveRoom,*/ WebSocketMessage } from "root/shared/helpers/webSocketHelper";
 
 const eventsApi = igroCehApi.enhanceEndpoints({
 }).injectEndpoints({
