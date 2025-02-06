@@ -18,13 +18,13 @@ window.onbeforeunload = () => {
     webSocketInstance?.close();
 };
 
-const onError = () => {
-    retryConnection = setInterval(() => {
-        webSocketInstance?.close();
-        webSocketInstance!.onerror = null;
-        initializeWebSocket()
-    }, 5000)
-};
+// const onError = () => {
+//     retryConnection = setInterval(() => {
+//         webSocketInstance?.close();
+//         webSocketInstance!.onerror = null;
+//         initializeWebSocket()
+//     }, 5000)
+// };
 
 const onOpen = () => {
     clearInterval(retryConnection);
@@ -33,12 +33,12 @@ const onOpen = () => {
     }, 5000);
 }
 
-webSocketInstance.onerror = onError;
+//webSocketInstance.onerror = onError;
 webSocketInstance.onopen = onOpen;
 
-const initializeWebSocket = () => {
- webSocketInstance = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
-}
+// const initializeWebSocket = () => {
+//  webSocketInstance = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
+// }
 
 // const waitForOpenConnection = (socket: WebSocket | null): Promise<void> => {
 //     return new Promise((resolve, reject) => {
@@ -74,7 +74,7 @@ const initializeWebSocket = () => {
 export const addRoom = async (roomId: string, listener: any) => {
     //ensureConnection();
     if(webSocketInstance?.readyState !== WebSocket.OPEN){
-        //webSocketInstance = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
+        webSocketInstance = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
     }
 
     if(webSocketInstance?.readyState === WebSocket.OPEN){
