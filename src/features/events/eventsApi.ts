@@ -1,5 +1,5 @@
 import { igroCehApi } from "root/shared/igroCehApi";
-import { addRoom, /*leaveRoom,*/ WebSocketMessage } from "root/shared/helpers/webSocketHelper";
+import { webSocketInstance, addRoom, /*leaveRoom,*/ WebSocketMessage } from "root/shared/helpers/webSocketHelper";
 
 const eventsApi = igroCehApi.enhanceEndpoints({
 }).injectEndpoints({
@@ -43,7 +43,7 @@ const eventsApi = igroCehApi.enhanceEndpoints({
                 try {
                     //ensureConnection()
                     await cacheDataLoaded
-                    await addRoom(`event${arg.eventId}` || "", listener)
+                    await addRoom(webSocketInstance, `event${arg.eventId}` || "", listener)
 
                     await cacheEntryRemoved
                     //await leaveRoom(`event${arg.eventId}` || "", listener);

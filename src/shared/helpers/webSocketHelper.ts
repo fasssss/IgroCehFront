@@ -12,7 +12,7 @@ export const state: WebSocketState = {
 
 let retryConnection: any = null;
 
-let webSocketInstance: WebSocket | null = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
+export let webSocketInstance: WebSocket | null = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
 
 window.onbeforeunload = () => {
     webSocketInstance?.close();
@@ -71,17 +71,17 @@ const initializeWebSocket = () => {
 //     }
 // };
 
-export const addRoom = async (roomId: string, listener: any) => {
+export const addRoom = async (webSocket: WebSocket | null, roomId: string, listener: any) => {
     //ensureConnection();
-    if(webSocketInstance?.readyState === WebSocket.OPEN){
+    if(webSocket?.readyState === WebSocket.OPEN){
         const newRoomsList = [...state.rooms];
         if(newRoomsList.indexOf(roomId) === -1) {
-            webSocketInstance?.send(JSON.stringify({ type: "join", payload: roomId }));
+            webSocket?.send(JSON.stringify({ type: "join", payload: roomId }));
         }
         
         newRoomsList.push(roomId);
         state.rooms = newRoomsList;
-        webSocketInstance?.addEventListener("message", listener);
+        webSocket?.addEventListener("message", listener);
     }
 };
 
