@@ -1,5 +1,5 @@
 import { igroCehApi } from "root/shared/igroCehApi";
-import { addRoom, /*leaveRoom,*/ WebSocketMessage } from "root/shared/helpers/webSocketHelper";
+//import { addRoom, /*leaveRoom,*/ WebSocketMessage } from "root/shared/helpers/webSocketHelper";
 
 const eventsApi = igroCehApi.enhanceEndpoints({
 }).injectEndpoints({
@@ -16,41 +16,41 @@ const eventsApi = igroCehApi.enhanceEndpoints({
                 credentials: 'include'
             }),
             keepUnusedDataFor: 1,
-            async onCacheEntryAdded(arg, { updateCachedData, cacheDataLoaded, cacheEntryRemoved }) {
-                const listener = (event: MessageEvent) => {
-                    const data: WebSocketMessage<EventRecord> = JSON.parse(event.data)
-                    if(data.type === "addUserToEvent") {
-                        updateCachedData((draft) => {
-                            draft.eventRecords.push(data.payload);
-                        });
-                    }
+            // async onCacheEntryAdded(arg, { updateCachedData, cacheDataLoaded, cacheEntryRemoved }) {
+            //     const listener = (event: MessageEvent) => {
+            //         const data: WebSocketMessage<EventRecord> = JSON.parse(event.data)
+            //         if(data.type === "addUserToEvent") {
+            //             updateCachedData((draft) => {
+            //                 draft.eventRecords.push(data.payload);
+            //             });
+            //         }
 
-                    if(data.type === "removeUserFromEvent") {
-                        updateCachedData((draft) => {
-                            draft.eventRecords = draft.eventRecords
-                            .filter(item => item.id !== data.payload.id);
-                        });
-                    }
+            //         if(data.type === "removeUserFromEvent") {
+            //             updateCachedData((draft) => {
+            //                 draft.eventRecords = draft.eventRecords
+            //                 .filter(item => item.id !== data.payload.id);
+            //             });
+            //         }
 
-                    if(data.type === "suggestGame") {
-                        updateCachedData((draft) => {
-                            const eventRecordIndex = draft.eventRecords.findIndex(item => item.id === data.payload.id);
-                            draft.eventRecords[eventRecordIndex].game = data.payload.game;
-                        });
-                    }
-                };
+            //         if(data.type === "suggestGame") {
+            //             updateCachedData((draft) => {
+            //                 const eventRecordIndex = draft.eventRecords.findIndex(item => item.id === data.payload.id);
+            //                 draft.eventRecords[eventRecordIndex].game = data.payload.game;
+            //             });
+            //         }
+            //     };
 
-                try {
-                    //ensureConnection()
-                    await cacheDataLoaded
-                    await addRoom(`event${arg.eventId}` || "", listener)
+            //     try {
+            //         //ensureConnection()
+            //         await cacheDataLoaded
+            //         //await addRoom(`event${arg.eventId}` || "", listener)
 
-                    await cacheEntryRemoved
-                    //await leaveRoom(`event${arg.eventId}` || "", listener);
-                } catch(e) {
-                    console.log(e);
-                }
-            },
+            //         await cacheEntryRemoved
+            //         //await leaveRoom(`event${arg.eventId}` || "", listener);
+            //     } catch(e) {
+            //         console.log(e);
+            //     }
+            // },
             transformResponse: (response: EventObjectResponse) => {
                 for (let i = 0; i < response.eventRecords.length - 1; i++) {  // sorting users in order of "from who" -> "to"
                     if(!response.eventRecords[i].toUser) {
