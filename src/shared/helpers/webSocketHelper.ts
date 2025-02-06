@@ -27,6 +27,9 @@ const onError = () => {
 
 const onOpen = () => {
     clearInterval(retryConnection);
+    setInterval(() => {
+        webSocketInstance?.send(JSON.stringify({ type: "ping", payload: true }));
+    }, 5000);
 }
 
 webSocketInstance.onerror = onError;
