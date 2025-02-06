@@ -21,6 +21,7 @@ window.onbeforeunload = () => {
 const onError = () => {
     retryConnection = setInterval(() => {
         webSocketInstance?.close();
+        webSocketInstance!.onerror = null;
         initializeWebSocket()
     }, 5000)
 };
