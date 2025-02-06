@@ -71,17 +71,21 @@ const initializeWebSocket = () => {
 //     }
 // };
 
-export const addRoom = async (webSocket: WebSocket | null, roomId: string, listener: any) => {
+export const addRoom = async (roomId: string, listener: any) => {
     //ensureConnection();
-    if(webSocket?.readyState === WebSocket.OPEN){
+    if(webSocketInstance?.readyState !== WebSocket.OPEN){
+        webSocketInstance = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`);
+    }
+
+    if(webSocketInstance?.readyState === WebSocket.OPEN){
         const newRoomsList = [...state.rooms];
         if(newRoomsList.indexOf(roomId) === -1) {
-            webSocket?.send(JSON.stringify({ type: "join", payload: roomId }));
+            webSocketInstance?.send(JSON.stringify({ type: "join", payload: roomId }));
         }
         
         newRoomsList.push(roomId);
         state.rooms = newRoomsList;
-        webSocket?.addEventListener("message", listener);
+        webSocketInstance?.addEventListener("message", listener);
     }
 };
 

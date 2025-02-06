@@ -6,7 +6,7 @@ import StyleIcon from '@mui/icons-material/Style';
 import { CustomCard } from "root/shared/components/CustomCard";
 import { CommonButton } from "root/shared/components/CommonButton";
 import { RootState } from "root/shared/store";
-import { webSocketInstance, addRoom, leaveRoom, WebSocketMessage } from "root/shared/helpers/webSocketHelper";
+import { addRoom, leaveRoom, WebSocketMessage } from "root/shared/helpers/webSocketHelper";
 import { 
     MoveEventToNextStageResponse,
     useLazyGetEventByIdQuery,
@@ -46,8 +46,8 @@ const AuctionShufflingStagePage = () => {
 
         getEventById({ eventId });
         if(!initialMount.current){
-            addRoom(webSocketInstance, `event${eventId}`, shuffleWebsocketHandler);
-            addRoom(webSocketInstance, `event${eventId}updateEventStage`, moveNextStageWebsocketHandler);
+            addRoom(`event${eventId}`, shuffleWebsocketHandler);
+            addRoom(`event${eventId}updateEventStage`, moveNextStageWebsocketHandler);
         }
         initialMount.current = true;
         return(() => {
