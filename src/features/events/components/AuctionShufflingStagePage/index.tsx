@@ -46,12 +46,12 @@ const AuctionShufflingStagePage = () => {
 
         getEventById({ eventId });
         if(!initialMount.current){
-            addRoom(`event${eventId}`, shuffleWebsocketHandler);
+            addRoom(`event${eventId}ShuffleUsers`, shuffleWebsocketHandler);
             addRoom(`event${eventId}updateEventStage`, moveNextStageWebsocketHandler);
         }
         initialMount.current = true;
         return(() => {
-            leaveRoom(`event${eventId}`, shuffleWebsocketHandler)
+            leaveRoom(`event${eventId}ShuffleUsers`, shuffleWebsocketHandler)
             leaveRoom(`event${eventId}updateEventStage`, moveNextStageWebsocketHandler)
         });
     }, []);
