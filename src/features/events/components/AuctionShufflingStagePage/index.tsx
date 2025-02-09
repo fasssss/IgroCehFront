@@ -6,7 +6,8 @@ import StyleIcon from '@mui/icons-material/Style';
 import { CustomCard } from "root/shared/components/CustomCard";
 import { CommonButton } from "root/shared/components/CommonButton";
 import { RootState } from "root/shared/store";
-import { addRoom, leaveRoom, WebSocketMessage } from "root/shared/helpers/webSocketHelper";
+import { addRoom, leaveRoom, WebSocketMessage, WebSocketState } from "root/shared/helpers/webSocketHelper";
+import { EVENT_STATUS, igroCehWebSocketBaseUrl } from "root/shared/constants";
 import { 
     MoveEventToNextStageResponse,
     useLazyGetEventByIdQuery,
@@ -14,7 +15,6 @@ import {
     useShuffleUsersMutation
 } from "../../eventsApi";
 import './styles.scss';
-import { EVENT_STATUS } from "root/shared/constants";
 
 const AuctionShufflingStagePage = () => {
     const { guildId, eventId } = useParams();
@@ -25,6 +25,10 @@ const AuctionShufflingStagePage = () => {
     const [shuffleUsers, shuffleUsersResult] = useShuffleUsersMutation();
     const navigate = useNavigate();
     const [moveEventToNextStage, moveEventToNextStageResult] = useMoveEventToNextStageMutation();
+    const webSocketState: WebSocketState = {
+        webSocketInstance: new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`),
+        rooms: []
+    }
 
     useEffect(() => {
         const shuffleWebsocketHandler = (event: MessageEvent) => {
@@ -46,13 +50,13 @@ const AuctionShufflingStagePage = () => {
 
         getEventById({ eventId });
         if(!initialMount.current){
-            addRoom(`event${eventId}ShuffleUsers`, shuffleWebsocketHandler);
-            addRoom(`event${eventId}updateEventStage`, moveNextStageWebsocketHandler);
+            addRoom(webSocketState, `event${eventId}ShuffleUsers`, shuffleWebsocketHandler);
+            addRoom(webSocketState,`event${eventId}updateEventStage`, moveNextStageWebsocketHandler);
         }
         initialMount.current = true;
         return(() => {
-            leaveRoom(`event${eventId}ShuffleUsers`, shuffleWebsocketHandler)
-            leaveRoom(`event${eventId}updateEventStage`, moveNextStageWebsocketHandler)
+            leaveRoom(webSocketState, `event${eventId}ShuffleUsers`, shuffleWebsocketHandler)
+            leaveRoom(webSocketState, `event${eventId}updateEventStage`, moveNextStageWebsocketHandler)
         });
     }, []);
 
