@@ -87,7 +87,7 @@ const GuildPage = () => {
                         {t("Create event")}
                     </CommonButton>
                     <CommonButton color="success" onClick={() => navigate(`/guild/${guildId}/leader-board`)}>
-                        {t("See leader board")}
+                        {t("See leaderboard")}
                     </CommonButton>
                 </div>
             </div>

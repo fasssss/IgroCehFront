@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ContentCopy, Person, Search } from '@mui/icons-material';
 import ShareIcon from '@mui/icons-material/Share';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { Chip, IconButton, TextField } from '@mui/material';
 import { CommonButton } from 'root/shared/components/CommonButton';
@@ -37,7 +38,16 @@ const EventTile = ({ id, name, creatorUserName, statusId, startDate, endDate, pa
                 </div>
                 <div className='event-tile__players-count'><Person /> { participantsIds?.length }</div>
                 {
-                    statusId !== EventStatus.Finished && (
+                    statusId === EventStatus.Finished ?
+                    <div className='event-tile__buttons'>
+                        <CommonButton color='success'
+                        onClick={() => navigate(`/guild/${guildId}/event/${id}`)}
+                        startIcon={<EmojiEventsIcon />}
+                        >
+                            { t('View results') }
+                        </CommonButton>
+                    </div>
+                    : (
                         participantsIds?.some(participantId => participantId === currentUser?.id) ?
                         <div className='event-tile__buttons'>
                             <CommonButton color='success' 

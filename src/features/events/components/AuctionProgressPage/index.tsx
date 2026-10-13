@@ -3,6 +3,7 @@ import './styles.scss';
 import { EventStatus, igroCehApiBaseUrl } from "root/shared/constants";
 import { CommonButton } from "root/shared/components/CommonButton";
 import type { EventStageProps } from "../EventStageRouter";
+import { t } from "i18next";
 
 // progress of passing the guessed games, after summarizing shows results of the event
 const AuctionProgressPage = ({ event, currentUser }: EventStageProps) => {
@@ -23,7 +24,7 @@ const AuctionProgressPage = ({ event, currentUser }: EventStageProps) => {
                     color="warning"
                     onClick={() => summarizeEvent({ eventId: event.id })}
                     >
-                        Summarize and finish
+                        {t("Summarize and finish")}
                     </CommonButton>
                 }
             </div>

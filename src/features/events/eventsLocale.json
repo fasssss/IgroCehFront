@@ -2,9 +2,11 @@
     "en": {
         "Create event": "Create event",
         "See leaderboard": "See leaderboard",
+        "Summarize and finish": "Summarize and finish",
         "Share": "Share",
         "Inspect": "Inspect",
         "Join": "Join",
+        "View results": "View results",
         "Players registration": "Players registration",
         "Auction": "Auction",
         "Active": "Active",
@@ -20,9 +22,11 @@
     "ru": {
         "Create event": "Создать событие",
         "See leaderboard": "Посмотреть таблицу лидеров",
+        "Summarize and finish": "Подвести итоги",
         "Share": "Поделиться",
         "Inspect": "Просмотреть",
         "Join": "Присоединиться",
+        "View results": "Посмотреть результаты",
         "Players registration": "Регистрация участников",
         "Auction": "Аукцион",
         "Active": "Активное",
