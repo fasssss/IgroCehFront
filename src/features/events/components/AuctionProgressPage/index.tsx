@@ -39,10 +39,12 @@ const AuctionProgressPage = ({ event, currentUser }: EventStageProps) => {
                             {record.participant.userName}
                             <img src={record.participant.avatarUrl ?? undefined} />
                         </div>
+                        <div className="players-progress__direction-arrow"/>
                         <div className="auction-progress__item-game">
                             {record.game.name}
                             <img src={record.game.imageUrl ? igroCehApiBaseUrl + record.game.imageUrl : undefined} />
                         </div>
+                        <div className="players-progress__direction-arrow"/>
                         <div className="auction-progress__item-to">
                             {record.toUser?.userName}
                             <img src={record.toUser?.avatarUrl ?? undefined} />

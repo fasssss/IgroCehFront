@@ -23,6 +23,15 @@ const authorizationApi = igroCehApi.injectEndpoints({
         getUserObject: build.query<UserObject, void>({
             query: () => "/api/getUserObject",
             providesTags: ['User'],
+        }),
+        // removes HttpOnly auth cookie, which can't be done from the browser;
+        // refetched user query fails with 401 and Layout redirects to the login page
+        logout: build.mutation<void, void>({
+            query: () => ({
+                url: "/api/logout",
+                method: 'POST'
+            }),
+            invalidatesTags: ['User'],
         })
     })
 })
@@ -41,7 +50,8 @@ export type UserObject = {
 export const {
     useGetDiscordApiLinkQuery,
     useAuthorizeByCodeMutation,
-    useGetUserObjectQuery
+    useGetUserObjectQuery,
+    useLogoutMutation
 } = authorizationApi;
 
 export const useCurrentUser = () => useGetUserObjectQuery().data;

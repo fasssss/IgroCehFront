@@ -5,7 +5,8 @@
         "Yes": "Yes",
         "No": "No",
         "No Image": "No Image",
-        "Drag or Ctrl-V to paste": "Drag or Ctrl-V to paste"
+        "Drag or Ctrl-V to paste": "Drag or Ctrl-V to paste",
+        "Log out": "Log out"
     },
     "ru": {
         "Confirm": "Продолжить",
@@ -13,6 +14,7 @@
         "Yes": "Да",
         "No": "Нет",
         "No Image": "Нет изображения",
-        "Drag or Ctrl-V to paste": "Перетащите / Ctrl+V"
+        "Drag or Ctrl-V to paste": "Перетащите / Ctrl+V",
+        "Log out": "Выход"
     }
 }

@@ -1,21 +1,30 @@
 import { Navigate, Outlet, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { SvgIcon } from '@mui/material'
+import { Logout } from '@mui/icons-material';
 import { SvgSelector } from 'root/shared/components/SvgSelector';
-import { useGetUserObjectQuery } from 'root/features/authorization/authorizationApi';
+import { useGetUserObjectQuery, useLogoutMutation } from 'root/features/authorization/authorizationApi';
 import { isUnauthorizedError } from 'root/shared/igroCehApi';
 import i18n from 'root/shared/localization';
 import './styles.scss';
 
 function Layout() {
   const [isLanguageSelectorOpened, setIsLanguageSelectorOpened] = useState(false);
+  const [isUserMenuOpened, setIsUserMenuOpened] = useState(false);
+  const userMenu = useRef<HTMLDivElement>(null);
   const getUserObject = useGetUserObjectQuery();
+  const [logout] = useLogoutMutation();
   const userInfo = getUserObject.data;
   const navigate = useNavigate()
+  const { t } = useTranslation();
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       setIsLanguageSelectorOpened(document.getElementsByClassName('layout__language-flag')[0] == e.target);
+      if(!userMenu.current?.contains(e.target as Node)) {
+        setIsUserMenuOpened(false);
+      }
     };
 
     document.addEventListener("click", handleClick);
@@ -39,6 +48,11 @@ function Layout() {
           <div className='layout__language-flag'>Русский &nbsp;<SvgSelector iconName='russian-flag'/></div>
         );
       }
+  }
+
+  const handleLogout = () => {
+    setIsUserMenuOpened(false);
+    logout();
   }
 
   if(isUnauthorizedError(getUserObject.error)) {
@@ -85,15 +99,25 @@ function Layout() {
               </div>
             }
           </div>
-          {
-            userInfo?.avatarUrl ?
-            <img src={userInfo.avatarUrl} className='layout__user-avatar'></img>
-            :
-            <div className='layout__default-avatar'>
-              <SvgIcon><SvgSelector iconName='discord-icon' /></SvgIcon>
+          <div ref={userMenu} onMouseLeave={() => setIsUserMenuOpened(false)} className='layout__user'>
+            <div onClick={() => setIsUserMenuOpened(!isUserMenuOpened)} className='layout__user-button'>
+              {
+                userInfo?.avatarUrl ?
+                <img src={userInfo.avatarUrl} className='layout__user-avatar'></img>
+                :
+                <div className='layout__default-avatar'>
+                  <SvgIcon><SvgSelector iconName='discord-icon' /></SvgIcon>
+                </div>
+              }
+              <span>{userInfo?.userName}</span>
             </div>
-          }
-          <span>{userInfo?.userName}</span>
+            <div className='layout__user-menu' style={!isUserMenuOpened ? { display: 'none', opacity: 0 } : {}}>
+              <div onClick={handleLogout} className='layout__user-menu-option'>
+                <Logout fontSize='small' />
+                { t('Log out') }
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div className='layout__content-container'>
