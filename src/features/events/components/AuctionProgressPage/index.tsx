@@ -1,84 +1,63 @@
-import { useNavigate, useParams } from "react-router-dom";
-import { useLazyGetEventByIdQuery, useSubmitPassingMutation, useSummarizeEventMutation } from "../../eventsApi";
-import { useEffect } from "react";
+import { useSubmitPassingMutation, useSummarizeEventMutation } from "../../eventsApi";
 import './styles.scss';
-import { igroCehApiBaseUrl } from "root/shared/constants";
+import { EventStatus, igroCehApiBaseUrl } from "root/shared/constants";
 import { CommonButton } from "root/shared/components/CommonButton";
-import { RootState } from "root/shared/store";
-import { useSelector } from "react-redux";
+import type { EventStageProps } from "../EventStageRouter";
 
-const AuctionProgressPage = () => {
-    const { eventId } = useParams();
-    const userInfo = useSelector((state: RootState) => state.authorizationReducer);
-    const [getEventById, getEventByIdResult] = useLazyGetEventByIdQuery();
+// progress of passing the guessed games, after summarizing shows results of the event
+const AuctionProgressPage = ({ event, currentUser }: EventStageProps) => {
     const [submitPassing] = useSubmitPassingMutation();
-    const [summarizeEvent, summarizeEventResult] = useSummarizeEventMutation();
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        getEventById({ eventId: eventId });
-    }, []);
-
-    useEffect(() => {
-        if(summarizeEventResult.isSuccess && !summarizeEventResult.isLoading) {
-            navigate(`/`);
-        }
-    }, [summarizeEventResult.isLoading]);
-
-    useEffect(() => {
-        if(getEventByIdResult.isSuccess){
-            console.log(getEventByIdResult);
-        }
-    }, [getEventByIdResult.data]);
+    const [summarizeEvent] = useSummarizeEventMutation();
+    const isCreator = currentUser.id === event.eventCreatorId;
+    const isFinished = event.statusId === EventStatus.Finished;
 
     return(
     <div className="auction-progress">
         <div className="auction-progress__header">
             <div className="auction-progress__event-name">
-                <h1>{getEventByIdResult.data?.eventName}</h1>
+                <h1>{event.eventName}</h1>
             </div>
             <div className="auction-progress__event-actions">
-                { userInfo.id === getEventByIdResult.data?.eventCreatorId &&
-                    <CommonButton 
+                { isCreator && !isFinished &&
+                    <CommonButton
                     color="warning"
-                    onClick={() => summarizeEvent({ eventId: eventId || "" })}
+                    onClick={() => summarizeEvent({ eventId: event.id })}
                     >
                         Summarize and finish
                     </CommonButton>
                 }
             </div>
         </div>
-        {getEventByIdResult.data?.eventRecords.map(record => {
+        {event.eventRecords.map(record => {
             return(
                 record.game &&
                 <div key={record.id} className="auction-progress__item-container">
                     <div className="auction-progress__info-part">
                         <div className="auction-progress__item-from">
                             {record.participant.userName}
-                            <img src={record.participant.avatarUrl} />
+                            <img src={record.participant.avatarUrl ?? undefined} />
                         </div>
                         <div className="auction-progress__item-game">
                             {record.game.name}
-                            <img src={igroCehApiBaseUrl + record.game.imageUrl} />
+                            <img src={record.game.imageUrl ? igroCehApiBaseUrl + record.game.imageUrl : undefined} />
                         </div>
                         <div className="auction-progress__item-to">
                             {record.toUser?.userName}
-                            <img src={record.toUser?.avatarUrl} />
+                            <img src={record.toUser?.avatarUrl ?? undefined} />
                         </div>
                     </div>
                     <div className="auction-progress__status-part">
-                        {record.reward ?
+                        {record.reward !== null ?
                             <div className="auction-progress__status-success">
                                 {record.reward}/3
                             </div>
                             :
                             <div className="auction-progress__status-progress">
-                                {(userInfo.id === record.participant.id ||
-                                 userInfo.id === getEventByIdResult.data?.eventCreatorId) &&
-                                    <CommonButton 
+                                {!isFinished && (currentUser.id === record.participant.id || isCreator) &&
+                                    <CommonButton
                                     color="success"
                                     onClick={() => {
-                                        submitPassing({ eventRecordId: record.id, eventId: eventId || "" })
+                                        submitPassing({ eventRecordId: record.id, eventId: event.id })
                                     }}>
                                     <div className="auction-progress__status-button">
                                         Submit

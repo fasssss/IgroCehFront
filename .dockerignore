@@ -19,6 +19,9 @@
 **/obj
 **/secrets.dev.yaml
 **/values.dev.yaml
+**/dist
+**/*.tsbuildinfo
+.git
+.claude
 LICENSE
 README.md
-package-lock.json

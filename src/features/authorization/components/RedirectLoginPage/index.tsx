@@ -1,37 +1,26 @@
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { useAuthorizeByCodeQuery } from '../../authorizationApi';
-import { setUserObject } from '../../authorizationSlice';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useAuthorizeByCodeMutation } from '../../authorizationApi';
 
+// Discord redirects here with either "code" or "error" in query string
 const RedirectLoginPage = () => {
-    var navigate = useNavigate();
-    var url = new URL(window.location.href)
-    var authCode = url.searchParams.get("code");
-    var errorCode = url.searchParams.get("error_code")
-    if(errorCode) {
-        navigate("/login");
-    }
+    const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const [authorizeByCode] = useAuthorizeByCodeMutation();
+    const authCode = searchParams.get("code");
 
-    if(authCode) {
-        var sendAuthCode = useAuthorizeByCodeQuery(authCode);
-        var dispatch = useDispatch();
-        useEffect(() => {
-            if(sendAuthCode.isSuccess) {
-                dispatch(setUserObject({
-                    userName: sendAuthCode.data.userName,
-                    email: sendAuthCode.data.email,
-                    avatarUrl: sendAuthCode.data.avatarUrl,
-                    id: sendAuthCode.data.id
-                }));
-                navigate("/");
-            }
-        }, [sendAuthCode.isSuccess]);
-    }
+    useEffect(() => {
+        if(!authCode) {
+            navigate("/login", { replace: true });
+            return;
+        }
 
-    return(
-        <></>
-    );
+        authorizeByCode(authCode).unwrap()
+            .then(() => navigate("/", { replace: true }))
+            .catch(() => navigate("/login", { replace: true }));
+    }, [authCode, authorizeByCode, navigate]);
+
+    return null;
 }
 
 export { RedirectLoginPage }

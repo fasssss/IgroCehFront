@@ -1,143 +1,79 @@
-import { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
 import StyleIcon from '@mui/icons-material/Style';
 import { CustomCard } from "root/shared/components/CustomCard";
 import { CommonButton } from "root/shared/components/CommonButton";
-import { RootState } from "root/shared/store";
-import { addRoom, leaveRoom, WebSocketMessage, WebSocketState } from "root/shared/helpers/webSocketHelper";
-import { EVENT_STATUS, igroCehWebSocketBaseUrl } from "root/shared/constants";
-import { 
-    MoveEventToNextStageResponse,
-    useLazyGetEventByIdQuery,
+import { EventStatus } from "root/shared/constants";
+import { useRoomMessages } from "root/shared/hooks/useRoomMessages";
+import {
     useMoveEventToNextStageMutation,
     useShuffleUsersMutation
 } from "../../eventsApi";
+import { eventRoom, EventRoomMessage } from "../../eventRoom";
+import type { EventStageProps } from "../EventStageRouter";
 import './styles.scss';
 
-const AuctionShufflingStagePage = () => {
-    const { guildId, eventId } = useParams();
-    const initialMount = useRef(false);
-    const [getEventById, eventById] = useLazyGetEventByIdQuery();
-    const userInfo = useSelector((state: RootState) => state.authorizationReducer);
-    const [isCardsShown, setIsCardsShown] = useState([] as boolean[]);
-    const [shuffleUsers, shuffleUsersResult] = useShuffleUsersMutation();
-    const navigate = useNavigate();
-    const [moveEventToNextStage, moveEventToNextStageResult] = useMoveEventToNextStageMutation();
-    const webSocketState: WebSocketState = {
-        webSocketInstance: new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws`),
-        rooms: []
-    }
+const CARD_REVEAL_DELAY_MS = 150;
 
-    useEffect(() => {
-        const shuffleWebsocketHandler = (event: MessageEvent) => {
-            getEventById({ eventId });
-            const data: WebSocketMessage<boolean> = JSON.parse(event.data);
-            if(data.type === "shuffleUsers" && data.payload) {
-                const isShown = [...isCardsShown];
-                isShown[isShown.indexOf(false)] = true;
-                setIsCardsShown(isShown);
-            }
-        };
+const AuctionShufflingStagePage = ({ event, currentUser }: EventStageProps) => {
+    const [shuffleUsers] = useShuffleUsersMutation();
+    const [moveEventToNextStage] = useMoveEventToNextStageMutation();
+    const records = event.eventRecords;
+    const isCreator = currentUser.id === event.eventCreatorId;
+    const isShuffled = records.length > 0 && records.every(record => record.toUser);
+    // already shuffled cards are shown right away, every new shuffle hides them and reveals one by one
+    const [revealedCount, setRevealedCount] = useState(isShuffled ? records.length : 0);
 
-        const moveNextStageWebsocketHandler = (event: MessageEvent) => {
-            const data: WebSocketMessage<MoveEventToNextStageResponse> = JSON.parse(event.data);
-            if(data.payload.moveToStage === 2) {
-                navigate(`/guild/${guildId}/event/${eventId}/guessing-stage`);
-            }
-        };
-
-        getEventById({ eventId });
-        if(!initialMount.current){
-            addRoom(webSocketState, `event${eventId}ShuffleUsers`, shuffleWebsocketHandler);
-            addRoom(webSocketState,`event${eventId}updateEventStage`, moveNextStageWebsocketHandler);
+    // shuffle message reaches every participant (initiator too), so the animation runs the same for everyone
+    useRoomMessages<EventRoomMessage>(eventRoom(event.id), (message) => {
+        if(message.type === "shuffleUsers") {
+            setRevealedCount(0);
         }
-        initialMount.current = true;
-        return(() => {
-            leaveRoom(webSocketState, `event${eventId}ShuffleUsers`, shuffleWebsocketHandler)
-            leaveRoom(webSocketState, `event${eventId}updateEventStage`, moveNextStageWebsocketHandler)
-        });
-    }, []);
-
-    useEffect(() => {
-        if(eventById.data) {
-            setIsCardsShown(Array(eventById.data.eventRecords.length).fill(false));
-        }
-    }, [eventById.isSuccess, shuffleUsersResult.isLoading]);
-
-    useEffect(() => {
-        if(eventById.isSuccess) {
-            switch (eventById.data?.statusId) {
-                case EVENT_STATUS.indexOf('Players registration'):
-                    navigate(`/guild/${guildId}/event/${eventId}`);
-                    break;
-                case EVENT_STATUS.indexOf('Guessing games'):
-                    navigate(`/guild/${guildId}/event/${eventId}/guessing-stage`);
-                    break;
-                case EVENT_STATUS.indexOf('Active'):
-                    navigate(`/guild/${guildId}/event/${eventId}/active-stage`);
-                    break;
-            }
-        }
-    }, [eventById.isLoading])
+    });
 
     useEffect(() => {     //useEffect for sequenced animation flipping of cards
-        if(shuffleUsersResult.isSuccess &&
-            !shuffleUsersResult.isLoading && 
-            isCardsShown.indexOf(false) !== -1
-        ) {
-            const isShown = [...isCardsShown];
-            isShown[isShown.indexOf(false)] = true;
-            const timeout = setTimeout(() => setIsCardsShown(isShown), 150);
-            return (() => {
-                clearTimeout(timeout);
-            });
-        }
-    }, [shuffleUsersResult.isLoading, isCardsShown]);
+        if(!isShuffled || revealedCount >= records.length) return;
 
-    useEffect(() => {
-        if(moveEventToNextStageResult.isSuccess) {
-            navigate(`/guild/${guildId}/event/${eventId}/guessing-stage`);
-        }
-    }, [moveEventToNextStageResult.isSuccess]);
-    
+        const timeout = setTimeout(() => setRevealedCount(count => count + 1), CARD_REVEAL_DELAY_MS);
+        return (() => {
+            clearTimeout(timeout);
+        });
+    }, [isShuffled, revealedCount, records.length]);
+
     return(
     <div className="players-shuffle">
         <div className="players-shuffle__header">
             {
-                userInfo.id === eventById.data?.eventCreatorId && 
-                <CommonButton 
+                isCreator &&
+                <CommonButton
                 endIcon={<StyleIcon />}
-                onClick={() => shuffleUsers({ eventId })}>
+                onClick={() => shuffleUsers({ eventId: event.id })}>
                     Let's dance... I mean shuffle
                 </CommonButton>
             }
             {
-                userInfo.id === eventById.data?.eventCreatorId &&
-                <CommonButton 
+                isCreator &&
+                <CommonButton
                 endIcon={<DoubleArrowIcon />}
-                onClick={() => moveEventToNextStage({ eventId: eventId || "", statusId: 2 })}
+                onClick={() => moveEventToNextStage({ eventId: event.id, statusId: EventStatus.GuessingGames })}
                 color="success"
-                disabled={!isCardsShown[isCardsShown.length - 1]}>
+                disabled={!isShuffled || revealedCount < records.length}>
                     Move next stage
                 </CommonButton>
             }
         </div>
         <div className="players-shuffle__body">
             {
-                eventById.data && 
-                eventById.data?.eventRecords.map((record, index) => {
+                records.map((record, index) => {
                     return(
-                        <div key={record?.id}  className="players-shuffle__card-container">
+                        <div key={record.id}  className="players-shuffle__card-container">
                             <CustomCard
-                            key={ record?.id }
-                            imageUrl={ record?.participant.avatarUrl } 
-                            name={ record?.participant.userName }
-                            isShown={isCardsShown[index]}
+                            imageUrl={ record.participant.avatarUrl ?? undefined }
+                            name={ record.participant.userName }
+                            isShown={index < revealedCount}
                             />
                             {
-                                index < (eventById.data?.eventRecords.length || 0) - 1 &&
+                                index < records.length - 1 &&
                                 <div className="players-shuffle__direction-arrow"/>
                             }
                         </div>

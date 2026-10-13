@@ -3,25 +3,32 @@ import { igroCehApi } from "root/shared/igroCehApi";
 const guildsApi = igroCehApi.injectEndpoints({
     endpoints: (build) => ({
         getSearchedGuilds: build.query<GetSearchedGuildsResponse, GetSearchedGuildsRequest>({
-            query: (filter) => ({
-                url: `/api/getSearchedGuilds?searchString=${filter.searchString}`,
-                credentials: 'include'
+            query: ({ searchString }) => ({
+                url: '/api/getSearchedGuilds',
+                params: { searchString }
             }),
         }),
         getScoresByGuild: build.query<GetScoresByGuildResponse, GetScoresByGuildRequest>({
-            query: (filter) => ({
-                url: `/api/getScoresByGuild?guildId=${filter.guildId}`,
-                credentials: 'include'
+            query: ({ guildId }) => ({
+                url: '/api/getScoresByGuild',
+                params: { guildId }
             }),
         }),
-        getGuildById: build.query<GuildObjectResponse, GetGuildByIdRequest>({
-            query: (request) => ({
-                url: `/api/getGuildById?guildId=${request.guildId}`,
-                credentials: 'include'
+        getGuildById: build.query<GetGuildByIdResponse, GetGuildByIdRequest>({
+            query: ({ guildId }) => ({
+                url: '/api/getGuildById',
+                params: { guildId }
             }),
         }),
     })
 })
+
+export type GuildObject = {
+    id: string
+    name: string | null,
+    iconUrl: string | null,
+    ownerId: string
+}
 
 export type GetSearchedGuildsRequest = {
     searchString: string
@@ -29,13 +36,6 @@ export type GetSearchedGuildsRequest = {
 
 export type GetSearchedGuildsResponse = {
     guildObjects: Array<GuildObject> | null
-}
-
-export type GuildObject = {
-    id: string
-    name: string | null,
-    iconUrl: string | null,
-    ownerId: string
 }
 
 export type GetScoresByGuildRequest = {
@@ -46,28 +46,22 @@ export type GetScoresByGuildResponse = {
     scores: Array<{
         userId: string,
         userName: string,
-        avatarUrl: string,
+        avatarUrl: string | null,
         score: number,
         eventsPlayed: number
     }> | undefined
 }
 
 export type GetGuildByIdRequest = {
-    guildId: string | undefined
+    guildId: string
 }
 
-export type GuildObjectResponse = {
-    guildObject: {
-        id: string
-        name: string | null,
-        iconUrl: string | undefined,
-        ownerId: string
-    }
+export type GetGuildByIdResponse = {
+    guildObject: GuildObject
 }
 
-export const { 
+export const {
     useLazyGetSearchedGuildsQuery,
-    useGetSearchedGuildsQuery,
     useGetScoresByGuildQuery,
     useGetGuildByIdQuery
 } = guildsApi;

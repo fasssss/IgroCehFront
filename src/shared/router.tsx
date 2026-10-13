@@ -1,13 +1,10 @@
 import { createBrowserRouter } from "react-router-dom";
-import { 
-    LoginPage, 
-    RedirectLoginPage, 
+import {
+    LoginPage,
+    RedirectLoginPage,
     GuildsBrowsingPage,
     GuildPage,
-    EventPage,
-    AuctionShufflingStagePage,
-    GameGuessPage,
-    AuctionProgressPage,
+    EventStageRouter,
     LeaderBoardPage
 } from "../features";
 import Layout from "./components/Layout";
@@ -38,20 +35,9 @@ const router = createBrowserRouter([
                 element: <LeaderBoardPage />
             },
             {
-                path: "guild/:guildId/event/:eventId",
-                element: <EventPage />
-            },
-            {
-                path: "guild/:guildId/event/:eventId/ordering-stage",
-                element: <AuctionShufflingStagePage />
-            },
-            {
-                path: "guild/:guildId/event/:eventId/guessing-stage",
-                element: <GameGuessPage />
-            },
-            {
-                path: "guild/:guildId/event/:eventId/active-stage",
-                element: <AuctionProgressPage />
+                // stage is chosen by event status, "/*" keeps old stage links (ordering-stage etc.) working
+                path: "guild/:guildId/event/:eventId/*",
+                element: <EventStageRouter />
             }
         ]
     }

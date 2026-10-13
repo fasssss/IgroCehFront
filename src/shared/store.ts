@@ -1,14 +1,17 @@
 import { configureStore } from "@reduxjs/toolkit";
-import authorizationReducer from "root/features/authorization/authorizationSlice";
 import { igroCehApiReducer, igroCehApiMiddleware } from "./igroCehApi";
 
 export const store = configureStore({
     reducer: {
         igroCehApi: igroCehApiReducer,
-        authorizationReducer
     },
     middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware({ serializableCheck: false }).concat(igroCehApiMiddleware),
+        getDefaultMiddleware({
+            serializableCheck: {
+                // createGame mutation is called with FormData
+                ignoredPaths: [/^igroCehApi\.mutations\.[^.]+\.originalArgs/],
+            },
+        }).concat(igroCehApiMiddleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>

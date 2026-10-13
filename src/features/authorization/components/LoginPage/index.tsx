@@ -1,11 +1,9 @@
 import { CircularProgress, SvgIcon } from '@mui/material';
-import { useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
+import { Navigate } from 'react-router-dom';
 import { CommonButton } from 'root/shared/components/CommonButton';
 import { SvgSelector } from 'root/shared/components/SvgSelector';
-import { router } from 'root/shared/router';
 import { useGetDiscordApiLinkQuery, useGetUserObjectQuery } from '../../authorizationApi';
-import { setUserObject } from '../../authorizationSlice';
 import { useTranslation } from 'react-i18next';
 import './styles.scss';
 
@@ -13,12 +11,13 @@ const LoginPage = () => {
 
     // Start of code section for page animateed background
     const [leftPosition, setLeftPosition] = useState(0);
-    const mouseListener = (event: MouseEvent) => {
-        let x = (window.innerWidth - event.pageX * 10) / 90;
-        setLeftPosition(x);
-    }
 
     useEffect(() => {
+        const mouseListener = (event: MouseEvent) => {
+            const x = (window.innerWidth - event.pageX * 10) / 90;
+            setLeftPosition(x);
+        }
+
         document.addEventListener("mousemove", mouseListener);
         return(() => {
             document.removeEventListener("mousemove", mouseListener);
@@ -28,23 +27,15 @@ const LoginPage = () => {
 
     const { t } = useTranslation()
     const getDiscordApiLink = useGetDiscordApiLinkQuery();
-    const dispatch = useDispatch();
     const getUserObject = useGetUserObjectQuery();
-    useEffect(() => {
-        if(getUserObject.isSuccess) {
-            dispatch(setUserObject({
-                userName: getUserObject.data.userName,
-                email: getUserObject.data.email,
-                avatarUrl: getUserObject.data.avatarUrl,
-                id: getUserObject.data.id
-            }));
-            router.navigate("/");
-        }
-    }, [getUserObject.isSuccess])
 
     const authByDiscord = () => {
         window.location.href = getDiscordApiLink.data?.discordApiLink
         || window.location.href
+    }
+
+    if(getUserObject.isSuccess) {
+        return <Navigate to="/" replace />;
     }
 
     return(
@@ -61,7 +52,7 @@ const LoginPage = () => {
                     <CommonButton onClick={authByDiscord} endIcon={<SvgIcon><SvgSelector iconName='discord-icon' /></SvgIcon>}>
                         {t('Login')}
                     </CommonButton>
-                    : 
+                    :
                     <CircularProgress color="primary" />
                 }
             </div>

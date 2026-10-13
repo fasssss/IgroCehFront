@@ -1,7 +1,6 @@
 import SearchIcon from '@mui/icons-material/Search';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { CircularProgress } from '@mui/material';
-import { useOnMount } from 'root/shared/hooks/useOnMount';
 import './styles.scss';
 
 const SearchBar = ({placeholder, onTyping, optionsSelect, isFetchingResult = false, handleOptionClick}: SearchBarProps) => {
@@ -10,11 +9,11 @@ const SearchBar = ({placeholder, onTyping, optionsSelect, isFetchingResult = fal
     const searchBarHandler = (e: ChangeEvent<HTMLInputElement>) => {
         setSearchBarText(e.target.value);
         if(e.target.value){
-            onTyping({ searchString: e.target.value })
+            onTyping?.({ searchString: e.target.value })
         }
     }
 
-    useOnMount(() => {
+    useEffect(() => {
         const handleClick = () => {
             setSearchFocused(document.getElementsByClassName('search-bar__input')[0] == document.activeElement);
         }
@@ -23,7 +22,7 @@ const SearchBar = ({placeholder, onTyping, optionsSelect, isFetchingResult = fal
         return () => {
             document.removeEventListener("click", handleClick)
         }
-    });
+    }, []);
 
     return(
         <div className="search-bar">
@@ -62,7 +61,7 @@ const SearchBar = ({placeholder, onTyping, optionsSelect, isFetchingResult = fal
 
 export type SearchBarProps = {
     placeholder?: string,
-    onTyping: any,
+    onTyping?: (filter: { searchString: string }) => void,
     isFetchingResult: boolean,
     handleOptionClick: (id: string) => void,
     optionsSelect: Array<{

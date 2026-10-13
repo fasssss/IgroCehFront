@@ -14,7 +14,7 @@ const CommonField = ({placeholder, value, onChange, className}: CommonFieldProps
 
 export type CommonFieldProps = {
     placeholder?: string,
-    onChange: (e: ChangeEvent<HTMLInputElement>) => any,
+    onChange: (e: ChangeEvent<HTMLInputElement>) => void,
     value: string,
     className?: string
 }

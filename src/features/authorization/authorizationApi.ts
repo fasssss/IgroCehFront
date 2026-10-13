@@ -5,23 +5,24 @@ const authorizationApi = igroCehApi.injectEndpoints({
         getDiscordApiLink: build.query<GetDiscordAuthLinkResponse, void>({
             query: () => "/api/getDiscordAuthLink",
         }),
-        authorizeByCode: build.query<GetUserObjectResponse, string>({
-            query: (authCode) => ({
-                url: `/api/authorizeByCode?authorizationCode=${authCode}`,
-                credentials: 'include'
+        authorizeByCode: build.mutation<UserObject, string>({
+            query: (authorizationCode) => ({
+                url: "/api/authorizeByCode",
+                params: { authorizationCode }
             }),
+            async onQueryStarted(_, { dispatch, queryFulfilled }) {
+                try {
+                    const { data: user } = await queryFulfilled;
+                    dispatch(authorizationApi.util.upsertQueryData('getUserObject', undefined, user));
+                } catch {
+                    // user stays unauthorized
+                }
+            },
         }),
-        getIsAuthorized: build.query<boolean, void>({
-            query: () => ({
-                url: `/api/getIsAuthorized`,
-                credentials: 'include'
-            }),
-        }),
-        getUserObject: build.query<GetUserObjectResponse, void>({
-            query: () => ({
-                url: `/api/getUserObject`,
-                credentials: 'include'
-            }),
+        // single source of current user data, see useCurrentUser
+        getUserObject: build.query<UserObject, void>({
+            query: () => "/api/getUserObject",
+            providesTags: ['User'],
         })
     })
 })
@@ -30,19 +31,17 @@ export type GetDiscordAuthLinkResponse = {
     discordApiLink: string
 }
 
-export type GetUserObjectResponse = {
+export type UserObject = {
     userName: string,
     email: string,
     avatarUrl: string | null,
-    id: string | null
+    id: string
 }
 
-export const { 
-    useLazyGetDiscordApiLinkQuery,
+export const {
     useGetDiscordApiLinkQuery,
-    useLazyAuthorizeByCodeQuery,
-    useAuthorizeByCodeQuery,
-    useGetIsAuthorizedQuery,
-    useLazyGetUserObjectQuery,
+    useAuthorizeByCodeMutation,
     useGetUserObjectQuery
 } = authorizationApi;
+
+export const useCurrentUser = () => useGetUserObjectQuery().data;

@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ContentCopy, Person, Search } from '@mui/icons-material';
@@ -9,22 +8,23 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { Chip, IconButton, TextField } from '@mui/material';
 import { CommonButton } from 'root/shared/components/CommonButton';
 import { CommonModal } from 'root/shared/components/CommonModal';
-import { EVENT_STATUS, EVENT_STATUS_COLOR } from 'root/shared/constants';
-import { RootState } from 'root/shared/store';
+import { EVENT_STATUS_COLOR, EVENT_STATUS_NAME, EventStatus } from 'root/shared/constants';
+import { useCurrentUser } from 'root/features/authorization/authorizationApi';
+import { EventShortObject } from '../../eventsApi';
 import './styles.scss';
 
-const EventTile = ({ id, name, creatorUserName, statusId, startDate, endDate, participantsIds }: EventTilePropType) => {
+const EventTile = ({ id, name, creatorUserName, statusId, startDate, endDate, participantsIds }: EventShortObject) => {
     const { t } = useTranslation();
     const { guildId } = useParams();
     const [eventToShare, setEventToShare] = useState({ eventLink: "" });
-    const userInfo = useSelector((state: RootState) => state.authorizationReducer);
+    const currentUser = useCurrentUser();
     const navigate = useNavigate();
 
     return(
         <div className='event-tile'>
             <div className='event-tile__left-side'>
                 <div className='event-tile__title'>
-                    {name} {statusId != null && <Chip sx={{fontSize: "medium"}} className='event-tile__chip' label={ t(EVENT_STATUS[statusId]) } color={EVENT_STATUS_COLOR[EVENT_STATUS[statusId]]} />}
+                    {name} {statusId != null && <Chip sx={{fontSize: "medium"}} className='event-tile__chip' label={ t(EVENT_STATUS_NAME[statusId]) } color={EVENT_STATUS_COLOR[statusId]} />}
                 </div>
                 <div className='event-tile__creator-name'>{ creatorUserName }</div>
             </div>
@@ -37,8 +37,8 @@ const EventTile = ({ id, name, creatorUserName, statusId, startDate, endDate, pa
                 </div>
                 <div className='event-tile__players-count'><Person /> { participantsIds?.length }</div>
                 {
-                    EVENT_STATUS[statusId] !== 'Finished' && (
-                        participantsIds?.some(id => id === userInfo.id) ?
+                    statusId !== EventStatus.Finished && (
+                        participantsIds?.some(participantId => participantId === currentUser?.id) ?
                         <div className='event-tile__buttons'>
                             <CommonButton color='success' 
                             onClick={() => setEventToShare({ eventLink: `${window.location.href}/event/${id}`} )} 
@@ -89,15 +89,5 @@ const EventTile = ({ id, name, creatorUserName, statusId, startDate, endDate, pa
         </div>
     );
 };
-
-type EventTilePropType = {
-    id: string,
-    name: string,
-    creatorUserName: string,
-    statusId: number
-    startDate: Date,
-    endDate: Date,
-    participantsIds?: Array<string>
-}
 
 export { EventTile }

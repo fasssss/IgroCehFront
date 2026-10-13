@@ -1,12 +1,13 @@
 //import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
+import { skipToken } from "@reduxjs/toolkit/query";
 import { useGetScoresByGuildQuery, useGetGuildByIdQuery } from "../../guildsApi";
 import './styles.scss';
 
 const LeaderBoardPage = () => {
     const { guildId } = useParams();
-    const leaderBoardData = useGetScoresByGuildQuery({ guildId: guildId || '' });
-    const guild = useGetGuildByIdQuery({ guildId: guildId });
+    const leaderBoardData = useGetScoresByGuildQuery(guildId ? { guildId } : skipToken);
+    const guild = useGetGuildByIdQuery(guildId ? { guildId } : skipToken);
 
     return(
         <div className="leader-board">
@@ -19,7 +20,7 @@ const LeaderBoardPage = () => {
             </div>
             <div className="leader-board__body">
                 {leaderBoardData.data?.scores &&
-                [...leaderBoardData.data?.scores]
+                [...leaderBoardData.data.scores]
                 .sort((firstScore, secondScore) => secondScore.score - firstScore.score)
                 .map((scoreData, index) => {
                     return(
@@ -29,7 +30,7 @@ const LeaderBoardPage = () => {
                                     <h2>#{index + 1}.</h2>
                                 </div>
                                 <div className="leader-board__score-item-user">
-                                    <img src={scoreData.avatarUrl} />
+                                    <img src={scoreData.avatarUrl ?? undefined} />
                                     <h3>{scoreData.userName}</h3>
                                 </div>
                             </div>

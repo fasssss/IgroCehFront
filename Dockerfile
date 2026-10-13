@@ -1,33 +1,23 @@
-# Use the latest LTS version of Node.js
-FROM node:18-alpine
+# Build stage: compiles the app into static files
+FROM node:22-alpine AS build
 
-USER root
-
-# Install git
-RUN apk add --no-cache git
-
-# Set the working directory inside the container
 WORKDIR /app
- 
-# Copy package.json and package-lock.json
-COPY package.json ./
- 
-# Install dependencies
-RUN npm install
- 
-# Copy the rest of your application files
+
+COPY package.json package-lock.json ./
+RUN npm ci
+
 COPY . .
 
-# Discard all possible changes that may occure after copying
-RUN git restore .
+# vite mode, defines which .env.<mode> file is used
+ARG BUILD_MODE=production
+RUN npm run build -- --mode ${BUILD_MODE}
 
-COPY ["./igroceh.xyz.pem", "/app/igroceh.xyz.pem"]
-COPY ["./igroceh.xyz-key.pem", "/app/igroceh.xyz-key.pem"]
+# Serve stage: static files over https, unknown paths fall back to index.html for client side routing
+FROM nginx:1.27-alpine
 
-# Expose the port your app runs on
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY ["./igroceh.xyz+5.pem", "/etc/nginx/certs/igroceh.pem"]
+COPY ["./igroceh.xyz+5-key.pem", "/etc/nginx/certs/igroceh-key.pem"]
+COPY --from=build /app/dist /usr/share/nginx/html
+
 EXPOSE 5173
-EXPOSE 4173
-EXPOSE 6436
- 
-# Define the command to run your app
-CMD ["npm", "run", "preview"]

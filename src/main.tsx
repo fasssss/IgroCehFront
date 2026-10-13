@@ -7,7 +7,6 @@ import { router } from './shared/router';
 import { Provider } from 'react-redux';
 import { store } from './shared/store';
 import './shared/localization';
-import './shared/helpers/webSocketHelper';
 import './index.css';
 
 createRoot(document.getElementById('root')!).render(

@@ -1,133 +1,63 @@
 import { igroCehApi } from "root/shared/igroCehApi";
-import { addRoom, leaveRoom, WebSocketMessage } from "root/shared/helpers/webSocketHelper";
+import { subscribeToRoom } from "root/shared/helpers/webSocketHelper";
+import { EventStatus } from "root/shared/constants";
+import { applyEventRoomMessage, eventRoom, EventRoomMessage, sortByChain } from "./eventRoom";
 
-const eventsApi = igroCehApi.enhanceEndpoints({
-}).injectEndpoints({
+const postTo = (url: string) => <TBody>(body: TBody) => ({ url, method: 'POST', body });
+
+// changes made by mutations come to the opened event through its websocket room,
+// refetch after mutation keeps the initiator consistent even if the socket is reconnecting
+const invalidateEvent = (_result: unknown, _error: unknown, { eventId }: { eventId: string }) =>
+    [{ type: 'Event' as const, id: eventId }];
+
+const eventsApi = igroCehApi.injectEndpoints({
     endpoints: (build) => ({
-        getGuildById: build.query<GuildObjectResponse, GetGuildByIdRequest>({
-            query: (request) => ({
-                url: `/api/getGuildById?guildId=${request.guildId}`,
-                credentials: 'include'
-            }),
-        }),
-        getEventById: build.query<EventObjectResponse, GetEventByIdRequest>({
-            query: (request) => ({
-                url: `/api/getEventById?eventId=${request.eventId}`,
-                credentials: 'include'
+        getEventById: build.query<EventObject, GetEventByIdRequest>({
+            query: ({ eventId }) => ({
+                url: '/api/getEventById',
+                params: { eventId }
             }),
             keepUnusedDataFor: 1,
-            async onCacheEntryAdded(arg, { updateCachedData, cacheDataLoaded, cacheEntryRemoved }) {
-                const listener = (event: MessageEvent) => {
-                    const data: WebSocketMessage<EventRecord> = JSON.parse(event.data)
-                    if(data.type === "addUserToEvent") {
-                        updateCachedData((draft) => {
-                            draft.eventRecords.push(data.payload);
-                        });
-                    }
-
-                    if(data.type === "removeUserFromEvent") {
-                        updateCachedData((draft) => {
-                            draft.eventRecords = draft.eventRecords
-                            .filter(item => item.id !== data.payload.id);
-                        });
-                    }
-
-                    if(data.type === "suggestGame") {
-                        updateCachedData((draft) => {
-                            const eventRecordIndex = draft.eventRecords.findIndex(item => item.id === data.payload.id);
-                            draft.eventRecords[eventRecordIndex].game = data.payload.game;
-                        });
-                    }
-                };
-
+            providesTags: (_result, _error, { eventId }) => [{ type: 'Event', id: eventId }],
+            transformResponse: (response: EventObject) => ({
+                ...response,
+                eventRecords: sortByChain(response.eventRecords)
+            }),
+            async onCacheEntryAdded({ eventId }, { updateCachedData, cacheDataLoaded, cacheEntryRemoved, dispatch }) {
                 try {
-                    //ensureConnection()
-                    await cacheDataLoaded
-                    await addRoom(`event${arg.eventId}` || "", listener)
-
-                    await cacheEntryRemoved
-                    await leaveRoom(`event${arg.eventId}` || "", listener);
-                } catch(e) {
-                    console.log(e);
+                    await cacheDataLoaded;
+                } catch {
+                    return; // cache entry was removed before the event was loaded
                 }
+
+                const unsubscribe = subscribeToRoom<EventRoomMessage>(eventRoom(eventId), {
+                    onMessage: (message) => updateCachedData((draft) => applyEventRoomMessage(draft, message)),
+                    onReconnect: () => dispatch(igroCehApi.util.invalidateTags([{ type: 'Event', id: eventId }])),
+                });
+
+                await cacheEntryRemoved;
+                unsubscribe();
             },
-            transformResponse: (response: EventObjectResponse) => {
-                for (let i = 0; i < response.eventRecords.length - 1; i++) {  // sorting users in order of "from who" -> "to"
-                    if(!response.eventRecords[i].toUser) {
-                        break;
-                    }
-
-                    const toUserIndex = response.eventRecords.findIndex(item => item.participant.id === response.eventRecords[i].toUser?.id);
-                    const temp: EventRecord = {...response.eventRecords[i + 1]};
-                    response.eventRecords[i + 1] = response.eventRecords[toUserIndex];
-                    response.eventRecords[toUserIndex] = temp;
-                }
-                
-                return response;
-            }
         }),
         postNewEvent: build.mutation<PostNewEventResponse, PostNewEventRequest>({
-            query: (request) => ({
-                url: `/api/postNewEvent`,
-                credentials: 'include',
-                method: 'POST',
-                body: {
-                    guildId: request.guildId,
-                    eventName: request.eventName
-                }
-            })
+            query: postTo('/api/postNewEvent'),
         }),
         joinEvent: build.mutation<JoinEventResponse, JoinEventRequest>({
-            query: (request) => ({
-                url: `/api/joinEvent`,
-                credentials: 'include',
-                method: 'POST',
-                body: {
-                    eventId: request.eventId
-                }
-            }),
-            async onQueryStarted({ eventId }, { dispatch, queryFulfilled }) {
-                try {
-                  const { data: newEventRecord } = await queryFulfilled
-                  dispatch(
-                    eventsApi.util.updateQueryData('getEventById', { eventId }, (draft) => {
-                      draft.eventRecords.push(newEventRecord.eventRecordObject)
-                    })
-                  )
-                } catch {}
-              },
+            query: postTo('/api/joinEvent'),
+            invalidatesTags: invalidateEvent,
         }),
         removeFromEvent: build.mutation<RemoveFromEventResponse, RemoveFromEventRequest>({
-            query: (request) => ({
-                url: `/api/removeFromEvent`,
-                credentials: 'include',
-                method: 'POST',
-                body: {
-                    userId: request.userId,
-                    eventId: request.eventId
-                }
-            }),
-            async onQueryStarted({ eventId }, { dispatch, queryFulfilled }) {
-                try {
-                  const { data: removedEventRecordData } = await queryFulfilled
-                  dispatch(
-                    eventsApi.util.updateQueryData('getEventById', { eventId }, (draft) => {
-                      draft.eventRecords = draft.eventRecords
-                      .filter(item => item.id !== removedEventRecordData.eventRecordObject.id);
-                    })
-                  )
-                } catch {}
-              },
+            query: postTo('/api/removeFromEvent'),
+            invalidatesTags: invalidateEvent,
         }),
         getEventsByGuildId: build.query<GetEventsByGuildIdResponse, GetEventsByGuildIdRequest>({
-            query: (request) => ({
-                url: `/api/getEventsByGuildId?guildId=${request.guildId}&startFrom=${request.skip}`,
-                credentials: 'include',
+            query: ({ guildId, skip }) => ({
+                url: '/api/getEventsByGuildId',
+                params: { guildId, startFrom: skip }
             }),
             keepUnusedDataFor: 1,
-            serializeQueryArgs: ({ endpointName }) => {
-                return endpointName
-            },
+            // pages of one guild are merged into a single cache entry
+            serializeQueryArgs: ({ queryArgs }) => queryArgs.guildId,
             merge: (currentCache, responseItems, { arg }) => {
                 if(arg.clearCache) {
                     currentCache.eventsList = responseItems.eventsList
@@ -140,172 +70,103 @@ const eventsApi = igroCehApi.enhanceEndpoints({
                 return currentArg !== previousArg
             }
         }),
-        moveEventToNextStage: build.mutation<void, MoveEventToNextStageRequest>({
-            query: (request) => ({
-                url: `/api/moveEventToNextStage`,
-                credentials: 'include',
-                method: 'POST',
-                body: {
-                    eventId: request.eventId,
-                    statusId: request.statusId
-                }
-            }),
+        moveEventToNextStage: build.mutation<MoveEventToNextStageResponse, MoveEventToNextStageRequest>({
+            query: postTo('/api/moveEventToNextStage'),
+            invalidatesTags: invalidateEvent,
         }),
         shuffleUsers: build.mutation<ShuffleUsersResponse, ShuffleUsersRequest>({
-            query: (request) => ({
-                url: `/api/shuffleUsers`,
-                credentials: 'include',
-                method: 'POST',
-                body: {
-                    eventId: request.eventId
-                }
-            }),
-            async onQueryStarted({ eventId }, { dispatch, queryFulfilled }) {
-                try {
-                  const { data: shuffledEventRecordData } = await queryFulfilled
-                  dispatch(
-                    eventsApi.util.updateQueryData('getEventById', { eventId }, (draft) => {
-                      draft.eventRecords = shuffledEventRecordData.eventRecordObjects
-                    })
-                  )
-                } catch {}
-              },
+            query: postTo('/api/shuffleUsers'),
+            invalidatesTags: invalidateEvent,
         }),
         findGameByName: build.query<FindGameByNameResponse, FindGameByNameRequest>({
-            query: (request) => ({
-                url: `/api/findGameByName?name=${request.name}`,
-                credentials: 'include',
-                method: 'GET'
+            query: ({ name }) => ({
+                url: '/api/findGameByName',
+                params: { name }
             }),
         }),
         createGame: build.mutation<CreateGameResponse, CreateGameRequest>({
-            query: (request) => ({
-                url: `/api/createGame`,
-                credentials: 'include',
-                method: 'POST',
-                body: request.data,
-            }),
+            query: ({ data }) => postTo('/api/createGame')(data),
         }),
-        suggestGame: build.mutation<SuggestGameResponse, SuggestGameRequest>({
-            query: (request) => ({
-                url: `/api/suggestGame`,
-                credentials: 'include',
-                method: 'POST',
-                body: {
-                    gameId: request.gameId,
-                    eventRecordId: request.eventRecordId,
-                    eventId: request.eventId
-                }
-            }),
-            async onQueryStarted({ eventId }, { dispatch, queryFulfilled }) {
-                try {
-                  const { data: suggestGameResponse } = await queryFulfilled
-                  dispatch(
-                    eventsApi.util.updateQueryData('getEventById', { eventId }, (draft) => {
-                        const eventRecordIndex = draft.eventRecords.findIndex(item => item.id === suggestGameResponse.eventRecordObject.id)
-                        draft.eventRecords[eventRecordIndex].game = suggestGameResponse.eventRecordObject.game;
-                    })
-                  )
-                } catch {}
-              },
+        suggestGame: build.mutation<EventRecord, SuggestGameRequest>({
+            query: postTo('/api/suggestGame'),
+            invalidatesTags: invalidateEvent,
         }),
         submitPassing: build.mutation<SubmitPassingResponse, SubmitPassingRequest>({
-            query: (request) => ({
-                url: `/api/submitPassing`,
-                credentials: 'include',
-                method: 'POST',
-                body: {
-                    eventRecordId: request.eventRecordId
-                }
-            }),
-            async onQueryStarted({ eventId }, { dispatch, queryFulfilled }) {
-                try {
-                  const { data: submitPassingResponse } = await queryFulfilled
-                  dispatch(
-                    eventsApi.util.updateQueryData('getEventById', { eventId }, (draft) => {
-                        const eventRecordIndex = draft.eventRecords.findIndex(item => item.id === submitPassingResponse.eventRecordObject.id)
-                        draft.eventRecords[eventRecordIndex].reward = submitPassingResponse.eventRecordObject.reward;
-                    })
-                  )
-                } catch {}
-            },
+            query: postTo('/api/submitPassing'),
+            invalidatesTags: invalidateEvent,
         }),
-
-        summarizeEvent: build.mutation<SummarizeEventResponse, SummarizeEventRequest>({
-            query: (request) => ({
-                url: `/api/summarizeEvent`,
-                credentials: 'include',
-                method: 'POST',
-                body: {
-                    eventId: request.eventId
-                }
-            }),
+        summarizeEvent: build.mutation<void, SummarizeEventRequest>({
+            query: postTo('/api/summarizeEvent'),
+            invalidatesTags: invalidateEvent,
         }),
     })
 })
 
-export type GetGuildByIdRequest = {
-    guildId: string | undefined
-}
-
-export type GuildObjectResponse = {
-    guildObject: {
-        id: string
-        name: string | null,
-        iconUrl: string | undefined,
-        ownerId: string
-    }
-}
-
-export type GetEventByIdRequest = {
-    eventId: string | undefined
-}
-
-export type EventObjectResponse = {
-    Id: string,
-    eventName: string,
-    eventCreatorId: string,
-    statusId: number,
-    eventRecords: EventRecord[]
-}
-
-type EventRecord = {
+export type UserShortObject = {
     id: string,
-    participant: {
-        id: string,
-        userName: string,
-        avatarUrl: string | undefined
-    },
-    toUser: {
-        id: string,
-        userName: string,
-        avatarUrl: string | undefined
-    } | undefined,
-    game: {
-        id: string,
-        name: string,
-        description: string | undefined,
-        imageUrl: string | undefined,
-        steamUrl: string | undefined
-    } | undefined,
+    userName: string,
+    avatarUrl: string | null
+}
+
+export type GameObject = {
+    id: string,
+    name: string,
+    description: string | null,
+    imageUrl: string | null,
+    steamUrl: string | null,
+    creatorId: string
+}
+
+export type EventRecord = {
+    id: string,
+    participant: UserShortObject,
+    toUser: UserShortObject | null,
+    game: GameObject | null,
     reward: number | null
 }
 
-type JoinEventResponse = {
+export type EventObject = {
+    id: string,
+    eventName: string,
+    eventCreatorId: string,
+    statusId: EventStatus,
+    eventRecords: EventRecord[]
+}
+
+export type EventShortObject = {
+    id: string,
+    name: string,
+    creatorUserName: string,
+    startDate: string,
+    endDate: string,
+    guildName: string,
+    statusId: EventStatus,
+    participantsIds: Array<string>
+}
+
+export type GetEventByIdRequest = {
+    eventId: string
+}
+
+export type JoinEventRequest = {
+    eventId: string
+}
+
+export type JoinEventResponse = {
     eventRecordObject: EventRecord
 }
 
-type RemoveFromEventRequest = {
+export type RemoveFromEventRequest = {
     userId: string,
     eventId: string
 }
 
-type RemoveFromEventResponse = {
+export type RemoveFromEventResponse = {
     eventRecordObject: EventRecord
 }
 
 export type PostNewEventRequest = {
-    guildId: string | undefined,
+    guildId: string,
     eventName: string
 }
 
@@ -314,39 +175,26 @@ export type PostNewEventResponse = {
 }
 
 export type GetEventsByGuildIdRequest = {
-    guildId: string | undefined,
+    guildId: string,
     skip: number,
     clearCache: boolean
 }
 
 export type GetEventsByGuildIdResponse = {
-    eventsList: Array<{
-        id: string,
-        name: string,
-        creatorUserName: string,
-        startDate: Date,
-        endDate: Date,
-        guildName: string,
-        statusId: number,
-        participantsIds: Array<string>
-    }>
-}
-
-export type JoinEventRequest = {
-    eventId: string,
+    eventsList: Array<EventShortObject>
 }
 
 export type MoveEventToNextStageRequest = {
     eventId: string,
-    statusId: number
+    statusId: EventStatus
 }
 
 export type MoveEventToNextStageResponse = {
-    moveToStage: number
+    moveToStage: EventStatus
 }
 
 export type ShuffleUsersRequest = {
-    eventId: string | undefined
+    eventId: string
 }
 
 export type ShuffleUsersResponse = {
@@ -358,14 +206,7 @@ export type FindGameByNameRequest = {
 }
 
 export type FindGameByNameResponse = {
-    gameObject: {
-        id: string,
-        name: string,
-        description: string | null,
-        imageUrl: string | null,
-        steamUrl: string | null,
-        creatorId: string
-    } | null
+    gameObject: GameObject | null
 }
 
 export type CreateGameRequest = {
@@ -382,10 +223,6 @@ export type SuggestGameRequest = {
     eventId: string
 }
 
-export type SuggestGameResponse = {
-    eventRecordObject: EventRecord
-}
-
 export type SubmitPassingRequest = {
     eventRecordId: string,
     eventId: string
@@ -399,23 +236,14 @@ export type SummarizeEventRequest = {
     eventId: string
 }
 
-export type SummarizeEventResponse = {
-
-}
-
-export const { 
-    useLazyGetGuildByIdQuery,
-    useGetGuildByIdQuery,
+export const {
     usePostNewEventMutation,
     useLazyGetEventsByGuildIdQuery,
-    useGetEventsByGuildIdQuery,
     useJoinEventMutation,
     useRemoveFromEventMutation,
-    useLazyGetEventByIdQuery,
     useGetEventByIdQuery,
     useMoveEventToNextStageMutation,
     useShuffleUsersMutation,
-    useFindGameByNameQuery,
     useLazyFindGameByNameQuery,
     useCreateGameMutation,
     useSuggestGameMutation,

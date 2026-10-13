@@ -1,62 +1,67 @@
-export type WebSocketState = {
-    webSocketInstance: WebSocket | null,
-    rooms: string[]
+import { igroCehWebSocketBaseUrl } from "root/shared/constants";
+
+export type WebSocketMessage<TType extends string = string, TPayload = unknown> = {
+    type: TType,
+    payload: TPayload
 }
 
-const waitForOpenConnection = (socket: WebSocket | null): Promise<void> => {
-    return new Promise((resolve, reject) => {
-        const maxNumberOfAttempts = 10
-        const intervalTime = 200 //ms
-
-        let currentAttempt = 0
-        const interval = setInterval(() => {
-            if (currentAttempt > maxNumberOfAttempts - 1) {
-                clearInterval(interval);
-                console.log(socket?.readyState);
-                reject(new Error('Maximum number of attempts exceeded'))
-            } else if (socket?.readyState === socket?.OPEN) {
-                clearInterval(interval)
-                console.log("opened " + socket?.readyState);
-                resolve()
-            }
-            currentAttempt++
-        }, intervalTime)
-    })
+export type RoomSubscription<TMessage extends WebSocketMessage> = {
+    onMessage: (message: TMessage) => void,
+    // connection was restored after a drop, messages sent meanwhile are lost
+    onReconnect?: () => void
 }
 
-export const addRoom = async (socketState: WebSocketState, roomId: string, listener: any) => {
+type Room = {
+    socket: WebSocket | null,
+    subscriptions: Set<RoomSubscription<WebSocketMessage>>,
+    reconnectTimeout?: ReturnType<typeof setTimeout>
+}
 
-    waitForOpenConnection(socketState.webSocketInstance);
+const RECONNECT_DELAY_MS = 2000;
 
-    if(socketState.webSocketInstance?.readyState === WebSocket.OPEN){
-        const newRoomsList = [...socketState.rooms];
-        if(newRoomsList.indexOf(roomId) === -1) {
-            socketState.webSocketInstance?.send(JSON.stringify({ type: "join", payload: roomId }));
+// every room has its own socket, so rooms connect, fail and reconnect independently of each other
+const rooms = new Map<string, Room>();
+
+const connect = (roomId: string, room: Room, isReconnect: boolean) => {
+    const socket = new WebSocket(`${igroCehWebSocketBaseUrl}/api/ws/${encodeURIComponent(roomId)}`);
+    room.socket = socket;
+
+    socket.addEventListener("open", () => {
+        if(isReconnect) {
+            room.subscriptions.forEach(subscription => subscription.onReconnect?.());
         }
-        
-        newRoomsList.push(roomId);
-        socketState.rooms = newRoomsList;
-        socketState.webSocketInstance?.addEventListener("message", listener);
-    }
+    });
+    socket.addEventListener("message", (event: MessageEvent<string>) => {
+        const message: WebSocketMessage = JSON.parse(event.data);
+        room.subscriptions.forEach(subscription => subscription.onMessage(message));
+    });
+    socket.addEventListener("close", () => {
+        if(rooms.get(roomId) !== room) return; // room was left on purpose
+        room.socket = null;
+        room.reconnectTimeout = setTimeout(() => connect(roomId, room, true), RECONNECT_DELAY_MS);
+    });
 };
 
-export const leaveRoom = async (socketState: WebSocketState, roomId: string, listener: any) => {
-    if(socketState && socketState.webSocketInstance?.readyState === WebSocket.OPEN) {
-        const newRooms = socketState.rooms.filter(room => room !== roomId);
-        socketState.rooms = newRooms;
-        if(newRooms.indexOf(roomId) === -1) {
-            socketState.webSocketInstance?.send(JSON.stringify({ type: "leave", payload: roomId }));
-        }
-        
-        socketState.webSocketInstance?.removeEventListener("message", listener);
-        if(newRooms.length === 0) {
-            socketState.webSocketInstance?.close();
-            socketState.rooms = [];
-        }
+// returns function that unsubscribes, socket of the room is closed when its last subscription is gone
+export const subscribeToRoom = <TMessage extends WebSocketMessage>(roomId: string, subscription: RoomSubscription<TMessage>) => {
+    let room = rooms.get(roomId);
+    if(!room) {
+        room = { socket: null, subscriptions: new Set() };
+        rooms.set(roomId, room);
+        connect(roomId, room, false);
     }
-};
 
-export type WebSocketMessage<T> = {
-    type: string,
-    payload: T
-}
+    // copy keeps subscriptions unique even when the same handlers are passed twice
+    const roomSubscription = { ...subscription } as RoomSubscription<WebSocketMessage>;
+    const subscribedRoom = room;
+    subscribedRoom.subscriptions.add(roomSubscription);
+
+    return () => {
+        subscribedRoom.subscriptions.delete(roomSubscription);
+        if(subscribedRoom.subscriptions.size > 0) return;
+
+        rooms.delete(roomId);
+        clearTimeout(subscribedRoom.reconnectTimeout);
+        subscribedRoom.socket?.close();
+    };
+};

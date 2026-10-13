@@ -1,4 +1,4 @@
-import icons from 'root/assets/icons.svg'
+import icons from 'root/assets/icons.svg?raw'
 
 const SvgSelector  = ({ iconName, height, width }: SvgSelectorProps) => { 
     const container = document.createElement('div');

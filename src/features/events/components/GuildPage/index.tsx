@@ -6,18 +6,17 @@ import { CircularProgress, Fab, TextField } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { CommonButton } from "root/shared/components/CommonButton";
 import { CommonModal } from "root/shared/components/CommonModal";
-import { useOnMount } from "root/shared/hooks/useOnMount";
-import { useGetGuildByIdQuery, 
-    usePostNewEventMutation, 
+import { useGetGuildByIdQuery } from "root/features/guilds/guildsApi";
+import { usePostNewEventMutation,
     useLazyGetEventsByGuildIdQuery } from "../../eventsApi";
 import { EventTile } from "../EventTile";
 import './styles.scss';
 
 const GuildPage = () => {
-    const { guildId } = useParams();
+    const { guildId = "" } = useParams();
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const getGuildById = useGetGuildByIdQuery({ guildId: guildId });
+    const getGuildById = useGetGuildByIdQuery({ guildId });
     const [postNewEvent, postNewEventResult] = usePostNewEventMutation();
     const [getEventsList, eventsList] = useLazyGetEventsByGuildIdQuery();
     const [isCreateNewOpened, setIsCreateNewOpened] = useState(false);
@@ -25,7 +24,7 @@ const GuildPage = () => {
     const [isScrollUpButtonShown, setIsScrollUpButtonShown] = useState(false);
     const [isScrolledDown, setIsScrolledDown] = useState(false);
 
-    useOnMount(() => {
+    useEffect(() => {
         const handleScroll = () => {
             if (document.documentElement.scrollTop > 1000) {
                 setIsScrollUpButtonShown(true);
@@ -50,11 +49,11 @@ const GuildPage = () => {
         return () => {
             document.removeEventListener('scroll', handleScroll);
         };
-    });
+    }, []);
 
     useEffect(() => {
         getEventsList({ guildId: guildId, skip: 0, clearCache: true })
-    }, []);
+    }, [getEventsList, guildId]);
 
     useEffect(() => {
         if(eventsList.isSuccess || eventsList.isError){
@@ -68,11 +67,10 @@ const GuildPage = () => {
         }
     }, [isScrolledDown]);
 
-    useEffect(() => {
-        if(postNewEventResult.isSuccess || postNewEventResult.isError){
-            navigate(`/guild/${guildId}/event/${postNewEventResult.data?.eventId}`);
-        }
-    }, [postNewEventResult.isSuccess, postNewEventResult.isError]);
+    const createEvent = async () => {
+        const { eventId } = await postNewEvent({ guildId, eventName: eventToCreate.eventName }).unwrap();
+        navigate(`/guild/${guildId}/event/${eventId}`);
+    };
 
     return (
         <div className="guild-page">
@@ -80,7 +78,7 @@ const GuildPage = () => {
                 {
                     getGuildById.isSuccess &&
                     <div className="guild-page__guild-badge">
-                        <img src={getGuildById.data.guildObject.iconUrl} className="guild-page__guild-icon" />
+                        <img src={getGuildById.data.guildObject.iconUrl ?? undefined} className="guild-page__guild-icon" />
                         <div className="guild-page__guild-name">{getGuildById.data.guildObject.name}</div>
                     </div>
                 }
@@ -121,9 +119,7 @@ const GuildPage = () => {
                 isCreateNewOpened &&
                 <CommonModal name={ t("Create new event") }
                     onClose={() => setIsCreateNewOpened(false)} 
-                    onConfirm={() => {
-                        postNewEvent({ guildId: guildId, eventName: eventToCreate.eventName });
-                    }}
+                    onConfirm={createEvent}
                 >
                     {
                         !postNewEventResult.isLoading ?
