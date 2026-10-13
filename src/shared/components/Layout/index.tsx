@@ -112,6 +112,7 @@ function Layout() {
               <span>{userInfo?.userName}</span>
             </div>
             <div className='layout__user-menu' style={!isUserMenuOpened ? { display: 'none', opacity: 0 } : {}}>
+              <div className='layout__user-menu-bridge' />
               <div onClick={handleLogout} className='layout__user-menu-option'>
                 <Logout fontSize='small' />
                 { t('Log out') }

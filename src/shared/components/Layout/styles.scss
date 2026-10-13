@@ -62,26 +62,27 @@
   cursor: pointer;
 }
 
+$user-menu-gap: 6px;
+
 .layout__user-menu {
   background-color: default.$dark-grey;
   position: absolute;
   top: 100%;
   left: 0;
   right: 0;
-  margin-top: 4px;
+  margin-top: $user-menu-gap;
   padding: 2px;
   border-radius: 0 0 2px 2px;
   transition: opacity 0.1s , display 0.1s allow-discrete;
 }
 
 // invisible bridge over the gap above the menu, so moving the cursor from profile to menu doesn't close it
-.layout__user-menu::before {
-  content: '';
+.layout__user-menu-bridge {
   position: absolute;
-  top: -4px;
+  top: -$user-menu-gap;
   left: 0;
   right: 0;
-  height: 4px;
+  height: $user-menu-gap;
 }
 
 .layout__user-menu-option {
