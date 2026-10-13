@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
 import StyleIcon from '@mui/icons-material/Style';
 import { CustomCard } from "root/shared/components/CustomCard";
@@ -16,6 +17,7 @@ import './styles.scss';
 const CARD_REVEAL_DELAY_MS = 150;
 
 const AuctionShufflingStagePage = ({ event, currentUser }: EventStageProps) => {
+    const { t } = useTranslation();
     const [shuffleUsers] = useShuffleUsersMutation();
     const [moveEventToNextStage] = useMoveEventToNextStageMutation();
     const records = event.eventRecords;
@@ -48,7 +50,7 @@ const AuctionShufflingStagePage = ({ event, currentUser }: EventStageProps) => {
                 <CommonButton
                 endIcon={<StyleIcon />}
                 onClick={() => shuffleUsers({ eventId: event.id })}>
-                    Let's dance... I mean shuffle
+                    {t("Let's dance... I mean shuffle")}
                 </CommonButton>
             }
             {
@@ -58,7 +60,7 @@ const AuctionShufflingStagePage = ({ event, currentUser }: EventStageProps) => {
                 onClick={() => moveEventToNextStage({ eventId: event.id, statusId: EventStatus.GuessingGames })}
                 color="success"
                 disabled={!isShuffled || revealedCount < records.length}>
-                    Move next stage
+                    {t("Move next stage")}
                 </CommonButton>
             }
         </div>

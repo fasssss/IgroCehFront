@@ -1,8 +1,10 @@
 import './styles.scss';
 import { SvgSelector } from '../SvgSelector';
 import { Dispatch, SetStateAction, useEffect, useMemo, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const DragNDropImage = ({ value, stateMutator }: DragNDropProperty) => {
+    const { t } = useTranslation();
     const inputFile = useRef<HTMLInputElement | null>(null);
     const dragNDropElement = useRef<HTMLDivElement | null>(null);
     // object url keeps the blob in memory until it is revoked
@@ -74,7 +76,7 @@ const DragNDropImage = ({ value, stateMutator }: DragNDropProperty) => {
                 {
                     <SvgSelector iconName="image-icon" />
                 }
-                Drag or Ctrl-V to paste
+                {t('Drag or Ctrl-V to paste')}
             </div>
             :
             <img src={previewUrl}/>

@@ -24,6 +24,7 @@ function Layout() {
     };
   }, []);
 
+  // language names are written in their own language, so everyone can find theirs
   const getCountryBadge = (countryCode: string) => {
     if(countryCode === 'en')
     {
@@ -35,7 +36,7 @@ function Layout() {
     if(countryCode === 'ru')
       {
         return(
-          <div className='layout__language-flag'>Russian &nbsp;<SvgSelector iconName='russian-flag'/></div>
+          <div className='layout__language-flag'>Русский &nbsp;<SvgSelector iconName='russian-flag'/></div>
         );
       }
   }

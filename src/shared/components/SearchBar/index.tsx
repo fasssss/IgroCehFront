@@ -1,9 +1,11 @@
 import SearchIcon from '@mui/icons-material/Search';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { CircularProgress } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import './styles.scss';
 
 const SearchBar = ({placeholder, onTyping, optionsSelect, isFetchingResult = false, handleOptionClick}: SearchBarProps) => {
+    const { t } = useTranslation();
     const [searchBarText, setSearchBarText] = useState('');
     const [isSearchFocused, setSearchFocused] = useState(false);
     const searchBarHandler = (e: ChangeEvent<HTMLInputElement>) => {
@@ -46,7 +48,7 @@ const SearchBar = ({placeholder, onTyping, optionsSelect, isFetchingResult = fal
                                         value.iconUrl ?
                                         <img className='search-bar__option-image' src={value.iconUrl} />
                                         :
-                                        <div className='search-bar__option-image-placeholder'>No Image</div>
+                                        <div className='search-bar__option-image-placeholder'>{t('No Image')}</div>
                                     }
                                     {value.label}
                                 </div>

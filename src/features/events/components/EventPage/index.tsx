@@ -90,15 +90,15 @@ const EventPage = ({ event, currentUser }: EventStageProps) => {
             {
                 isJoinProposalShown &&
                 <CommonModal
-                name="Hark, noble wayfarer 🧙‍♂️"
-                onConfirmText="Yes"
-                onCloseText="No"
+                name={`${t("Hark, noble wayfarer")} 🧙‍♂️`}
+                onConfirmText={t("Yes")}
+                onCloseText={t("No")}
                 onConfirm={() => {
                     setIsJoinProposalShown(false);
                     joinEvent({ eventId: event.id })
                 }}
                 onClose={() => { setIsJoinProposalShown(false) }}>
-                    Do you want to join this event?
+                    {t("Do you want to join this event?")}
                 </CommonModal>
             }
         </div>

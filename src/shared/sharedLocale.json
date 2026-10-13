@@ -1,10 +1,18 @@
 {
     "en": {
         "Confirm": "Confirm",
-        "Close": "Close"
+        "Close": "Close",
+        "Yes": "Yes",
+        "No": "No",
+        "No Image": "No Image",
+        "Drag or Ctrl-V to paste": "Drag or Ctrl-V to paste"
     },
     "ru": {
         "Confirm": "Продолжить",
-        "Close": "Закрыть"
+        "Close": "Закрыть",
+        "Yes": "Да",
+        "No": "Нет",
+        "No Image": "Нет изображения",
+        "Drag or Ctrl-V to paste": "Перетащите / Ctrl+V"
     }
 }

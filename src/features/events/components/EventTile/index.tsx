@@ -15,7 +15,7 @@ import { EventShortObject } from '../../eventsApi';
 import './styles.scss';
 
 const EventTile = ({ id, name, creatorUserName, statusId, startDate, endDate, participantsIds }: EventShortObject) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { guildId } = useParams();
     const [eventToShare, setEventToShare] = useState({ eventLink: "" });
     const currentUser = useCurrentUser();
@@ -32,9 +32,9 @@ const EventTile = ({ id, name, creatorUserName, statusId, startDate, endDate, pa
             <div className='event-tile__right-side'>
                 <div className='event-tile__date-time'>
                     <CalendarMonthIcon />
-                    {new Date(startDate).toLocaleString('default', { day: 'numeric', month: 'long' })}
+                    {new Date(startDate).toLocaleString(i18n.language, { day: 'numeric', month: 'long' })}
                     &nbsp;-&nbsp;
-                    {new Date(endDate).toLocaleString('default', { day: 'numeric', month: 'long' })}
+                    {new Date(endDate).toLocaleString(i18n.language, { day: 'numeric', month: 'long' })}
                 </div>
                 <div className='event-tile__players-count'><Person /> { participantsIds?.length }</div>
                 {

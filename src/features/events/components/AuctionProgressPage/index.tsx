@@ -3,10 +3,11 @@ import './styles.scss';
 import { EventStatus, igroCehApiBaseUrl } from "root/shared/constants";
 import { CommonButton } from "root/shared/components/CommonButton";
 import type { EventStageProps } from "../EventStageRouter";
-import { t } from "i18next";
+import { useTranslation } from "react-i18next";
 
 // progress of passing the guessed games, after summarizing shows results of the event
 const AuctionProgressPage = ({ event, currentUser }: EventStageProps) => {
+    const { t } = useTranslation();
     const [submitPassing] = useSubmitPassingMutation();
     const [summarizeEvent] = useSummarizeEventMutation();
     const isCreator = currentUser.id === event.eventCreatorId;
@@ -61,7 +62,7 @@ const AuctionProgressPage = ({ event, currentUser }: EventStageProps) => {
                                         submitPassing({ eventRecordId: record.id, eventId: event.id })
                                     }}>
                                     <div className="auction-progress__status-button">
-                                        Submit
+                                        {t("Submit")}
                                     </div>
                                 </CommonButton>
                                 }

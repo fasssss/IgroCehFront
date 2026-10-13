@@ -1,12 +1,12 @@
-//import { useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { skipToken } from "@reduxjs/toolkit/query";
 import { useGetScoresByGuildQuery, useGetGuildByIdQuery } from "../../guildsApi";
 import './styles.scss';
-import { t } from "i18next";
 
 const LeaderBoardPage = () => {
     const { guildId } = useParams();
+    const { t } = useTranslation();
     const leaderBoardData = useGetScoresByGuildQuery(guildId ? { guildId } : skipToken);
     const guild = useGetGuildByIdQuery(guildId ? { guildId } : skipToken);
 

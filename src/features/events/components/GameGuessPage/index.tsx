@@ -65,12 +65,12 @@ const GameGuessPage = ({ event, currentUser }: EventStageProps) => {
                 <CommonButton
                 disabled={isSearchInSteam}
                 onClick={() => setIsSearchInSteam(true)}>
-                    Search in Steam
+                    {t("Search in Steam")}
                 </CommonButton>
                 <CommonButton
                 disabled={!isSearchInSteam}
                 onClick={() => setIsSearchInSteam(false)}>
-                    Create custom
+                    {t("Create custom")}
                 </CommonButton>
             </div>
             {
@@ -85,7 +85,7 @@ const GameGuessPage = ({ event, currentUser }: EventStageProps) => {
                     <DragNDropImage value={imgBlob} stateMutator={setImgBlob} />
                     <br />
                     <CommonField
-                    placeholder="Enter game name..."
+                    placeholder={t("Enter game name...")}
                     value={gameName}
                     className="game-guess__name-field"
                     onChange={(e) => { setGameName(e.target.value) }} />
@@ -93,19 +93,19 @@ const GameGuessPage = ({ event, currentUser }: EventStageProps) => {
                         <CommonButton
                         onClick={handleSuggestClick}
                         color="success">
-                            Suggest game
+                            {t("Suggest game")}
                         </CommonButton>
                     </div>
                     {
                         existingGame &&
                         <CommonModal
-                        name={"Game with such name already exist"}
+                        name={t("Game with such name already exists")}
                         onClose={() => {
                             setExistingGame(null);
                             createAndSuggest();
                         }}
-                        onCloseText="Create new one"
-                        onConfirmText="Continue with existing"
+                        onCloseText={t("Create new one")}
+                        onConfirmText={t("Continue with existing")}
                         onConfirm={() => {
                             setExistingGame(null);
                             suggest(existingGame.id);
