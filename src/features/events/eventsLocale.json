@@ -1,6 +1,7 @@
 {
     "en": {
         "Create event": "Create event",
+        "See leaderboard": "See leaderboard",
         "Share": "Share",
         "Inspect": "Inspect",
         "Join": "Join",
@@ -18,6 +19,7 @@
     },
     "ru": {
         "Create event": "Создать событие",
+        "See leaderboard": "Посмотреть таблицу лидеров",
         "Share": "Поделиться",
         "Inspect": "Просмотреть",
         "Join": "Присоединиться",

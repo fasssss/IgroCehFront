@@ -1,8 +1,12 @@
 {
     "en": {
-        "Search guild...": "Search guild..."
+        "Search guild...": "Search guild...",
+        "Total score": "Total score",
+        "Total events participating": "Total events participating"
     },
     "ru": {
-        "Search guild...": "Поиск гильдии..."
+        "Search guild...": "Поиск гильдии...",
+        "Total score": "Всего очков",
+        "Total events participating": "Всего в событиях учавствовал"
     }
 }

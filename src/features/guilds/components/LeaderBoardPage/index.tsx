@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { skipToken } from "@reduxjs/toolkit/query";
 import { useGetScoresByGuildQuery, useGetGuildByIdQuery } from "../../guildsApi";
 import './styles.scss';
+import { t } from "i18next";
 
 const LeaderBoardPage = () => {
     const { guildId } = useParams();
@@ -36,10 +37,10 @@ const LeaderBoardPage = () => {
                             </div>
                             <div className="leader-board__score-item-right">
                                 <div className="leader-board__score-item-score">
-                                    <h3>Total score: {scoreData.score}</h3>
+                                    <h3>{t("Total score")}: {scoreData.score}</h3>
                                 </div>
                                 <div className="leader-board__score-item-events-played">
-                                    <h3>Total games played: {scoreData.eventsPlayed}</h3>
+                                    <h3>{t("Total events participating")}: {scoreData.eventsPlayed}</h3>
                                 </div>
                             </div>
                         </div>
