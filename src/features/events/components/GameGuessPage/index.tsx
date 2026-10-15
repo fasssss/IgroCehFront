@@ -21,7 +21,7 @@ const GameGuessPage = ({ event, currentUser }: EventStageProps) => {
     const [findGameByName] = useLazyFindGameByNameQuery();
     const [createGame] = useCreateGameMutation();
     const [suggestGame] = useSuggestGameMutation();
-    const [isSearchInSteam, setIsSearchInSteam] = useState(true);
+    const [isSearchInVideoGamesCritic, setIsSearchInVideoGamesCritic] = useState(true);
     const [gameName, setGameName] = useState("");
     const [existingGame, setExistingGame] = useState<GameObject | null>(null);
     const [imgBlob, setImgBlob] = useState<Blob>();
@@ -63,20 +63,20 @@ const GameGuessPage = ({ event, currentUser }: EventStageProps) => {
         <div className="game-guess__body">
             <div className="game-guess__body-buttons">
                 <CommonButton
-                disabled={isSearchInSteam}
-                onClick={() => setIsSearchInSteam(true)}>
-                    {t("Search in Steam")}
+                disabled={isSearchInVideoGamesCritic}
+                onClick={() => setIsSearchInVideoGamesCritic(true)}>
+                    {t("Search in VideoGamesCritic")}
                 </CommonButton>
                 <CommonButton
-                disabled={!isSearchInSteam}
-                onClick={() => setIsSearchInSteam(false)}>
+                disabled={!isSearchInVideoGamesCritic}
+                onClick={() => setIsSearchInVideoGamesCritic(false)}>
                     {t("Create custom")}
                 </CommonButton>
             </div>
             {
-                isSearchInSteam ?
+                isSearchInVideoGamesCritic ?
                 <SearchBar
-                placeholder= {t("Search in Steam")}
+                placeholder= {t("Search in VideoGamesCritic")}
                 isFetchingResult={true}
                 handleOptionClick={() => {}}
                 optionsSelect={undefined} />

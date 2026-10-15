@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { CommonButton } from 'root/shared/components/CommonButton';
 import { SvgSelector } from 'root/shared/components/SvgSelector';
+import { PoweredBy } from 'root/shared/components/PoweredBy';
 import { useGetDiscordApiLinkQuery, useGetUserObjectQuery } from '../../authorizationApi';
 import { useTranslation } from 'react-i18next';
 import './styles.scss';
@@ -56,6 +57,7 @@ const LoginPage = () => {
                     <CircularProgress color="primary" />
                 }
             </div>
+            <PoweredBy className="login-page__powered-by" />
         </div>
     );
 };
