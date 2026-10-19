@@ -4,11 +4,11 @@ import './styles.scss';
 
 const VIDEO_GAMES_CRITIC_URL = 'https://videogamescritic.com';
 
-const PoweredBy = ({ className }: PoweredByProps) => {
+const PoweredBy = ({ className, href = VIDEO_GAMES_CRITIC_URL }: PoweredByProps) => {
     const { t } = useTranslation();
 
     return(
-        <a href={VIDEO_GAMES_CRITIC_URL} target='_blank' rel='noopener' className={`powered-by ${className || ""}`}>
+        <a href={href} target='_blank' rel='noopener' className={`powered-by ${className || ""}`}>
             <span className='powered-by__text'>{ t('Powered by') }</span>
             <img src={videoGamesCriticLogo} alt='VideoGamesCritic' className='powered-by__logo' />
         </a>
@@ -16,7 +16,9 @@ const PoweredBy = ({ className }: PoweredByProps) => {
 }
 
 type PoweredByProps = {
-    className?: string
+    className?: string,
+    // VideoGamesCritic asks to link the game page wherever its numbers are shown
+    href?: string
 }
 
 export { PoweredBy }

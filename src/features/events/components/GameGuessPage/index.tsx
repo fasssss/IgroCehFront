@@ -5,22 +5,37 @@ import { CommonButton } from "root/shared/components/CommonButton";
 import { CommonField } from "root/shared/components/CommonField";
 import { DragNDropImage } from "root/shared/components/DragNDropImage";
 import { CommonModal } from "root/shared/components/CommonModal";
-import { igroCehApiBaseUrl } from "root/shared/constants";
+import { Pills } from "root/shared/components/Pills";
+import { PoweredBy } from "root/shared/components/PoweredBy";
+import { resolveImageUrl } from "root/shared/helpers/imageUrl";
 import {
+    CatalogGameObject,
     GameObject,
+    useCreateGameFromVgcMutation,
     useCreateGameMutation,
     useLazyFindGameByNameQuery,
+    useLazySearchGamesQuery,
     useSuggestGameMutation
 } from "../../eventsApi";
+import { toPlatformPills } from "../../platformPills";
 import type { EventStageProps } from "../EventStageRouter";
 import './styles.scss';
+
+const MIN_CATALOG_SEARCH_LENGTH = 2; // VideoGamesCritic doesn't search by a single character
+
+const getScoreLevel = (score: number | null) =>
+    score === null ? 'none' : score >= 75 ? 'high' : score >= 50 ? 'medium' : 'low';
 
 // after the game is suggested EventStageRouter switches to the progress page by itself
 const GameGuessPage = ({ event, currentUser }: EventStageProps) => {
     const { t } = useTranslation();
     const [findGameByName] = useLazyFindGameByNameQuery();
     const [createGame] = useCreateGameMutation();
-    const [suggestGame] = useSuggestGameMutation();
+    const [suggestGame, suggestGameResult] = useSuggestGameMutation();
+    const [searchGames, searchGamesResult] = useLazySearchGamesQuery();
+    const [createGameFromVgc, createGameFromVgcResult] = useCreateGameFromVgcMutation();
+    const [selectedGame, setSelectedGame] = useState<CatalogGameObject | null>(null);
+    const [isSelectFailed, setIsSelectFailed] = useState(false);
     const [isSearchInVideoGamesCritic, setIsSearchInVideoGamesCritic] = useState(true);
     const [gameName, setGameName] = useState("");
     const [existingGame, setExistingGame] = useState<GameObject | null>(null);
@@ -41,6 +56,19 @@ const GameGuessPage = ({ event, currentUser }: EventStageProps) => {
         formData.append("gameName", gameName);
         const { gameId } = await createGame({ data: formData }).unwrap();
         await suggest(gameId);
+    };
+
+    const foundGames = searchGamesResult.data?.games;
+    const isSelecting = createGameFromVgcResult.isLoading || suggestGameResult.isLoading;
+
+    const selectCatalogGame = async (game: CatalogGameObject) => {
+        setIsSelectFailed(false);
+        try {
+            const { gameId } = await createGameFromVgc({ vgcId: game.vgcId }).unwrap();
+            await suggest(gameId);
+        } catch {
+            setIsSelectFailed(true);
+        }
     };
 
     const handleSuggestClick = async () => {
@@ -75,11 +103,57 @@ const GameGuessPage = ({ event, currentUser }: EventStageProps) => {
             </div>
             {
                 isSearchInVideoGamesCritic ?
-                <SearchBar
-                placeholder= {t("Search in VideoGamesCritic")}
-                isFetchingResult={true}
-                handleOptionClick={() => {}}
-                optionsSelect={undefined} />
+                <div className="game-guess__catalog">
+                    <SearchBar
+                    placeholder= {t("Search in VideoGamesCritic")}
+                    minSearchLength={MIN_CATALOG_SEARCH_LENGTH}
+                    imageShape="portrait"
+                    onTyping={({ searchString }) => searchGames({ query: searchString }, true)}
+                    isFetchingResult={searchGamesResult.isFetching}
+                    errorText={searchGamesResult.isError ? t("Search is unavailable, try later or create a custom game") : undefined}
+                    optionsSelect={foundGames?.map(game => ({
+                        id: String(game.vgcId),
+                        label: game.releaseDate ? `${game.name} (${game.releaseDate.slice(0, 4)})` : game.name,
+                        iconUrl: game.coverUrl,
+                        tags: toPlatformPills(game.platforms)
+                    }))}
+                    handleOptionClick={id => setSelectedGame(foundGames?.find(game => String(game.vgcId) === id) ?? null)} />
+                    {
+                        selectedGame &&
+                        <div className="game-guess__selected-game">
+                            <img src={selectedGame.coverUrl ?? undefined} className="game-guess__selected-game-image" />
+                            <div className="game-guess__selected-game-info">
+                                <div className="game-guess__selected-game-name-container">
+                                    <div className="game-guess__selected-game-name">{selectedGame.name}</div>
+                                </div>
+                                <Pills items={toPlatformPills(selectedGame.platforms)} />
+                                <div className="game-guess__selected-game-scores">
+                                    <div className="game-guess__selected-game-score-label">{t("Critics score")}:</div>
+                                    <div className={`game-guess__score game-guess__score--${getScoreLevel(selectedGame.criticsScore)}`}>
+                                        {selectedGame.criticsScore ?? "—"}
+                                    </div>
+                                    <div className="game-guess__selected-game-score-label">{t("Players score")}:</div>
+                                    <div className={`game-guess__score game-guess__score--${getScoreLevel(selectedGame.playersScore)}`}>
+                                        {selectedGame.playersScore ?? "—"}
+                                    </div>
+                                </div>
+                            </div>
+                            <PoweredBy href={selectedGame.pageUrl} className="game-guess__selected-game-powered-by" />
+                            <div className="game-guess__selected-game-select">
+                                <CommonButton
+                                color="success"
+                                disabled={isSelecting}
+                                onClick={() => selectCatalogGame(selectedGame)}>
+                                    {t("Select game")}
+                                </CommonButton>
+                            </div>
+                            {
+                                isSelectFailed &&
+                                <div className="game-guess__selected-game-error">{t("Failed to select the game, try again")}</div>
+                            }
+                        </div>
+                    }
+                </div>
                 :
                 <div className="game-guess__custom-game">
                     <DragNDropImage value={imgBlob} stateMutator={setImgBlob} />
@@ -114,7 +188,7 @@ const GameGuessPage = ({ event, currentUser }: EventStageProps) => {
                                 <h3>👉{existingGame.name}👈</h3>
                                 {
                                     existingGame.imageUrl &&
-                                    <img src={igroCehApiBaseUrl + existingGame.imageUrl} />
+                                    <img src={resolveImageUrl(existingGame.imageUrl)} />
                                 }
                             </div>
                         </CommonModal>

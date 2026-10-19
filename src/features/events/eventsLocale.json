@@ -33,7 +33,12 @@
         "Game with such name already exists": "Game with such name already exists",
         "Create new one": "Create new one",
         "Continue with existing": "Continue with existing",
-        "Submit": "Submit"
+        "Submit": "Submit",
+        "Critics score": "Critics score",
+        "Players score": "Players score",
+        "Select game": "Select game",
+        "Search is unavailable, try later or create a custom game": "Search is unavailable, try later or create a custom game",
+        "Failed to select the game, try again": "Failed to select the game, try again"
     },
     "ru": {
         "Create event": "Создать событие",
@@ -69,6 +74,11 @@
         "Game with such name already exists": "Игра с таким названием уже существует",
         "Create new one": "Создать новую",
         "Continue with existing": "Выбрать существующую",
-        "Submit": "Засчитать"
+        "Submit": "Засчитать",
+        "Critics score": "Оценка критиков",
+        "Players score": "Оценка игроков",
+        "Select game": "Выбрать игру",
+        "Search is unavailable, try later or create a custom game": "Поиск недоступен, попробуйте позже или создайте свою игру",
+        "Failed to select the game, try again": "Не удалось выбрать игру, попробуйте ещё раз"
     }
 }

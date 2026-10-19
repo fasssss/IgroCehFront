@@ -1,0 +1,18 @@
+@use '../../default.module.scss' as default;
+
+.pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.pills__item {
+    padding: 2px 10px;
+    border-radius: 999px;
+    background-color: default.$light-grey;
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 20px;
+    white-space: nowrap;
+}

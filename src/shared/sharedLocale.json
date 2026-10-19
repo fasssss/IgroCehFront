@@ -7,7 +7,8 @@
         "No Image": "No Image",
         "Drag or Ctrl-V to paste": "Drag or Ctrl-V to paste",
         "Log out": "Log out",
-        "Powered by": "Powered by"
+        "Powered by": "Powered by",
+        "Nothing found": "Nothing found"
     },
     "ru": {
         "Confirm": "Продолжить",
@@ -17,6 +18,7 @@
         "No Image": "Нет изображения",
         "Drag or Ctrl-V to paste": "Перетащите / Ctrl+V",
         "Log out": "Выход",
-        "Powered by": "Powered by"
+        "Powered by": "Powered by",
+        "Nothing found": "Ничего не найдено"
     }
 }

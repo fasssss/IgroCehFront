@@ -91,18 +91,47 @@
     width: 80px;
     border-radius: default.$border-radius_big;
     margin-right: 8px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+// applies to both image and its placeholder
+.search-bar__option .search-bar__option-image--portrait {
+    width: 54px;
+    border-radius: default.$border-radius_small;
+}
+
+.search-bar__option-label {
+    min-width: 0;
+}
+
+.search-bar__option-tags {
+    margin-left: auto;
+    padding-left: 16px;
+    justify-content: flex-end;
+}
+
+.search-bar__option-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100px;
+    padding: default.$padding_small;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
 }
 
 .search-bar__option-image-placeholder {
     height: 80px;
     width: 80px;
+    flex-shrink: 0;
     background-color: default.$black;
-    color: white;
-    font-size: 18px;
+    color: rgba(255, 255, 255, 0.5);
     border-radius: default.$border-radius_big;
     margin-right: 8px;
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
 .search-bar__option-loader {

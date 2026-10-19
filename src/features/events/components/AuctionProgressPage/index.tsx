@@ -1,6 +1,7 @@
 import { useSubmitPassingMutation, useSummarizeEventMutation } from "../../eventsApi";
 import './styles.scss';
-import { EventStatus, igroCehApiBaseUrl } from "root/shared/constants";
+import { EventStatus } from "root/shared/constants";
+import { resolveImageUrl } from "root/shared/helpers/imageUrl";
 import { CommonButton } from "root/shared/components/CommonButton";
 import type { EventStageProps } from "../EventStageRouter";
 import { useTranslation } from "react-i18next";
@@ -42,7 +43,7 @@ const AuctionProgressPage = ({ event, currentUser }: EventStageProps) => {
                         <div className="players-progress__direction-arrow"/>
                         <div className="auction-progress__item-game">
                             {record.game.name}
-                            <img src={record.game.imageUrl ? igroCehApiBaseUrl + record.game.imageUrl : undefined} />
+                            <img src={resolveImageUrl(record.game.imageUrl)} />
                         </div>
                         <div className="players-progress__direction-arrow"/>
                         <div className="auction-progress__item-to">

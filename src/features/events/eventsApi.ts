@@ -87,6 +87,18 @@ const eventsApi = igroCehApi.injectEndpoints({
         createGame: build.mutation<CreateGameResponse, CreateGameRequest>({
             query: ({ data }) => postTo('/api/createGame')(data),
         }),
+        // search in VideoGamesCritic catalog through our API, which keeps the catalog key and caches results
+        searchGames: build.query<SearchGamesResponse, SearchGamesRequest>({
+            query: ({ query }) => ({
+                url: '/api/searchGames',
+                params: { query }
+            }),
+            keepUnusedDataFor: 600,
+        }),
+        // saves a catalog game to our database (or finds already saved one), it is suggested like any other game
+        createGameFromVgc: build.mutation<CreateGameResponse, CreateGameFromVgcRequest>({
+            query: postTo('/api/createGameFromVgc'),
+        }),
         suggestGame: build.mutation<EventRecord, SuggestGameRequest>({
             query: postTo('/api/suggestGame'),
             invalidatesTags: invalidateEvent,
@@ -217,6 +229,30 @@ export type CreateGameResponse = {
     gameId: string
 }
 
+export type CatalogGameObject = {
+    vgcId: number,
+    name: string,
+    releaseDate: string | null,
+    coverUrl: string | null,
+    pageUrl: string,
+    steamUrl: string | null,
+    platforms: string[],
+    criticsScore: number | null,
+    playersScore: number | null
+}
+
+export type SearchGamesRequest = {
+    query: string
+}
+
+export type SearchGamesResponse = {
+    games: CatalogGameObject[]
+}
+
+export type CreateGameFromVgcRequest = {
+    vgcId: number
+}
+
 export type SuggestGameRequest = {
     gameId: string,
     eventRecordId: string,
@@ -246,6 +282,8 @@ export const {
     useShuffleUsersMutation,
     useLazyFindGameByNameQuery,
     useCreateGameMutation,
+    useLazySearchGamesQuery,
+    useCreateGameFromVgcMutation,
     useSuggestGameMutation,
     useSubmitPassingMutation,
     useSummarizeEventMutation,
