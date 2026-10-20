@@ -5,7 +5,8 @@ import {
     GuildsBrowsingPage,
     GuildPage,
     EventStageRouter,
-    LeaderBoardPage
+    LeaderBoardPage,
+    PlayerProfilePage
 } from "../features";
 import Layout from "./components/Layout";
 
@@ -33,6 +34,11 @@ const router = createBrowserRouter([
             {
                 path: "guild/:guildId/leader-board",
                 element: <LeaderBoardPage />
+            },
+            {
+                // ?guild= selects one of the guilds shared with the player
+                path: "user/:userId",
+                element: <PlayerProfilePage />
             },
             {
                 // stage is chosen by event status, "/*" keeps old stage links (ordering-stage etc.) working

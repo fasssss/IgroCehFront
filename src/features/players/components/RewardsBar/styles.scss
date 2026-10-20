@@ -1,0 +1,71 @@
+@use '../../../../shared/default.module.scss' as default;
+
+$segment-gap: 2px;
+
+.rewards-bar__track {
+    display: flex;
+    gap: $segment-gap;
+    height: 20px;
+}
+
+.rewards-bar__segment {
+    position: relative;
+    min-width: 4px;
+    outline: none;
+}
+
+// the bar grows from the left, only its far end is rounded
+.rewards-bar__segment:last-child {
+    border-radius: 0 4px 4px 0;
+}
+
+.rewards-bar__segment:hover,
+.rewards-bar__segment:focus-visible {
+    filter: brightness(1.15);
+}
+
+.rewards-bar__tooltip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 4px default.$padding_small;
+    border-radius: default.$border-radius_small;
+    background-color: default.$black;
+    color: white;
+    font-size: 14px;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.rewards-bar__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: default.$margin_small default.$margin_big;
+    margin-top: default.$margin_big;
+}
+
+.rewards-bar__legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.rewards-bar__swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+}
+
+.rewards-bar__legend-label {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.rewards-bar__legend-count {
+    font-weight: 700;
+}
+
+.rewards-bar__empty {
+    color: rgba(255, 255, 255, 0.7);
+}

@@ -1,0 +1,71 @@
+@use '../../../../shared/default.module.scss' as default;
+
+$muted-text: rgba(255, 255, 255, 0.7);
+
+.player-guilds__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: default.$margin_big;
+    padding: default.$padding_small;
+    border-radius: default.$border-radius_small;
+    cursor: pointer;
+}
+
+.player-guilds__row:hover {
+    background-color: default.$grey;
+}
+
+.player-guilds__name {
+    display: flex;
+    align-items: center;
+    gap: default.$margin_small;
+    font-weight: 600;
+}
+
+.player-guilds__icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+}
+
+.player-guilds__left {
+    padding: 0 default.$padding_small;
+    border-radius: 999px;
+    background-color: default.$light-grey;
+    color: $muted-text;
+    font-size: 13px;
+    font-weight: 400;
+}
+
+.player-guilds__score {
+    display: flex;
+    gap: default.$margin_big;
+    white-space: nowrap;
+}
+
+.player-guilds__place {
+    color: $muted-text;
+}
+
+// looks like text, lined up with the guild names
+.player-guilds__show-all {
+    margin-top: 4px;
+    padding: 4px default.$padding_small;
+    border: none;
+    background: none;
+    color: $muted-text;
+    font: inherit;
+    cursor: pointer;
+}
+
+.player-guilds__show-all:hover {
+    color: white;
+    text-decoration: underline;
+}
+
+.player-guilds__others {
+    margin-top: 4px;
+    padding: 4px default.$padding_small;
+    color: $muted-text;
+}

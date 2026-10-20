@@ -2,9 +2,10 @@ import { Navigate, Outlet, useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SvgIcon } from '@mui/material'
-import { Logout } from '@mui/icons-material';
+import { Logout, Person } from '@mui/icons-material';
 import { SvgSelector } from 'root/shared/components/SvgSelector';
 import { useGetUserObjectQuery, useLogoutMutation } from 'root/features/authorization/authorizationApi';
+import { playerProfilePath } from 'root/features/players/playerProfilePath';
 import { isUnauthorizedError } from 'root/shared/igroCehApi';
 import i18n from 'root/shared/localization';
 import './styles.scss';
@@ -48,6 +49,13 @@ function Layout() {
           <div className='layout__language-flag'>Русский &nbsp;<SvgSelector iconName='russian-flag'/></div>
         );
       }
+  }
+
+  const openProfile = () => {
+    setIsUserMenuOpened(false);
+    if(userInfo) {
+      navigate(playerProfilePath(userInfo.id));
+    }
   }
 
   const handleLogout = () => {
@@ -113,6 +121,10 @@ function Layout() {
             </div>
             <div className='layout__user-menu' style={!isUserMenuOpened ? { display: 'none', opacity: 0 } : {}}>
               <div className='layout__user-menu-bridge' />
+              <div onClick={openProfile} className='layout__user-menu-option'>
+                <Person fontSize='small' />
+                { t('Profile') }
+              </div>
               <div onClick={handleLogout} className='layout__user-menu-option'>
                 <Logout fontSize='small' />
                 { t('Log out') }

@@ -1,12 +1,14 @@
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { skipToken } from "@reduxjs/toolkit/query";
+import { playerProfilePath } from "root/features/players/playerProfilePath";
 import { useGetScoresByGuildQuery, useGetGuildByIdQuery } from "../../guildsApi";
 import './styles.scss';
 
 const LeaderBoardPage = () => {
     const { guildId } = useParams();
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const leaderBoardData = useGetScoresByGuildQuery(guildId ? { guildId } : skipToken);
     const guild = useGetGuildByIdQuery(guildId ? { guildId } : skipToken);
 
@@ -30,7 +32,9 @@ const LeaderBoardPage = () => {
                                 <div className="leader-board__score-item-position">
                                     <h2>#{index + 1}.</h2>
                                 </div>
-                                <div className="leader-board__score-item-user">
+                                <div className="leader-board__score-item-user"
+                                    onClick={() => navigate(playerProfilePath(scoreData.userId, guildId))}
+                                >
                                     <img src={scoreData.avatarUrl ?? undefined} />
                                     <h3>{scoreData.userName}</h3>
                                 </div>

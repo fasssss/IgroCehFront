@@ -75,6 +75,11 @@
     font-size: larger;
 }
 
+.auction-progress__item-to,
+.auction-progress__item-from {
+    cursor: pointer;
+}
+
 .auction-progress__item-to img,
 .auction-progress__item-from img{
     width: 128px;

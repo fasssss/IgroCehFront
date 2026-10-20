@@ -1,3 +1,4 @@
+import { useNavigate, useParams } from "react-router-dom";
 import { useSubmitPassingMutation, useSummarizeEventMutation } from "../../eventsApi";
 import './styles.scss';
 import { EventStatus } from "root/shared/constants";
@@ -5,10 +6,13 @@ import { resolveImageUrl } from "root/shared/helpers/imageUrl";
 import { CommonButton } from "root/shared/components/CommonButton";
 import type { EventStageProps } from "../EventStageRouter";
 import { useTranslation } from "react-i18next";
+import { playerProfilePath } from "root/features/players/playerProfilePath";
 
 // progress of passing the guessed games, after summarizing shows results of the event
 const AuctionProgressPage = ({ event, currentUser }: EventStageProps) => {
     const { t } = useTranslation();
+    const { guildId } = useParams();
+    const navigate = useNavigate();
     const [submitPassing] = useSubmitPassingMutation();
     const [summarizeEvent] = useSummarizeEventMutation();
     const isCreator = currentUser.id === event.eventCreatorId;
@@ -36,7 +40,9 @@ const AuctionProgressPage = ({ event, currentUser }: EventStageProps) => {
                 record.game &&
                 <div key={record.id} className="auction-progress__item-container">
                     <div className="auction-progress__info-part">
-                        <div className="auction-progress__item-from">
+                        <div className="auction-progress__item-from"
+                            onClick={() => navigate(playerProfilePath(record.participant.id, guildId))}
+                        >
                             {record.participant.userName}
                             <img src={record.participant.avatarUrl ?? undefined} />
                         </div>
@@ -46,7 +52,9 @@ const AuctionProgressPage = ({ event, currentUser }: EventStageProps) => {
                             <img src={resolveImageUrl(record.game.imageUrl)} />
                         </div>
                         <div className="players-progress__direction-arrow"/>
-                        <div className="auction-progress__item-to">
+                        <div className="auction-progress__item-to"
+                            onClick={() => record.toUser && navigate(playerProfilePath(record.toUser.id, guildId))}
+                        >
                             {record.toUser?.userName}
                             <img src={record.toUser?.avatarUrl ?? undefined} />
                         </div>
