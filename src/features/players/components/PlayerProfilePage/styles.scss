@@ -156,7 +156,16 @@ $header-gap: default.$margin_big;
 }
 
 .player-profile__history-title {
+    display: flex;
+    align-items: center;
+    gap: default.$margin_small;
     margin: default.$margin_large 0 default.$margin_big 0;
+}
+
+.player-profile__history-hint {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 22px;
+    cursor: help;
 }
 
 .player-profile__message {

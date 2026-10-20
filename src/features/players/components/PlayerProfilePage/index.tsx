@@ -1,7 +1,8 @@
 import { ReactNode } from "react";
 import { Navigate, useParams, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { CircularProgress, SvgIcon } from "@mui/material";
+import { CircularProgress, SvgIcon, Tooltip } from "@mui/material";
+import { HelpOutline } from "@mui/icons-material";
 import { SvgSelector } from "root/shared/components/SvgSelector";
 import { CommonButton } from "root/shared/components/CommonButton";
 import { Pills } from "root/shared/components/Pills";
@@ -174,7 +175,14 @@ const PlayerProfilePage = () => {
                 <section className="player-profile__panel player-profile__achievements">
                     {t('Achievements will appear here soon')}
                 </section>
-                <h2 className="player-profile__history-title">{t('History')}</h2>
+                <h2 className="player-profile__history-title">
+                    {t('History')}
+                    <Tooltip title={t('History contains only guilds you are a member of too')} arrow
+                        slotProps={{ tooltip: { sx: { fontSize: 14 } } }}
+                    >
+                        <HelpOutline className="player-profile__history-hint" tabIndex={0} />
+                    </Tooltip>
+                </h2>
                 <PlayerHistory key={`${userId}:${guildId ?? ''}`} userId={userId} guildId={guildId} />
             </div>
         </div>
