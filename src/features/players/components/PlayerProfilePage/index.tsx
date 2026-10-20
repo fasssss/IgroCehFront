@@ -177,7 +177,7 @@ const PlayerProfilePage = () => {
                 </section>
                 <h2 className="player-profile__history-title">
                     {t('History')}
-                    <Tooltip title={t('History contains only guilds you are a member of too')} arrow
+                    <Tooltip title={t('History contains only guilds you are a member of too')} arrow placement="right"
                         slotProps={{ tooltip: { sx: { fontSize: 14 } } }}
                     >
                         <HelpOutline className="player-profile__history-hint" tabIndex={0} />

@@ -14,6 +14,10 @@ const guildsApi = igroCehApi.injectEndpoints({
                 params: { guildId }
             }),
         }),
+        // guilds where the current user took part in events, the latest played first
+        getPlayedGuilds: build.query<GetPlayedGuildsResponse, void>({
+            query: () => '/api/getPlayedGuilds',
+        }),
         getGuildById: build.query<GetGuildByIdResponse, GetGuildByIdRequest>({
             query: ({ guildId }) => ({
                 url: '/api/getGuildById',
@@ -52,6 +56,18 @@ export type GetScoresByGuildResponse = {
     }> | undefined
 }
 
+export type PlayedGuildObject = {
+    id: string,
+    name: string,
+    iconUrl: string | null,
+    eventsPlayed: number,
+    eventsInProgress: number
+}
+
+export type GetPlayedGuildsResponse = {
+    guilds: PlayedGuildObject[]
+}
+
 export type GetGuildByIdRequest = {
     guildId: string
 }
@@ -63,5 +79,6 @@ export type GetGuildByIdResponse = {
 export const {
     useLazyGetSearchedGuildsQuery,
     useGetScoresByGuildQuery,
+    useGetPlayedGuildsQuery,
     useGetGuildByIdQuery
 } = guildsApi;

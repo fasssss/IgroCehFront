@@ -1,0 +1,76 @@
+@use '../../../../shared/default.module.scss' as default;
+
+$muted-text: rgba(255, 255, 255, 0.7);
+
+// the same width as the search bar above
+.guild-browser__played {
+    width: 50%;
+    min-width: 230px;
+    margin: default.$margin_large auto 0 auto;
+}
+
+.guild-browser__played-title {
+    margin: 0 0 default.$margin_big 0;
+    font-size: 22px;
+}
+
+.guild-browser__played-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: default.$margin_big;
+}
+
+.guild-browser__guild {
+    display: flex;
+    align-items: center;
+    gap: default.$margin_big;
+    padding: default.$padding_big;
+    border: none;
+    border-radius: default.$border-radius_big;
+    background-color: default.$grey;
+    color: white;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.guild-browser__guild:hover,
+.guild-browser__guild:focus-visible {
+    background-color: default.$light-grey;
+}
+
+.guild-browser__guild-icon {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: default.$border-radius_small;
+}
+
+// Discord shows the first letter for guilds without an icon
+.guild-browser__guild-icon--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: default.$discord-bluerple;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.guild-browser__guild-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.guild-browser__guild-name {
+    font-size: 18px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.guild-browser__guild-events {
+    color: $muted-text;
+    font-size: 14px;
+}

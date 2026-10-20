@@ -2,11 +2,24 @@
     "en": {
         "Search guild...": "Search guild...",
         "Total score": "Total score",
-        "Total events participating": "Total events participating"
+        "Total events participating": "Total events participating",
+        "Guilds you played in": "Guilds you played in",
+        "{{count}} events_one": "{{count}} event",
+        "{{count}} events_other": "{{count}} events",
+        "{{count}} in progress": "{{count}} in progress"
     },
     "ru": {
         "Search guild...": "Поиск гильдии...",
         "Total score": "Всего очков",
-        "Total events participating": "Всего в событиях участвовал"
+        "Total events participating": "Всего в событиях участвовал",
+        "Guilds you played in": "Гильдии, где вы играли",
+        "{{count}} events_one": "{{count}} событие",
+        "{{count}} events_few": "{{count}} события",
+        "{{count}} events_many": "{{count}} событий",
+        "{{count}} events_other": "{{count}} события",
+        "{{count}} in progress_one": "{{count}} ещё идёт",
+        "{{count}} in progress_few": "{{count}} ещё идут",
+        "{{count}} in progress_many": "{{count}} ещё идут",
+        "{{count}} in progress_other": "{{count}} ещё идут"
     }
 }
