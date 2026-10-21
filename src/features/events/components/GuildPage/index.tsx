@@ -97,6 +97,7 @@ const GuildPage = () => {
                         return(
                             <EventTile key={value.id} 
                             {...value}
+                            canDelete={getGuildById.data?.guildObject.isCurrentUserAdmin}
                             />
                         );
                     })

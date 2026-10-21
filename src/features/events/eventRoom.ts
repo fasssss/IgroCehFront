@@ -10,7 +10,8 @@ export type EventRoomMessage =
     | WebSocketMessage<'shuffleUsers', EventRecord[]>
     | WebSocketMessage<'suggestGame', Pick<EventRecord, 'id' | 'game'>>
     | WebSocketMessage<'submitPassing', Pick<EventRecord, 'id' | 'reward'>>
-    | WebSocketMessage<'updateEventStage', MoveEventToNextStageResponse>;
+    | WebSocketMessage<'updateEventStage', MoveEventToNextStageResponse>
+    | WebSocketMessage<'deleteEvent', { eventId: string }>;
 
 // orders records along the chain "who guesses" -> "for whom", so cards can be shown with arrows between them
 export const sortByChain = (records: EventRecord[]) => {
@@ -52,6 +53,9 @@ export const applyEventRoomMessage = (event: EventObject, message: EventRoomMess
             break;
         case 'updateEventStage':
             event.statusId = message.payload.moveToStage;
+            break;
+        case 'deleteEvent':
+            event.isDeleted = true;
             break;
     }
 };

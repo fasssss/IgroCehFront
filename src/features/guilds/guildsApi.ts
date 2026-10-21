@@ -31,7 +31,9 @@ export type GuildObject = {
     id: string
     name: string | null,
     iconUrl: string | null,
-    ownerId: string
+    ownerId: string,
+    // the current user is an admin of the guild in Discord
+    isCurrentUserAdmin: boolean
 }
 
 export type GetSearchedGuildsRequest = {

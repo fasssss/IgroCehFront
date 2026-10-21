@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img">
+  <title>Knight</title>
+  <defs>
+    <clipPath id="knight-badge-inner">
+      <circle cx="64" cy="64" r="56"/>
+    </clipPath>
+    <clipPath id="knight-badge-shadow">
+      <rect x="64" y="0" width="64" height="128"/>
+    </clipPath>
+    <!-- light shining from behind the head, fading towards the edge -->
+    <radialGradient id="knight-badge-glow" cx="64" cy="58" r="56" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff6c8" stop-opacity="1"/>
+      <stop offset="0.6" stop-color="#ffde59" stop-opacity="0.9"/>
+      <stop offset="0.85" stop-color="#f2c200" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#e1b800" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="knight-badge-rays" cx="64" cy="58" r="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0.5" stop-color="#fff3b0" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#ffd84d" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <circle cx="64" cy="64" r="62" fill="#e1b800"/>
+  <circle cx="64" cy="64" r="56" fill="#3d3d3d"/>
+  <g clip-path="url(#knight-badge-inner)">
+    <!-- radiance behind the helmet -->
+    <circle cx="64" cy="58" r="56" fill="url(#knight-badge-glow)"/>
+    <path fill="url(#knight-badge-rays)" d="M64 58 L57.9 -11.7 L70.1 -11.7 Z M64 58 L85.0 -8.8 L96.3 -4.1 Z M64 58 L109.0 4.4 L117.6 13.0 Z M64 58 L126.1 25.7 L130.8 37.0 Z M64 58 L133.7 51.9 L133.7 64.1 Z M64 58 L130.8 79.0 L126.1 90.3 Z M64 58 L117.6 103.0 L109.0 111.6 Z M64 58 L96.3 120.1 L85.0 124.8 Z M64 58 L70.1 127.7 L57.9 127.7 Z M64 58 L43.0 124.8 L31.7 120.1 Z M64 58 L19.0 111.6 L10.4 103.0 Z M64 58 L1.9 90.3 L-2.8 79.0 Z M64 58 L-5.7 64.1 L-5.7 51.9 Z M64 58 L-2.8 37.0 L1.9 25.7 Z M64 58 L10.4 13.0 L19.0 4.4 Z M64 58 L31.7 -4.1 L43.0 -8.8 Z"/>
+    <!-- neck flare under the helmet, cut by the edge of the badge -->
+    <path d="M22 128 L34 106 L64 114 L94 106 L106 128 Z" fill="#8d97a4"/>
+    <!-- faceted helm with a ridge in the middle, the right half is in shadow -->
+    <path d="M64 14 L88 24 L100 46 L102 76 L92 98 L64 114 L36 98 L26 76 L28 46 L40 24 Z" fill="#c3cad3"/>
+    <path d="M64 14 L88 24 L100 46 L102 76 L92 98 L64 114 L36 98 L26 76 L28 46 L40 24 Z" fill="#aab3be" clip-path="url(#knight-badge-shadow)"/>
+    <!-- plume on the top of the ridge -->
+    <path d="M63 19 L85 11 L75 19 L68 24 Z" fill="#be2908"/>
+    <!-- brow -->
+    <path d="M27 47 L64 55 L101 47 L101 52 L64 60 L27 52 Z" fill="#9aa4b1"/>
+    <!-- slots cut through the face plate -->
+    <g fill="#1a1a1a">
+      <path d="M40 60 L41.9 65 V83 L40 88 L38.1 83 V65 Z"/>
+      <path d="M48 62 L49.9 67 V88 L48 93 L46.1 88 V67 Z"/>
+      <path d="M56 63.5 L57.9 68.5 V92 L56 97 L54.1 92 V68.5 Z"/>
+      <path d="M64 65 L65.9 70 V95 L64 100 L62.1 95 V70 Z"/>
+      <path d="M72 63.5 L73.9 68.5 V92 L72 97 L70.1 92 V68.5 Z"/>
+      <path d="M80 62 L81.9 67 V88 L80 93 L78.1 88 V67 Z"/>
+      <path d="M88 60 L89.9 65 V83 L88 88 L86.1 83 V65 Z"/>
+    </g>
+  </g>
+</svg>

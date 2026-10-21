@@ -111,6 +111,22 @@ const eventsApi = igroCehApi.injectEndpoints({
             query: postTo('/api/summarizeEvent'),
             invalidatesTags: invalidateEvent,
         }),
+        // available to guild admins, the event disappears from the loaded list of its guild right away
+        deleteEvent: build.mutation<void, DeleteEventRequest>({
+            query: ({ eventId }) => postTo('/api/deleteEvent')({ eventId }),
+            async onQueryStarted({ eventId, guildId }, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                } catch {
+                    return;
+                }
+
+                // pages of a guild share one cache entry, so any arguments with its id point to it
+                dispatch(eventsApi.util.updateQueryData('getEventsByGuildId', { guildId, skip: 0, clearCache: false }, (draft) => {
+                    draft.eventsList = draft.eventsList.filter(item => item.id !== eventId);
+                }));
+            },
+        }),
     })
 })
 
@@ -142,7 +158,9 @@ export type EventObject = {
     eventName: string,
     eventCreatorId: string,
     statusId: EventStatus,
-    eventRecords: EventRecord[]
+    eventRecords: EventRecord[],
+    // set by the event room when an admin deletes the opened event
+    isDeleted?: boolean
 }
 
 export type EventShortObject = {
@@ -272,6 +290,11 @@ export type SummarizeEventRequest = {
     eventId: string
 }
 
+export type DeleteEventRequest = {
+    eventId: string,
+    guildId: string
+}
+
 export const {
     usePostNewEventMutation,
     useLazyGetEventsByGuildIdQuery,
@@ -287,4 +310,5 @@ export const {
     useSuggestGameMutation,
     useSubmitPassingMutation,
     useSummarizeEventMutation,
+    useDeleteEventMutation,
 } = eventsApi;

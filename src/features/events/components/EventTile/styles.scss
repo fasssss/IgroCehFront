@@ -77,6 +77,23 @@
     margin-right: 8px;
 }
 
+// greyed until hovered, deleting is not the main action of the tile
+.event-tile__delete.MuiIconButton-root {
+    align-self: center;
+    margin-left: 8px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.event-tile__delete.MuiIconButton-root:hover {
+    color: default.$red;
+}
+
+.event-tile__delete-warning {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
 .event-tile__players-count {
     display: flex;
     align-items: center;

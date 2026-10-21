@@ -17,6 +17,7 @@ const AuctionProgressPage = ({ event, currentUser }: EventStageProps) => {
     const [summarizeEvent] = useSummarizeEventMutation();
     const isCreator = currentUser.id === event.eventCreatorId;
     const isFinished = event.statusId === EventStatus.Finished;
+    const isActive = event.statusId === EventStatus.Active;
 
     return(
     <div className="auction-progress">
@@ -66,7 +67,8 @@ const AuctionProgressPage = ({ event, currentUser }: EventStageProps) => {
                             </div>
                             :
                             <div className="auction-progress__status-progress">
-                                {!isFinished && (currentUser.id === record.participant.id || isCreator) &&
+                                {/* only the one who guessed the game confirms that it is passed */}
+                                {isActive && currentUser.id === record.participant.id &&
                                     <CommonButton
                                     color="success"
                                     onClick={() => {

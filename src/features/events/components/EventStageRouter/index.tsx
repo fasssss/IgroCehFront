@@ -39,7 +39,7 @@ const EventStageRouter = () => {
     const currentUser = useCurrentUser();
     const getEventById = useGetEventByIdQuery(eventId ? { eventId } : skipToken);
 
-    if(getEventById.isError && !getEventById.data) {
+    if((getEventById.isError && !getEventById.data) || getEventById.data?.isDeleted) {
         return <Navigate to={`/guild/${guildId}`} replace />;
     }
 

@@ -1,21 +1,23 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ContentCopy, Person, Search } from '@mui/icons-material';
+import { ContentCopy, DeleteOutline, Person, Search } from '@mui/icons-material';
 import ShareIcon from '@mui/icons-material/Share';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import { Chip, IconButton, TextField } from '@mui/material';
+import { Chip, IconButton, TextField, Tooltip } from '@mui/material';
 import { CommonButton } from 'root/shared/components/CommonButton';
 import { CommonModal } from 'root/shared/components/CommonModal';
 import { EVENT_STATUS_COLOR, EVENT_STATUS_NAME, EventStatus } from 'root/shared/constants';
 import { useCurrentUser } from 'root/features/authorization/authorizationApi';
-import { EventShortObject } from '../../eventsApi';
+import { EventShortObject, useDeleteEventMutation } from '../../eventsApi';
 import './styles.scss';
 
-const EventTile = ({ id, name, creatorUserName, statusId, startDate, endDate, participantsIds }: EventShortObject) => {
+const EventTile = ({ id, name, creatorUserName, statusId, startDate, endDate, participantsIds, canDelete = false }: EventTileProps) => {
     const { t, i18n } = useTranslation();
+    const [isDeleteConfirmShown, setIsDeleteConfirmShown] = useState(false);
+    const [deleteEvent] = useDeleteEventMutation();
     const { guildId } = useParams();
     const [eventToShare, setEventToShare] = useState({ eventLink: "" });
     const currentUser = useCurrentUser();
@@ -74,7 +76,36 @@ const EventTile = ({ id, name, creatorUserName, statusId, startDate, endDate, pa
                         </div>
                     )
                 }
+                {
+                    canDelete &&
+                    <Tooltip title={t('Delete event')}>
+                        <IconButton className='event-tile__delete' aria-label={t('Delete event')} onClick={() => setIsDeleteConfirmShown(true)}>
+                            <DeleteOutline />
+                        </IconButton>
+                    </Tooltip>
+                }
             </div>
+            {
+                isDeleteConfirmShown &&
+                <CommonModal name={ t('Delete the event?') }
+                    onConfirmText={t('Yes')}
+                    onCloseText={t('No')}
+                    onConfirm={() => {
+                        setIsDeleteConfirmShown(false);
+                        deleteEvent({ eventId: id, guildId: guildId ?? '' });
+                    }}
+                    onClose={() => setIsDeleteConfirmShown(false)}
+                >
+                    <div className='event-tile__delete-warning'>
+                        <b>{ name }</b>
+                        {
+                            statusId === EventStatus.Finished ?
+                            t('Points players got in this event will be taken back. This can\'t be undone.') :
+                            t('This can\'t be undone.')
+                        }
+                    </div>
+                </CommonModal>
+            }
             {
                 eventToShare.eventLink &&
                 <CommonModal name={ t("Link to event") }
@@ -99,5 +130,10 @@ const EventTile = ({ id, name, creatorUserName, statusId, startDate, endDate, pa
         </div>
     );
 };
+
+type EventTileProps = EventShortObject & {
+    // shown to guild admins
+    canDelete?: boolean
+}
 
 export { EventTile }
