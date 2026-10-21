@@ -1,12 +1,15 @@
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useSubmitPassingMutation, useSummarizeEventMutation } from "../../eventsApi";
+import { useActivateEventMutation, useSubmitPassingMutation, useSummarizeEventMutation } from "../../eventsApi";
 import './styles.scss';
 import { EventStatus } from "root/shared/constants";
 import { resolveImageUrl } from "root/shared/helpers/imageUrl";
 import { CommonButton } from "root/shared/components/CommonButton";
+import { CommonModal } from "root/shared/components/CommonModal";
 import type { EventStageProps } from "../EventStageRouter";
 import { useTranslation } from "react-i18next";
 import { playerProfilePath } from "root/features/players/playerProfilePath";
+import { guessGamePath } from "../../guessGamePath";
 
 // progress of passing the guessed games, after summarizing shows results of the event
 const AuctionProgressPage = ({ event, currentUser }: EventStageProps) => {
@@ -15,9 +18,14 @@ const AuctionProgressPage = ({ event, currentUser }: EventStageProps) => {
     const navigate = useNavigate();
     const [submitPassing] = useSubmitPassingMutation();
     const [summarizeEvent] = useSummarizeEventMutation();
+    const [activateEvent] = useActivateEventMutation();
+    const [isActivateConfirmShown, setIsActivateConfirmShown] = useState(false);
     const isCreator = currentUser.id === event.eventCreatorId;
-    const isFinished = event.statusId === EventStatus.Finished;
     const isActive = event.statusId === EventStatus.Active;
+    const isGuessing = event.statusId === EventStatus.GuessingGames;
+    const guessedCount = event.eventRecords.filter(record => record.game).length;
+    // the creator activates the event once every participant has guessed, until then the games can be changed
+    const canActivate = guessedCount > 0 && guessedCount === event.eventRecords.length;
 
     return(
     <div className="auction-progress">
@@ -26,7 +34,24 @@ const AuctionProgressPage = ({ event, currentUser }: EventStageProps) => {
                 <h1>{event.eventName}</h1>
             </div>
             <div className="auction-progress__event-actions">
-                { isCreator && !isFinished &&
+                { isCreator && isGuessing &&
+                    <>
+                        { !canActivate &&
+                            <div className="auction-progress__guessed-count">
+                                {t("Games guessed: {{guessed}} of {{total}}", { guessed: guessedCount, total: event.eventRecords.length })}
+                            </div>
+                        }
+                        <CommonButton
+                        color="success"
+                        disabled={!canActivate}
+                        onClick={() => setIsActivateConfirmShown(true)}
+                        >
+                            {t("Activate event")}
+                        </CommonButton>
+                    </>
+                }
+                {/* the games are played only after the activation, so there is nothing to summarize before it */}
+                { isCreator && isActive &&
                     <CommonButton
                     color="warning"
                     onClick={() => summarizeEvent({ eventId: event.id })}
@@ -79,12 +104,35 @@ const AuctionProgressPage = ({ event, currentUser }: EventStageProps) => {
                                     </div>
                                 </CommonButton>
                                 }
+                                {isGuessing && currentUser.id === record.participant.id &&
+                                    <CommonButton
+                                    color="error"
+                                    onClick={() => navigate(guessGamePath(guildId, event.id))}>
+                                        <div className="auction-progress__status-button">
+                                            {t("Change")}
+                                        </div>
+                                    </CommonButton>
+                                }
                             </div>
                         }
                     </div>
                 </div>
             )
         })}
+        {
+            isActivateConfirmShown &&
+            <CommonModal
+            name={t("Activate the event?")}
+            onConfirmText={t("Yes")}
+            onCloseText={t("No")}
+            onConfirm={() => {
+                setIsActivateConfirmShown(false);
+                activateEvent({ eventId: event.id });
+            }}
+            onClose={() => setIsActivateConfirmShown(false)}>
+                {t("After the activation the guessed games can't be changed.")}
+            </CommonModal>
+        }
     </div>
     );
 }

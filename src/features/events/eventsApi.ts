@@ -107,6 +107,11 @@ const eventsApi = igroCehApi.injectEndpoints({
             query: postTo('/api/submitPassing'),
             invalidatesTags: invalidateEvent,
         }),
+        // available to the creator once every participant has guessed a game
+        activateEvent: build.mutation<void, ActivateEventRequest>({
+            query: postTo('/api/activateEvent'),
+            invalidatesTags: invalidateEvent,
+        }),
         summarizeEvent: build.mutation<void, SummarizeEventRequest>({
             query: postTo('/api/summarizeEvent'),
             invalidatesTags: invalidateEvent,
@@ -286,6 +291,10 @@ export type SubmitPassingResponse = {
     eventRecordObject: EventRecord,
 }
 
+export type ActivateEventRequest = {
+    eventId: string
+}
+
 export type SummarizeEventRequest = {
     eventId: string
 }
@@ -309,6 +318,7 @@ export const {
     useCreateGameFromVgcMutation,
     useSuggestGameMutation,
     useSubmitPassingMutation,
+    useActivateEventMutation,
     useSummarizeEventMutation,
     useDeleteEventMutation,
 } = eventsApi;

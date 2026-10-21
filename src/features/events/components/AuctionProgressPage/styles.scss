@@ -9,6 +9,11 @@
 .auction-progress__event-actions {
     display: flex;
     align-items: center;
+    gap: 12px;
+}
+
+.auction-progress__guessed-count {
+    font-size: large;
 }
 
 .auction-progress__item-container{

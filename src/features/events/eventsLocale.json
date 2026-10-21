@@ -42,7 +42,16 @@
         "Players score": "Players score",
         "Select game": "Select game",
         "Search is unavailable, try later or create a custom game": "Search is unavailable, try later or create a custom game",
-        "Failed to select the game, try again": "Failed to select the game, try again"
+        "Failed to select the game, try again": "Failed to select the game, try again",
+        "Activate event": "Activate event",
+        "Games guessed: {{guessed}} of {{total}}": "Games guessed: {{guessed}} of {{total}}",
+        "Change": "Change",
+        "Now guessed: {{game}}": "Now guessed: {{game}}",
+        "Back to the event": "Back to the event",
+        "Move on to the auction?": "Move on to the auction?",
+        "After moving on to the next stage new players won't be able to join the event.": "After moving on to the next stage new players won't be able to join the event.",
+        "Activate the event?": "Activate the event?",
+        "After the activation the guessed games can't be changed.": "After the activation the guessed games can't be changed."
     },
     "ru": {
         "Create event": "Создать событие",
@@ -87,6 +96,15 @@
         "Players score": "Оценка игроков",
         "Select game": "Выбрать игру",
         "Search is unavailable, try later or create a custom game": "Поиск недоступен, попробуйте позже или создайте свою игру",
-        "Failed to select the game, try again": "Не удалось выбрать игру, попробуйте ещё раз"
+        "Failed to select the game, try again": "Не удалось выбрать игру, попробуйте ещё раз",
+        "Activate event": "Активировать событие",
+        "Games guessed: {{guessed}} of {{total}}": "Игр выбрано: {{guessed}} из {{total}}",
+        "Change": "Изменить",
+        "Now guessed: {{game}}": "Сейчас выбрана: {{game}}",
+        "Back to the event": "Вернуться к событию",
+        "Move on to the auction?": "Перейти к аукциону?",
+        "After moving on to the next stage new players won't be able to join the event.": "После перехода на следующий этап новые игроки не смогут присоединиться к событию.",
+        "Activate the event?": "Активировать событие?",
+        "After the activation the guessed games can't be changed.": "После активации изменить выбранные игры будет нельзя."
     }
 }

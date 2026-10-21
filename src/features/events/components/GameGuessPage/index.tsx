@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { SearchBar } from "root/shared/components/SearchBar";
 import { CommonButton } from "root/shared/components/CommonButton";
@@ -29,6 +30,8 @@ const getScoreLevel = (score: number | null) =>
 // after the game is suggested EventStageRouter switches to the progress page by itself
 const GameGuessPage = ({ event, currentUser }: EventStageProps) => {
     const { t } = useTranslation();
+    const { guildId } = useParams();
+    const navigate = useNavigate();
     const [findGameByName] = useLazyFindGameByNameQuery();
     const [createGame] = useCreateGameMutation();
     const [suggestGame, suggestGameResult] = useSuggestGameMutation();
@@ -46,8 +49,12 @@ const GameGuessPage = ({ event, currentUser }: EventStageProps) => {
         return null;
     }
 
-    const suggest = (gameId: string) =>
-        suggestGame({ gameId, eventRecordId: ownRecord.id, eventId: event.id }).unwrap();
+    const eventPath = `/guild/${guildId}/event/${event.id}`;
+    // a changed game is picked on its own page, so the event page is opened back after it
+    const suggest = async (gameId: string) => {
+        await suggestGame({ gameId, eventRecordId: ownRecord.id, eventId: event.id }).unwrap();
+        navigate(eventPath, { replace: true });
+    };
 
     const createAndSuggest = async () => {
         const formData = new FormData();
@@ -87,6 +94,18 @@ const GameGuessPage = ({ event, currentUser }: EventStageProps) => {
                 <img src={ownRecord.toUser?.avatarUrl ?? undefined} className="game-guess__user-image" />
                 {ownRecord.toUser?.userName}
             </div>
+            {
+                // a guessed game here means the participant came back to change it before the event is activated
+                ownRecord.game &&
+                <div className="game-guess__change">
+                    <div className="game-guess__change-text">
+                        {t("Now guessed: {{game}}", { game: ownRecord.game.name })}
+                    </div>
+                    <CommonButton onClick={() => navigate(eventPath)}>
+                        {t("Back to the event")}
+                    </CommonButton>
+                </div>
+            }
         </div>
         <div className="game-guess__body">
             <div className="game-guess__body-buttons">

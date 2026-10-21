@@ -9,6 +9,7 @@ import { EventPage } from "../EventPage";
 import { AuctionShufflingStagePage } from "../AuctionShufflingStagePage";
 import { GameGuessPage } from "../GameGuessPage";
 import { AuctionProgressPage } from "../AuctionProgressPage";
+import { GUESS_GAME_SUBPATH } from "../../guessGamePath";
 import './styles.scss';
 
 export type EventStageProps = {
@@ -35,7 +36,7 @@ const getStagePage = (event: EventObject, currentUserId: string): ComponentType<
 // Event is loaded once here and kept up to date through its websocket room,
 // so the shown stage follows status changes for every participant at the same time
 const EventStageRouter = () => {
-    const { guildId, eventId } = useParams();
+    const { guildId, eventId, '*': subPath } = useParams();
     const currentUser = useCurrentUser();
     const getEventById = useGetEventByIdQuery(eventId ? { eventId } : skipToken);
 
@@ -49,6 +50,14 @@ const EventStageRouter = () => {
                 <CircularProgress color="primary" />
             </div>
         );
+    }
+
+    if(subPath === GUESS_GAME_SUBPATH) {
+        // the participant changes the guessed game until the creator activates the event, then everyone sees the progress
+        const ownRecord = getEventById.data.eventRecords.find(record => record.participant.id === currentUser.id);
+        return getEventById.data.statusId === EventStatus.GuessingGames && ownRecord
+            ? <GameGuessPage event={getEventById.data} currentUser={currentUser} />
+            : <Navigate to={`/guild/${guildId}/event/${eventId}`} replace />;
     }
 
     const StagePage = getStagePage(getEventById.data, currentUser.id);

@@ -29,6 +29,7 @@ const EventPage = ({ event, currentUser }: EventStageProps) => {
     const isParticipant = event.eventRecords.some(record => record.participant.id === currentUser.id);
     // proposal is shown only on opening, so a kicked participant doesn't get it
     const [isJoinProposalShown, setIsJoinProposalShown] = useState(!isParticipant);
+    const [isNextStageConfirmShown, setIsNextStageConfirmShown] = useState(false);
 
     const leaveEvent = async () => {
         await removeFromEvent({ userId: currentUser.id, eventId: event.id }).unwrap();
@@ -46,7 +47,7 @@ const EventPage = ({ event, currentUser }: EventStageProps) => {
                     {
                         isCreator &&
                         <CommonButton
-                        onClick={() => moveEventToNextStage({ eventId: event.id, statusId: EventStatus.PlayersShuffle })}
+                        onClick={() => setIsNextStageConfirmShown(true)}
                         color="success"
                         endIcon={<ArrowForwardIos />}>
                             {t("Travel to Auction!")}
@@ -99,6 +100,20 @@ const EventPage = ({ event, currentUser }: EventStageProps) => {
                 }}
                 onClose={() => { setIsJoinProposalShown(false) }}>
                     {t("Do you want to join this event?")}
+                </CommonModal>
+            }
+            {
+                isNextStageConfirmShown &&
+                <CommonModal
+                name={t("Move on to the auction?")}
+                onConfirmText={t("Yes")}
+                onCloseText={t("No")}
+                onConfirm={() => {
+                    setIsNextStageConfirmShown(false);
+                    moveEventToNextStage({ eventId: event.id, statusId: EventStatus.PlayersShuffle });
+                }}
+                onClose={() => setIsNextStageConfirmShown(false)}>
+                    {t("After moving on to the next stage new players won't be able to join the event.")}
                 </CommonModal>
             }
         </div>
