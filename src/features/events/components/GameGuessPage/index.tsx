@@ -9,6 +9,7 @@ import { CommonModal } from "root/shared/components/CommonModal";
 import { Pills } from "root/shared/components/Pills";
 import { PoweredBy } from "root/shared/components/PoweredBy";
 import { resolveImageUrl } from "root/shared/helpers/imageUrl";
+import { isConflictError } from "root/shared/igroCehApi";
 import {
     CatalogGameObject,
     GameObject,
@@ -38,7 +39,8 @@ const GameGuessPage = ({ event, currentUser }: EventStageProps) => {
     const [searchGames, searchGamesResult] = useLazySearchGamesQuery();
     const [createGameFromVgc, createGameFromVgcResult] = useCreateGameFromVgcMutation();
     const [selectedGame, setSelectedGame] = useState<CatalogGameObject | null>(null);
-    const [isSelectFailed, setIsSelectFailed] = useState(false);
+    const [selectError, setSelectError] = useState<string | null>(null);
+    const [customGameError, setCustomGameError] = useState<string | null>(null);
     const [isSearchInVideoGamesCritic, setIsSearchInVideoGamesCritic] = useState(true);
     const [gameName, setGameName] = useState("");
     const [existingGame, setExistingGame] = useState<GameObject | null>(null);
@@ -68,13 +70,27 @@ const GameGuessPage = ({ event, currentUser }: EventStageProps) => {
     const foundGames = searchGamesResult.data?.games;
     const isSelecting = createGameFromVgcResult.isLoading || suggestGameResult.isLoading;
 
+    // a player never gets the same game twice, the server refuses such a game with 409
+    const toErrorText = (error: unknown) => isConflictError(error)
+        ? t("This player has already got this game, pick another one")
+        : t("Failed to select the game, try again");
+
     const selectCatalogGame = async (game: CatalogGameObject) => {
-        setIsSelectFailed(false);
+        setSelectError(null);
         try {
             const { gameId } = await createGameFromVgc({ vgcId: game.vgcId }).unwrap();
             await suggest(gameId);
-        } catch {
-            setIsSelectFailed(true);
+        } catch (error) {
+            setSelectError(toErrorText(error));
+        }
+    };
+
+    const runCustomGameAction = async (action: () => Promise<void>) => {
+        setCustomGameError(null);
+        try {
+            await action();
+        } catch (error) {
+            setCustomGameError(toErrorText(error));
         }
     };
 
@@ -167,8 +183,8 @@ const GameGuessPage = ({ event, currentUser }: EventStageProps) => {
                                 </CommonButton>
                             </div>
                             {
-                                isSelectFailed &&
-                                <div className="game-guess__selected-game-error">{t("Failed to select the game, try again")}</div>
+                                selectError &&
+                                <div className="game-guess__selected-game-error">{selectError}</div>
                             }
                         </div>
                     }
@@ -184,24 +200,28 @@ const GameGuessPage = ({ event, currentUser }: EventStageProps) => {
                     onChange={(e) => { setGameName(e.target.value) }} />
                     <div className="game-guess__custom-game-submit">
                         <CommonButton
-                        onClick={handleSuggestClick}
+                        onClick={() => runCustomGameAction(handleSuggestClick)}
                         color="success">
                             {t("Suggest game")}
                         </CommonButton>
                     </div>
+                    {
+                        customGameError &&
+                        <div className="game-guess__custom-game-error">{customGameError}</div>
+                    }
                     {
                         existingGame &&
                         <CommonModal
                         name={t("Game with such name already exists")}
                         onClose={() => {
                             setExistingGame(null);
-                            createAndSuggest();
+                            runCustomGameAction(createAndSuggest);
                         }}
                         onCloseText={t("Create new one")}
                         onConfirmText={t("Continue with existing")}
                         onConfirm={() => {
                             setExistingGame(null);
-                            suggest(existingGame.id);
+                            runCustomGameAction(() => suggest(existingGame.id));
                         }}>
                             <div className="create-additional-modal">
                                 <h3>👉{existingGame.name}👈</h3>

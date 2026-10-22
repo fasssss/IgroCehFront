@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { skipToken } from "@reduxjs/toolkit/query";
 import { EventRecord, useActivateEventMutation, useSubmitPassingMutation, useSummarizeEventMutation } from "../../eventsApi";
 import './styles.scss';
 import { EventStatus } from "root/shared/constants";
@@ -9,6 +10,7 @@ import { CommonModal } from "root/shared/components/CommonModal";
 import type { EventStageProps } from "../EventStageRouter";
 import { useTranslation } from "react-i18next";
 import { playerProfilePath } from "root/features/players/playerProfilePath";
+import { useGetGuildByIdQuery } from "root/features/guilds/guildsApi";
 import { guessGamePath } from "../../guessGamePath";
 import { reviewPath } from "root/features/reviews/reviewPath";
 import { canSeeReview } from "root/features/reviews/reviewVisibility";
@@ -23,6 +25,7 @@ const AuctionProgressPage = ({ event, currentUser }: EventStageProps) => {
     const [activateEvent] = useActivateEventMutation();
     const [isActivateConfirmShown, setIsActivateConfirmShown] = useState(false);
     const isCreator = currentUser.id === event.eventCreatorId;
+    const isGuildAdmin = useGetGuildByIdQuery(guildId ? { guildId } : skipToken).data?.guildObject.isCurrentUserAdmin ?? false;
     const isActive = event.statusId === EventStatus.Active;
     const isGuessing = event.statusId === EventStatus.GuessingGames;
     const guessedCount = event.eventRecords.filter(record => record.game).length;
@@ -114,15 +117,15 @@ const AuctionProgressPage = ({ event, currentUser }: EventStageProps) => {
                             </div>
                             :
                             <div className="auction-progress__status-progress">
-                                {/* only the one who guessed the game confirms that it is passed */}
-                                {isActive && currentUser.id === record.participant.id &&
+                                {/* the one who guessed the game confirms that it is passed, an admin of the guild can do it for any game */}
+                                {isActive && (currentUser.id === record.participant.id || isGuildAdmin) &&
                                     <CommonButton
                                     color="success"
                                     onClick={() => {
                                         submitPassing({ eventRecordId: record.id, eventId: event.id })
                                     }}>
                                     <div className="auction-progress__status-button">
-                                        {t("Submit")}
+                                        {currentUser.id === record.participant.id ? t("Submit") : t("Submit as admin")}
                                     </div>
                                 </CommonButton>
                                 }

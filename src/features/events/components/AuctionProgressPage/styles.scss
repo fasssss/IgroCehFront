@@ -61,6 +61,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    // the longer "as admin" button doesn't touch the edges
+    padding: 0 default.$padding_big;
+    box-sizing: border-box;
+    text-align: center;
 }
 
 .players-progress__direction-arrow {

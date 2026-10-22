@@ -26,5 +26,8 @@ export const igroCehApi = createApi({
 export const isUnauthorizedError = (error: unknown) =>
   typeof error === 'object' && error !== null && 'status' in error && error.status === 401;
 
+export const isConflictError = (error: unknown) =>
+  typeof error === 'object' && error !== null && 'status' in error && error.status === 409;
+
 export const igroCehApiReducer = igroCehApi.reducer;
 export const igroCehApiMiddleware = igroCehApi.middleware;
