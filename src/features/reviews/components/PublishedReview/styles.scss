@@ -1,0 +1,67 @@
+@use '../../../../shared/default.module.scss' as default;
+@use '../../review';
+
+.published-review__verdict {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: default.$margin_small;
+    padding: default.$padding_small;
+    border-radius: default.$border-radius_small;
+    color: default.$black;
+    font-weight: 700;
+}
+
+.published-review__verdict--up {
+    background-color: default.$green;
+}
+
+.published-review__verdict--down {
+    background-color: review.$failed;
+}
+
+.published-review__section {
+    @include review.section;
+}
+
+.published-review__section-title {
+    margin: 0;
+    font-size: 22px;
+    overflow-wrap: anywhere;
+}
+
+.published-review__section-text,
+.published-review__reply-text {
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+    line-height: 1.5;
+}
+
+// the answer of the one who guessed the game hangs under the section it answers
+.published-review__reply {
+    display: flex;
+    flex-direction: column;
+    gap: default.$margin_small;
+    padding: 12px default.$padding_big;
+    border-left: 3px solid default.$discord-bluerple;
+    border-radius: 0 default.$border-radius_small default.$border-radius_small 0;
+    background-color: rgba(88, 101, 242, 0.1);
+}
+
+.published-review__reply-input {
+    @include review.textarea;
+    min-height: 100px;
+    border-left: 3px solid default.$discord-bluerple;
+}
+
+.published-review__actions {
+    @include review.actions;
+}
+
+.published-review__waiting {
+    @include review.note;
+}
+
+.published-review__error {
+    color: review.$failed;
+}

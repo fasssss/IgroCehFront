@@ -2,6 +2,11 @@
 
 $muted-text: rgba(255, 255, 255, 0.7);
 
+// the history may get only a half of the profile, its items are laid out by its own width
+.player-history {
+    container-type: inline-size;
+}
+
 // one row: the event, the received game and the guessed game
 .player-history__item {
     display: grid;
@@ -141,6 +146,27 @@ $muted-text: rgba(255, 255, 255, 0.7);
 .player-history__no-game,
 .player-history__empty {
     color: $muted-text;
+}
+
+// a narrow history puts the event above its two games
+@container (max-width: 760px) {
+    .player-history__item {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        row-gap: default.$margin_big;
+    }
+
+    .player-history__event {
+        grid-column: 1 / -1;
+        gap: default.$margin_small;
+    }
+}
+
+// on a phone the games go one under another as well
+@container (max-width: 480px) {
+    .player-history__item {
+        grid-template-columns: minmax(0, 1fr);
+        padding: default.$padding_big;
+    }
 }
 
 .player-history__loader {

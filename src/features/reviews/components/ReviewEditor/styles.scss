@@ -1,0 +1,105 @@
+@use '../../../../shared/default.module.scss' as default;
+@use '../../review';
+
+.review-editor__thumbs {
+    display: flex;
+    gap: default.$margin_big;
+}
+
+.review-editor__thumb {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 64px;
+    border: 2px solid default.$light-grey;
+    border-radius: default.$border-radius_small;
+    background-color: transparent;
+    color: review.$muted-text;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+.review-editor__thumb--up:hover,
+.review-editor__thumb--up.review-editor__thumb--active {
+    border-color: default.$green;
+    color: default.$green;
+}
+
+.review-editor__thumb--down:hover,
+.review-editor__thumb--down.review-editor__thumb--active {
+    border-color: review.$failed;
+    color: review.$failed;
+}
+
+.review-editor__thumb--up.review-editor__thumb--active {
+    background-color: default.$green;
+    color: default.$black;
+}
+
+.review-editor__thumb--down.review-editor__thumb--active {
+    background-color: review.$failed;
+    color: default.$black;
+}
+
+.review-editor__thumb:focus-visible {
+    outline: 2px solid default.$discord-bluerple;
+    outline-offset: 2px;
+}
+
+.review-editor__section {
+    @include review.section;
+}
+
+.review-editor__section-header {
+    display: flex;
+    align-items: center;
+    gap: default.$margin_small;
+}
+
+.review-editor__topic-input {
+    @include review.input;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.review-editor__remove-section {
+    color: review.$muted-text !important;
+}
+
+.review-editor__textarea {
+    @include review.textarea;
+}
+
+.review-editor__add-section {
+    align-self: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    border: 2px dashed default.$light-grey;
+    border-radius: 50%;
+    background-color: transparent;
+    color: white;
+    cursor: pointer;
+    transition: border-color 0.2s ease-in-out;
+}
+
+.review-editor__add-section:hover,
+.review-editor__add-section:focus-visible {
+    border-color: default.$discord-bluerple;
+    outline: none;
+}
+
+.review-editor__actions {
+    @include review.actions;
+}
+
+.review-editor__hint {
+    @include review.note;
+}
+
+.review-editor__error {
+    color: review.$failed;
+}

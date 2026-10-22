@@ -19,7 +19,7 @@ const baseQueryWithReauth: BaseQueryFn<
 export const igroCehApi = createApi({
   reducerPath: 'igroCehApi',
   baseQuery: baseQueryWithReauth,
-  tagTypes: ['User', 'Event'],
+  tagTypes: ['User', 'Event', 'Review', 'PlayerReviews'],
   endpoints: () => ({}),
 })
 

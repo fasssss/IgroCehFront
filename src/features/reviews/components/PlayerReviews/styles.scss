@@ -1,0 +1,116 @@
+@use '../../../../shared/default.module.scss' as default;
+
+$muted-text: rgba(255, 255, 255, 0.7);
+
+.player-reviews {
+    display: flex;
+    flex-direction: column;
+    gap: default.$margin_big;
+}
+
+.player-reviews__empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 156px;
+    padding: default.$padding_big;
+    border-radius: default.$border-radius_small;
+    background-color: default.$dark-grey;
+    color: $muted-text;
+}
+
+.player-reviews__item {
+    display: flex;
+    gap: default.$margin_big;
+    padding: default.$padding_big;
+    border-radius: default.$border-radius_small;
+    background-color: default.$dark-grey;
+    color: inherit;
+    text-decoration: none;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.player-reviews__item:hover,
+.player-reviews__item:focus-visible {
+    background-color: default.$grey;
+    outline: none;
+}
+
+.player-reviews__cover {
+    flex-shrink: 0;
+    width: 64px;
+    // global img rule in DragNDropImage styles caps every image at 300px
+    max-width: none;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    border-radius: default.$border-radius_small;
+    background-color: default.$grey;
+}
+
+.player-reviews__info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.player-reviews__title {
+    display: flex;
+    align-items: center;
+    gap: default.$margin_small;
+}
+
+.player-reviews__game {
+    font-size: 20px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.player-reviews__verdict {
+    display: inline-flex;
+    flex-shrink: 0;
+    padding: 2px;
+    border-radius: 4px;
+    color: default.$black;
+}
+
+.player-reviews__verdict--up {
+    background-color: default.$green;
+}
+
+.player-reviews__verdict--down {
+    background-color: #ef6a5a;
+}
+
+.player-reviews__visibility {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.player-reviews__details {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: $muted-text;
+    overflow-wrap: anywhere;
+}
+
+.player-reviews__guild-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+}
+
+.player-reviews__status {
+    align-self: start;
+    padding: 2px default.$padding_small;
+    border-radius: default.$border-radius_small;
+    background-color: default.$yellow;
+    color: default.$black;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.player-reviews__status--answered {
+    background-color: default.$discord-bluerple;
+    color: white;
+}

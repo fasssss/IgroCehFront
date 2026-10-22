@@ -1,0 +1,30 @@
+@use '../../../../shared/default.module.scss' as default;
+
+.review-person {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: white;
+    text-decoration: none;
+}
+
+.review-person:hover {
+    text-decoration: underline;
+}
+
+.review-person__avatar {
+    width: 24px;
+    height: 24px;
+    max-width: none;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.review-person__avatar--empty {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: default.$discord-bluerple;
+    font-size: 12px;
+    font-weight: bold;
+}

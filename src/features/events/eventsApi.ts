@@ -2,6 +2,7 @@ import { igroCehApi } from "root/shared/igroCehApi";
 import { subscribeToRoom } from "root/shared/helpers/webSocketHelper";
 import { EventStatus } from "root/shared/constants";
 import { applyEventRoomMessage, eventRoom, EventRoomMessage, sortByChain } from "./eventRoom";
+import type { ReviewVisibility } from "root/features/reviews/reviewVisibility";
 
 const postTo = (url: string) => <TBody>(body: TBody) => ({ url, method: 'POST', body });
 
@@ -155,7 +156,11 @@ export type EventRecord = {
     participant: UserShortObject,
     toUser: UserShortObject | null,
     game: GameObject | null,
-    reward: number | null
+    reward: number | null,
+    // a passed game gets a paired review, the one who guessed it answers
+    hasReview: boolean,
+    hasReviewReplies: boolean,
+    reviewVisibility: ReviewVisibility | null
 }
 
 export type EventObject = {

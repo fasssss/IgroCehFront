@@ -1,0 +1,95 @@
+@use '../../../../shared/default.module.scss' as default;
+@use '../../review';
+
+.review-layout {
+    width: min(1100px, 100%);
+    margin: 0 auto;
+    padding: default.$padding_large default.$padding_big;
+    box-sizing: border-box;
+}
+
+.review-layout__columns {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: default.$margin_large;
+    align-items: start;
+}
+
+.review-layout__aside {
+    display: flex;
+    flex-direction: column;
+    gap: default.$margin_big;
+}
+
+.review-layout__cover {
+    width: 100%;
+    // global img rule in DragNDropImage styles caps every image at 300px
+    max-width: none;
+    max-height: none;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    border-radius: default.$border-radius_small;
+    background-color: default.$dark-grey;
+}
+
+.review-layout__settings {
+    display: flex;
+    flex-direction: column;
+    gap: default.$margin_small;
+}
+
+.review-layout__content {
+    display: flex;
+    flex-direction: column;
+    gap: default.$margin_big;
+    min-width: 0;
+}
+
+.review-layout__title {
+    margin: 0;
+    font-size: 28px;
+    overflow-wrap: anywhere;
+}
+
+.review-layout__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: default.$margin_small default.$margin_big;
+    color: review.$muted-text;
+}
+
+.review-layout__meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.review-layout__event-link {
+    color: review.$muted-text;
+}
+
+// on a phone the cover and the verdict stand in a row, the settings take the next one
+@media (max-width: 700px) {
+    .review-layout__columns {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .review-layout__aside {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .review-layout__cover {
+        width: 120px;
+    }
+
+    .review-layout__verdict {
+        flex: 1;
+    }
+
+    .review-layout__settings {
+        flex-basis: 100%;
+    }
+}

@@ -1,0 +1,34 @@
+@use '../../../../shared/default.module.scss' as default;
+
+.review-visibility {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px default.$padding_big;
+    border-radius: default.$border-radius_small;
+    background-color: default.$dark-grey;
+}
+
+.review-visibility__title {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+}
+
+// the icons under the edge marks stay inside the box
+.review-visibility__slider {
+    width: calc(100% - 16px) !important;
+    margin: 0 8px;
+}
+
+.review-visibility .MuiSlider-markLabel {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.review-visibility .MuiSlider-markLabelActive {
+    color: white;
+}
+
+.review-visibility__value {
+    text-align: center;
+    font-weight: 600;
+}

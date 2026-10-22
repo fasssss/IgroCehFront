@@ -12,6 +12,7 @@ import { playerProfilePath } from "../../playerProfilePath";
 import { RewardsBar } from "../RewardsBar";
 import { PlayerGuilds } from "../PlayerGuilds";
 import { PlayerHistory } from "../PlayerHistory";
+import { PlayerReviews } from "root/features/reviews/components/PlayerReviews";
 import './styles.scss';
 
 const StatTile = ({ label, value, note }: StatTileProps) => {
@@ -172,18 +173,26 @@ const PlayerProfilePage = () => {
                     }
                 </div>
                 {/* place for achievements until they are implemented */}
-                <section className="player-profile__panel player-profile__achievements">
+                <section className="player-profile__panel player-profile__placeholder">
                     {t('Achievements will appear here soon')}
                 </section>
-                <h2 className="player-profile__history-title">
-                    {t('History')}
-                    <Tooltip title={t('History contains only guilds you are a member of too')} arrow placement="right"
-                        slotProps={{ tooltip: { sx: { fontSize: 14 } } }}
-                    >
-                        <HelpOutline className="player-profile__history-hint" tabIndex={0} />
-                    </Tooltip>
-                </h2>
-                <PlayerHistory key={`${userId}:${guildId ?? ''}`} userId={userId} guildId={guildId} />
+                <div className="player-profile__columns">
+                    <section>
+                        <h2 className="player-profile__column-title">
+                            {t('History')}
+                            <Tooltip title={t('History contains only guilds you are a member of too')} arrow placement="right"
+                                slotProps={{ tooltip: { sx: { fontSize: 14 } } }}
+                            >
+                                <HelpOutline className="player-profile__history-hint" tabIndex={0} />
+                            </Tooltip>
+                        </h2>
+                        <PlayerHistory key={`${userId}:${guildId ?? ''}`} userId={userId} guildId={guildId} />
+                    </section>
+                    <section>
+                        <h2 className="player-profile__column-title">{t('Reviews')}</h2>
+                        <PlayerReviews key={`${userId}:${guildId ?? ''}`} userId={userId} guildId={guildId} />
+                    </section>
+                </div>
             </div>
         </div>
     );

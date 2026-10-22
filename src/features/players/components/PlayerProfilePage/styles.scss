@@ -147,7 +147,8 @@ $header-gap: default.$margin_big;
     font-size: 22px;
 }
 
-.player-profile__achievements {
+// achievements and reviews until they are implemented
+.player-profile__placeholder {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -155,7 +156,21 @@ $header-gap: default.$margin_big;
     color: $muted-text;
 }
 
-.player-profile__history-title {
+// the history takes the left half, reviews the right one; on narrow screens reviews go under the history
+.player-profile__columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: default.$margin_big;
+    align-items: start;
+}
+
+@media (max-width: 900px) {
+    .player-profile__columns {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+.player-profile__column-title {
     display: flex;
     align-items: center;
     gap: default.$margin_small;

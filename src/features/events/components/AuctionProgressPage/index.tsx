@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useActivateEventMutation, useSubmitPassingMutation, useSummarizeEventMutation } from "../../eventsApi";
+import { EventRecord, useActivateEventMutation, useSubmitPassingMutation, useSummarizeEventMutation } from "../../eventsApi";
 import './styles.scss';
 import { EventStatus } from "root/shared/constants";
 import { resolveImageUrl } from "root/shared/helpers/imageUrl";
@@ -10,6 +10,8 @@ import type { EventStageProps } from "../EventStageRouter";
 import { useTranslation } from "react-i18next";
 import { playerProfilePath } from "root/features/players/playerProfilePath";
 import { guessGamePath } from "../../guessGamePath";
+import { reviewPath } from "root/features/reviews/reviewPath";
+import { canSeeReview } from "root/features/reviews/reviewVisibility";
 
 // progress of passing the guessed games, after summarizing shows results of the event
 const AuctionProgressPage = ({ event, currentUser }: EventStageProps) => {
@@ -26,6 +28,20 @@ const AuctionProgressPage = ({ event, currentUser }: EventStageProps) => {
     const guessedCount = event.eventRecords.filter(record => record.game).length;
     // the creator activates the event once every participant has guessed, until then the games can be changed
     const canActivate = guessedCount > 0 && guessedCount === event.eventRecords.length;
+
+    // the player who passed the game writes the review, the one who guessed it answers, everyone else reads
+    const reviewAction = (record: EventRecord) => {
+        if(record.hasReview) {
+            // every viewer of the event page is a member of its guild
+            if(record.reviewVisibility === null || !canSeeReview(record.reviewVisibility, currentUser.id, record.toUser?.id, record.participant.id, true)) {
+                return null;
+            }
+
+            return currentUser.id === record.participant.id && !record.hasReviewReplies ? t("Answer the review") : t("Read the review");
+        }
+
+        return currentUser.id === record.toUser?.id ? t("Write a review") : null;
+    };
 
     return(
     <div className="auction-progress">
@@ -89,6 +105,12 @@ const AuctionProgressPage = ({ event, currentUser }: EventStageProps) => {
                         {record.reward !== null ?
                             <div className="auction-progress__status-success">
                                 {record.reward}/3
+                                {
+                                    reviewAction(record) &&
+                                    <CommonButton onClick={() => navigate(reviewPath(record.id))}>
+                                        {reviewAction(record)}
+                                    </CommonButton>
+                                }
                             </div>
                             :
                             <div className="auction-progress__status-progress">

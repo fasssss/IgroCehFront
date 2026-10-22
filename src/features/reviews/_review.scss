@@ -1,0 +1,53 @@
+@use '../../shared/default.module.scss' as default;
+
+// the editor of a review and the published review look alike
+
+$muted-text: rgba(255, 255, 255, 0.7);
+$failed: #ef6a5a;
+
+// a section on its dark card
+@mixin section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: default.$padding_big;
+    border-radius: default.$border-radius_small;
+    background-color: default.$dark-grey;
+}
+
+@mixin input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: default.$padding_big;
+    border: none;
+    border-radius: default.$border-radius_small;
+    background-color: default.$grey;
+    color: white;
+    font-family: inherit;
+    font-size: 16px;
+    transition: background-color 0.2s ease-in-out;
+
+    &:focus {
+        outline: none;
+        background-color: default.$light-grey;
+    }
+}
+
+@mixin textarea {
+    @include input;
+    min-height: 140px;
+    resize: vertical;
+}
+
+// the publish button with a hint or an error around it
+@mixin actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: default.$margin_small;
+}
+
+@mixin note {
+    color: $muted-text;
+    text-align: center;
+}
