@@ -1,0 +1,27 @@
+@use '../../../../shared/default.module.scss' as default;
+
+.reviews-page {
+    display: flex;
+    flex-direction: column;
+    gap: default.$margin_large;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 default.$padding_big default.$padding_large;
+    box-sizing: border-box;
+}
+
+.reviews-page__suggestions {
+    display: flex;
+    flex-direction: column;
+    gap: default.$margin_big;
+}
+
+.reviews-page__community {
+    display: flex;
+    flex-direction: column;
+    gap: default.$margin_big;
+}
+
+.reviews-page__title {
+    margin: 0;
+}

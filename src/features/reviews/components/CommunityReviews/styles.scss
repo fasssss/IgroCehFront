@@ -1,0 +1,128 @@
+@use '../../../../shared/default.module.scss' as default;
+@use '../../review';
+
+$avatar-size: 48px;
+
+.community-reviews {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+    gap: default.$margin_big;
+}
+
+.community-reviews__empty {
+    @include review.note;
+    padding: default.$padding_large;
+    border-radius: default.$border-radius_small;
+    background-color: default.$dark-grey;
+}
+
+.community-reviews__item {
+    display: flex;
+    gap: default.$margin_big;
+    padding: default.$padding_big;
+    border-radius: default.$border-radius_small;
+    background-color: default.$dark-grey;
+    color: inherit;
+    text-decoration: none;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.community-reviews__item:hover,
+.community-reviews__item:focus-visible {
+    background-color: default.$grey;
+    outline: none;
+}
+
+.community-reviews__cover {
+    flex-shrink: 0;
+    width: 88px;
+    // global img rule in DragNDropImage styles caps every image at 300px
+    max-width: none;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    border-radius: default.$border-radius_small;
+    background-color: default.$grey;
+}
+
+.community-reviews__cover--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.community-reviews__info {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+}
+
+.community-reviews__game {
+    font-size: 20px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.community-reviews__author {
+    display: flex;
+    align-items: center;
+    gap: default.$margin_small;
+    min-width: 0;
+}
+
+.community-reviews__avatar {
+    flex-shrink: 0;
+    width: $avatar-size;
+    height: $avatar-size;
+    max-width: none;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.community-reviews__avatar--empty {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: default.$discord-bluerple;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.community-reviews__author-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+// the verdict of the review sits in the bottom right corner
+.community-reviews__verdict {
+    display: flex;
+    align-items: center;
+    align-self: flex-end;
+    gap: 6px;
+    margin-top: auto;
+    color: review.$muted-text;
+}
+
+.community-reviews__thumb {
+    display: inline-flex;
+    padding: 2px;
+    border-radius: 4px;
+    color: default.$black;
+}
+
+.community-reviews__thumb--up {
+    background-color: default.$green;
+}
+
+.community-reviews__thumb--down {
+    background-color: review.$failed;
+}
+
+.community-reviews__loader {
+    display: flex;
+    justify-content: center;
+    min-height: 64px;
+}

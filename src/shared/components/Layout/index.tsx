@@ -1,11 +1,12 @@
-import { Navigate, Outlet, useNavigate } from 'react-router-dom';
+import { NavLink, Navigate, Outlet, useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SvgIcon } from '@mui/material'
-import { Logout, Person } from '@mui/icons-material';
+import { Logout, Person, RateReviewOutlined } from '@mui/icons-material';
 import { SvgSelector } from 'root/shared/components/SvgSelector';
 import { useGetUserObjectQuery, useLogoutMutation } from 'root/features/authorization/authorizationApi';
 import { playerProfilePath } from 'root/features/players/playerProfilePath';
+import { REVIEWS_PATH } from 'root/features/reviews/reviewPath';
 import { isUnauthorizedError } from 'root/shared/igroCehApi';
 import i18n from 'root/shared/localization';
 import './styles.scss';
@@ -79,6 +80,12 @@ function Layout() {
         <div className='layout__logo' onClick={() => navigate('/')}>
           <h2>Igro Ceh</h2>
         </div>
+        <nav className='layout__nav'>
+          <NavLink to={REVIEWS_PATH} className='layout__nav-link' title={t('Reviews')}>
+            <RateReviewOutlined />
+            <span className='layout__nav-text'>{ t('Reviews') }</span>
+          </NavLink>
+        </nav>
         <div className='layout__user-badge'>
           <div className='layout__language'>
             <div onClick={() => setIsLanguageSelectorOpened(!isLanguageSelectorOpened)} className='layout__language-button'>
@@ -117,7 +124,7 @@ function Layout() {
                   <SvgIcon><SvgSelector iconName='discord-icon' /></SvgIcon>
                 </div>
               }
-              <span>{userInfo?.userName}</span>
+              <span className='layout__user-name'>{userInfo?.userName}</span>
             </div>
             <div className='layout__user-menu' style={!isUserMenuOpened ? { display: 'none', opacity: 0 } : {}}>
               <div className='layout__user-menu-bridge' />

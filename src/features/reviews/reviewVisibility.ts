@@ -22,10 +22,3 @@ export const REVIEW_VISIBILITY_NAME: Record<ReviewVisibility, string> = {
     [ReviewVisibility.Guild]: 'Visible to the guild',
     [ReviewVisibility.Everyone]: 'Visible to everyone',
 };
-
-// the same rule as on the server
-export const canSeeReview = (visibility: ReviewVisibility, viewerId: string, authorId: string | undefined, guesserId: string, isGuildMember: boolean) =>
-    viewerId === authorId
-    || visibility === ReviewVisibility.Everyone
-    || (visibility >= ReviewVisibility.AuthorAndGuesser && viewerId === guesserId)
-    || (visibility >= ReviewVisibility.Guild && isGuildMember);

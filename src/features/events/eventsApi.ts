@@ -2,7 +2,6 @@ import { igroCehApi } from "root/shared/igroCehApi";
 import { subscribeToRoom } from "root/shared/helpers/webSocketHelper";
 import { EventStatus } from "root/shared/constants";
 import { applyEventRoomMessage, eventRoom, EventRoomMessage, sortByChain } from "./eventRoom";
-import type { ReviewVisibility } from "root/features/reviews/reviewVisibility";
 
 const postTo = (url: string) => <TBody>(body: TBody) => ({ url, method: 'POST', body });
 
@@ -104,9 +103,10 @@ const eventsApi = igroCehApi.injectEndpoints({
             query: postTo('/api/suggestGame'),
             invalidatesTags: invalidateEvent,
         }),
+        // a passed game can be reviewed on the reviews page
         submitPassing: build.mutation<SubmitPassingResponse, SubmitPassingRequest>({
             query: postTo('/api/submitPassing'),
-            invalidatesTags: invalidateEvent,
+            invalidatesTags: (result, error, arg) => [...invalidateEvent(result, error, arg), 'ReviewLists'],
         }),
         // available to the creator once every participant has guessed a game
         activateEvent: build.mutation<void, ActivateEventRequest>({
@@ -156,11 +156,7 @@ export type EventRecord = {
     participant: UserShortObject,
     toUser: UserShortObject | null,
     game: GameObject | null,
-    reward: number | null,
-    // a passed game gets a paired review, the one who guessed it answers
-    hasReview: boolean,
-    hasReviewReplies: boolean,
-    reviewVisibility: ReviewVisibility | null
+    reward: number | null
 }
 
 export type EventObject = {

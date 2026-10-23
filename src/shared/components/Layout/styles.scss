@@ -16,6 +16,32 @@
   cursor: pointer;
 }
 
+.layout__nav {
+  display: flex;
+  margin-left: default.$margin_big;
+  z-index: 1;
+}
+
+.layout__nav-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: default.$border-radius_small;
+  color: white;
+  font-size: 18px;
+  text-decoration: none;
+  transition: background-color 0.1s;
+}
+
+.layout__nav-link:hover {
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+.layout__nav-link.active {
+  background-color: default.$dark-grey;
+}
+
 .layout__user-badge {
   right: 0;
   padding-right: default.$padding_big;
@@ -95,6 +121,19 @@ $user-menu-gap: 6px;
 .layout__user-menu-option:hover {
   background-color: rgba(0, 0, 0, 0.1);
   cursor: pointer;
+}
+
+// on a phone the icons are enough, the avatar alone opens the user menu
+@media (max-width: 600px) {
+  .layout__nav-text,
+  .layout__user-name {
+    display: none;
+  }
+
+  .layout__user-menu {
+    left: auto;
+    min-width: 140px;
+  }
 }
 
 .layout__language {

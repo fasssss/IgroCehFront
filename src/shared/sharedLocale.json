@@ -9,7 +9,8 @@
         "Profile": "Profile",
         "Log out": "Log out",
         "Powered by": "Powered by",
-        "Nothing found": "Nothing found"
+        "Nothing found": "Nothing found",
+        "Reviews": "Reviews"
     },
     "ru": {
         "Confirm": "Продолжить",
@@ -21,6 +22,7 @@
         "Profile": "Профиль",
         "Log out": "Выход",
         "Powered by": "Powered by",
-        "Nothing found": "Ничего не найдено"
+        "Nothing found": "Ничего не найдено",
+        "Reviews": "Обзоры"
     }
 }

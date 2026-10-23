@@ -43,7 +43,6 @@ const ReviewEditor = ({ page }: ReviewEditorProps) => {
             // the page switches to the published review when the query refetches
             await publishReview({
                 eventRecordId: page.eventRecordId,
-                eventId: page.eventId,
                 isRecommended: isRecommended === true,
                 visibility,
                 sections: sections.map(({ title, text }) => ({ title, text })),

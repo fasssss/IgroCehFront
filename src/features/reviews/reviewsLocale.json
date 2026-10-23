@@ -25,9 +25,6 @@
         "The review isn't written yet": "The review isn't written yet",
         "The review is not found": "The review is not found",
         "To the main page": "To the main page",
-        "Write a review": "Write a review",
-        "Read the review": "Read the review",
-        "Answer the review": "Answer the review",
         "No reviews yet": "No reviews yet",
         "Waiting for answers": "Waiting for answers",
         "Answered": "Answered",
@@ -36,7 +33,12 @@
         "Visible to me and the one who guessed the game": "Visible to me and the one who guessed the game",
         "Visible to the guild": "Visible to the guild",
         "Visible to everyone": "Visible to everyone",
-        "Couldn't change, try again": "Couldn't change, try again"
+        "Couldn't change, try again": "Couldn't change, try again",
+        "You can review a passed game": "You can review a passed game",
+        "You can answer the review of a guessed game": "You can answer the review of a guessed game",
+        "Community reviews": "Community reviews",
+        "Previous games": "Previous games",
+        "Next games": "Next games"
     },
     "ru": {
         "Paired review of {{game}}": "Парный обзор на игру «{{game}}»",
@@ -64,9 +66,6 @@
         "The review isn't written yet": "Обзор ещё не написан",
         "The review is not found": "Обзор не найден",
         "To the main page": "На главную",
-        "Write a review": "Написать обзор",
-        "Read the review": "Читать обзор",
-        "Answer the review": "Ответить на обзор",
         "No reviews yet": "Обзоров пока нет",
         "Waiting for answers": "Ждёт ответов",
         "Answered": "Есть ответы",
@@ -75,6 +74,11 @@
         "Visible to me and the one who guessed the game": "Видно только мне и загадавшему",
         "Visible to the guild": "Видно гильдии",
         "Visible to everyone": "Видно всем",
-        "Couldn't change, try again": "Не удалось изменить, попробуйте ещё раз"
+        "Couldn't change, try again": "Не удалось изменить, попробуйте ещё раз",
+        "You can review a passed game": "Можете написать обзор на пройденную игру",
+        "You can answer the review of a guessed game": "Можете ответить на обзор загаданной игры",
+        "Community reviews": "Обзоры сообщества",
+        "Previous games": "Предыдущие игры",
+        "Next games": "Следующие игры"
     }
 }

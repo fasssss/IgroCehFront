@@ -7,7 +7,8 @@ import {
     EventStageRouter,
     LeaderBoardPage,
     PlayerProfilePage,
-    ReviewPage
+    ReviewPage,
+    ReviewsPage
 } from "../features";
 import Layout from "./components/Layout";
 
@@ -40,6 +41,11 @@ const router = createBrowserRouter([
                 // ?guild= selects one of the guilds shared with the player
                 path: "user/:userId",
                 element: <PlayerProfilePage />
+            },
+            {
+                // the reviews to write and to answer and every review the user can read
+                path: "reviews",
+                element: <ReviewsPage />
             },
             {
                 // the paired review of a passed game

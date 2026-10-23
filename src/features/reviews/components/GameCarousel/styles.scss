@@ -1,0 +1,134 @@
+@use '../../../../shared/default.module.scss' as default;
+
+$cover-width: 140px;
+$cover-width_phone: 104px;
+$item-padding: 4px;
+// the cover keeps the 2:3 shape of a game box
+$cover-height: ($cover-width - 2 * $item-padding) * 1.5;
+
+.game-carousel {
+    display: flex;
+    flex-direction: column;
+    gap: default.$margin_small;
+}
+
+.game-carousel__title {
+    margin: 0;
+    font-size: 20px;
+}
+
+.game-carousel__body {
+    display: flex;
+    gap: default.$margin_small;
+}
+
+.game-carousel__track {
+    display: flex;
+    flex: 1;
+    gap: default.$margin_big;
+    min-width: 0;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    // swiping and the arrows scroll it, a scrollbar would only take the place
+    scrollbar-width: none;
+}
+
+.game-carousel__track::-webkit-scrollbar {
+    display: none;
+}
+
+.game-carousel__item {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    gap: 6px;
+    width: $cover-width;
+    padding: $item-padding;
+    border-radius: default.$border-radius_small;
+    color: inherit;
+    text-decoration: none;
+    scroll-snap-align: start;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.game-carousel__item:hover,
+.game-carousel__item:focus-visible {
+    background-color: default.$light-grey;
+    outline: none;
+}
+
+.game-carousel__cover {
+    width: 100%;
+    // global img rule in DragNDropImage styles caps every image at 300px
+    max-width: none;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    border-radius: default.$border-radius_small;
+    background-color: default.$dark-grey;
+}
+
+.game-carousel__cover--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+// long names take two lines at most, the full name is in the review
+.game-carousel__name {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+// both arrows stand to the right of the row, centered on the covers
+.game-carousel__arrows {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    justify-content: center;
+    gap: default.$margin_small;
+    height: $cover-height + 2 * $item-padding;
+}
+
+.game-carousel__arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background-color: default.$grey;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+}
+
+.game-carousel__arrow:enabled:hover,
+.game-carousel__arrow:focus-visible {
+    background-color: default.$discord-bluerple;
+    outline: none;
+}
+
+// the arrow stays in its place at the end of the row, so the other one doesn't jump
+.game-carousel__arrow:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
+@media (max-width: 600px) {
+    .game-carousel__item {
+        width: $cover-width_phone;
+    }
+
+    // a phone scrolls the row by swiping
+    .game-carousel__arrows {
+        display: none;
+    }
+}

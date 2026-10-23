@@ -29,7 +29,7 @@ const PublishedReview = ({ page, canReply, isAuthor }: PublishedReviewProps) => 
         }
 
         try {
-            await setReviewVisibility({ eventRecordId: page.eventRecordId, eventId: page.eventId, visibility: value }).unwrap();
+            await setReviewVisibility({ eventRecordId: page.eventRecordId, visibility: value }).unwrap();
         } catch {
             setVisibility(review.visibility);
         }
@@ -40,7 +40,6 @@ const PublishedReview = ({ page, canReply, isAuthor }: PublishedReviewProps) => 
         try {
             await publishReplies({
                 eventRecordId: page.eventRecordId,
-                eventId: page.eventId,
                 replies: review.sections.map(section => ({ sectionId: section.id, text: replies[section.id] ?? "" })),
             }).unwrap();
         } catch {
