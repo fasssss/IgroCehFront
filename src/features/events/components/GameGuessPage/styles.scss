@@ -9,6 +9,11 @@
     width: 100%;
 }
 
+.game-guess__preferences {
+    max-width: 900px;
+    margin: default.$margin_big auto 0;
+}
+
 .game-guess__user-plate {
     display: flex;
     align-items: center;

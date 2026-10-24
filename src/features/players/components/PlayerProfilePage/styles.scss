@@ -9,8 +9,17 @@ $header-gap: default.$margin_big;
 
 .player-profile__header {
     display: flex;
-    gap: $header-gap;
+    // the preferences go under the name when they don't fit next to it
+    flex-wrap: wrap;
+    column-gap: $header-gap * 2;
+    row-gap: $header-gap;
     padding: 0 $content-inset default.$padding_big $content-inset;
+}
+
+// the two lists take the rest of the header next to the name
+.player-profile__preferences {
+    flex: 1 1 520px;
+    align-self: flex-start;
 }
 
 .player-profile__avatar {

@@ -42,7 +42,13 @@
         "Show all guilds": "Show all guilds",
         "Show all": "Show all",
         "Plays in {{count}} more guilds you are not in_one": "Plays in {{count}} more guild you are not in",
-        "Plays in {{count}} more guilds you are not in_other": "Plays in {{count}} more guilds you are not in"
+        "Plays in {{count}} more guilds you are not in_other": "Plays in {{count}} more guilds you are not in",
+        "I prefer": "I prefer",
+        "I avoid": "I avoid",
+        "Start typing a genre or a period": "Start typing a genre or a period",
+        "A list holds up to {{count}} tags": "A list holds up to {{count}} tags",
+        "Not specified": "Not specified",
+        "Couldn't save, try again": "Couldn't save, try again"
     },
     "ru": {
         "Playing since {{date}}": "Играет с {{date}}",
@@ -100,6 +106,12 @@
         "Plays in {{count}} more guilds you are not in_one": "Играет ещё в {{count}} гильдии, где вас нет",
         "Plays in {{count}} more guilds you are not in_few": "Играет ещё в {{count}} гильдиях, где вас нет",
         "Plays in {{count}} more guilds you are not in_many": "Играет ещё в {{count}} гильдиях, где вас нет",
-        "Plays in {{count}} more guilds you are not in_other": "Играет ещё в {{count}} гильдиях, где вас нет"
+        "Plays in {{count}} more guilds you are not in_other": "Играет ещё в {{count}} гильдиях, где вас нет",
+        "I prefer": "Предпочитаю",
+        "I avoid": "Избегаю",
+        "Start typing a genre or a period": "Начните вводить жанр или период",
+        "A list holds up to {{count}} tags": "В списке может быть не больше {{count}} тегов",
+        "Not specified": "Не указано",
+        "Couldn't save, try again": "Не удалось сохранить, попробуйте ещё раз"
     }
 }

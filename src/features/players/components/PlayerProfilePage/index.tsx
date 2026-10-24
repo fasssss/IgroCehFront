@@ -12,6 +12,7 @@ import { playerProfilePath } from "../../playerProfilePath";
 import { RewardsBar } from "../RewardsBar";
 import { PlayerGuilds } from "../PlayerGuilds";
 import { PlayerHistory } from "../PlayerHistory";
+import { PlayerPreferences } from "../PlayerPreferences";
 import { PlayerReviews } from "root/features/reviews/components/PlayerReviews";
 import './styles.scss';
 
@@ -100,6 +101,7 @@ const PlayerProfilePage = () => {
                         </div>
                     }
                 </div>
+                <PlayerPreferences userId={profile.id} className="player-profile__preferences" />
             </div>
             {
                 profile.guilds.length > 0 &&

@@ -28,6 +28,33 @@ const playersApi = igroCehApi.injectEndpoints({
             },
             forceRefetch: ({ currentArg, previousArg }) => currentArg?.startFrom !== previousArg?.startFrom,
         }),
+        // genres and release periods to pick preferences from
+        getPreferenceTags: build.query<GetPreferenceTagsResponse, void>({
+            query: () => ({ url: '/api/getPreferenceTags' }),
+        }),
+        // seen by the same players as the profile
+        getPlayerPreferences: build.query<PlayerPreferences, string>({
+            query: (userId) => ({ url: '/api/getPlayerPreferences', params: { userId } }),
+        }),
+        // both lists of the current user are saved on every change, the screen shows the change before the answer
+        setPreferences: build.mutation<void, SetPreferencesRequest>({
+            query: ({ preferred, avoided }) => ({
+                url: '/api/setPreferences',
+                method: 'POST',
+                body: { preferredTagIds: preferred.map(tag => tag.id), avoidedTagIds: avoided.map(tag => tag.id) }
+            }),
+            async onQueryStarted({ userId, preferred, avoided }, { dispatch, queryFulfilled }) {
+                const patch = dispatch(playersApi.util.updateQueryData('getPlayerPreferences', userId, (draft) => {
+                    draft.preferred = preferred;
+                    draft.avoided = avoided;
+                }));
+                try {
+                    await queryFulfilled;
+                } catch {
+                    patch.undo();
+                }
+            },
+        }),
     })
 })
 
@@ -113,7 +140,32 @@ export type GetPlayerHistoryResponse = {
     hasMore: boolean
 }
 
+// the name is shown in the language of the site, see usePreferenceTagName
+export type PreferenceTag = {
+    id: number,
+    name: string,
+    nameRu: string
+}
+
+export type GetPreferenceTagsResponse = {
+    tags: PreferenceTag[]
+}
+
+// the tags in the order the player added them
+export type PlayerPreferences = {
+    preferred: PreferenceTag[],
+    avoided: PreferenceTag[]
+}
+
+export type SetPreferencesRequest = PlayerPreferences & {
+    // the lists of the current user, the id points to the cached ones
+    userId: string
+}
+
 export const {
     useGetPlayerProfileQuery,
-    useGetPlayerHistoryQuery
+    useGetPlayerHistoryQuery,
+    useGetPreferenceTagsQuery,
+    useGetPlayerPreferencesQuery,
+    useSetPreferencesMutation
 } = playersApi;

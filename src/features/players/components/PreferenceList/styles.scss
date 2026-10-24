@@ -1,0 +1,78 @@
+@use '../../../../shared/default.module.scss' as default;
+
+$muted-text: rgba(255, 255, 255, 0.7);
+$box-min-height: 88px;
+$box-border: 2px solid default.$light-grey;
+
+.preference-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.preference-list__title {
+    font-size: 22px;
+    font-weight: 600;
+}
+
+// the read-only list looks like the field of the owner
+.preference-list__box {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 6px;
+    min-height: $box-min-height;
+    padding: default.$padding_small;
+    border: $box-border;
+    border-radius: default.$border-radius_small;
+    box-sizing: border-box;
+}
+
+// MUI classes in the selectors outweigh its own styles
+.preference-list__input.MuiAutocomplete-root .MuiOutlinedInput-root {
+    align-content: flex-start;
+    align-items: flex-start;
+    min-height: $box-min-height;
+    padding: 6px;
+    border-radius: default.$border-radius_small;
+}
+
+.preference-list__input.MuiAutocomplete-root .MuiOutlinedInput-notchedOutline {
+    border: $box-border;
+}
+
+.preference-list__input.MuiAutocomplete-root .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.preference-list__input.MuiAutocomplete-root .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+    border-color: default.$discord-bluerple;
+}
+
+.preference-list__tag.MuiChip-root {
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.preference-list__tag.MuiChip-root .MuiChip-deleteIcon {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 16px;
+}
+
+.preference-list__tag.MuiChip-root .MuiChip-deleteIcon:hover {
+    color: white;
+}
+
+.preference-list__tag--preferred.MuiChip-root {
+    background-color: default.$discord-bluerple;
+}
+
+.preference-list__tag--avoided.MuiChip-root {
+    background-color: default.$red;
+}
+
+.preference-list__empty {
+    color: $muted-text;
+}

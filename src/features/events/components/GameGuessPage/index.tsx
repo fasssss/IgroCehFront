@@ -20,6 +20,7 @@ import {
     useSuggestGameMutation
 } from "../../eventsApi";
 import { toPlatformPills } from "../../platformPills";
+import { PlayerPreferences } from "root/features/players/components/PlayerPreferences";
 import type { EventStageProps } from "../EventStageRouter";
 import './styles.scss';
 
@@ -110,6 +111,8 @@ const GameGuessPage = ({ event, currentUser }: EventStageProps) => {
                 <img src={ownRecord.toUser?.avatarUrl ?? undefined} className="game-guess__user-image" />
                 {ownRecord.toUser?.userName}
             </div>
+            {/* what the player likes helps to pick a game for them */}
+            {ownRecord.toUser && <PlayerPreferences userId={ownRecord.toUser.id} className="game-guess__preferences" />}
             {
                 // a guessed game here means the participant came back to change it before the event is activated
                 ownRecord.game &&

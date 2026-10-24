@@ -1,0 +1,20 @@
+@use '../../../../shared/default.module.scss' as default;
+
+// "prefer" and "avoid" side by side
+.player-preferences {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: default.$margin_big;
+    min-width: 0;
+}
+
+.player-preferences__error {
+    grid-column: 1 / -1;
+    color: #ef6a5a;
+}
+
+@media (max-width: 600px) {
+    .player-preferences {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
