@@ -16,6 +16,9 @@ import {
 import type { EventStageProps } from "../EventStageRouter";
 import './styles.scss';
 
+// mirrors MinPlayersCount on backend: with fewer players there is nobody to guess a game for
+const MIN_PLAYERS_COUNT = 2;
+
 // players registration stage
 const EventPage = ({ event, currentUser }: EventStageProps) => {
     const { guildId } = useParams();
@@ -27,6 +30,7 @@ const EventPage = ({ event, currentUser }: EventStageProps) => {
     const { t } = useTranslation()
     const isCreator = event.eventCreatorId === currentUser.id;
     const isParticipant = event.eventRecords.some(record => record.participant.id === currentUser.id);
+    const hasEnoughPlayers = event.eventRecords.length >= MIN_PLAYERS_COUNT;
     // proposal is shown only on opening, so a kicked participant doesn't get it
     const [isJoinProposalShown, setIsJoinProposalShown] = useState(!isParticipant);
     const [isNextStageConfirmShown, setIsNextStageConfirmShown] = useState(false);
@@ -45,10 +49,15 @@ const EventPage = ({ event, currentUser }: EventStageProps) => {
                 </div>
                 <div className="event-page__header-buttons">
                     {
+                        isCreator && !hasEnoughPlayers &&
+                        <div className="event-page__hint">{t("At least 2 players are needed")}</div>
+                    }
+                    {
                         isCreator &&
                         <CommonButton
                         onClick={() => setIsNextStageConfirmShown(true)}
                         color="success"
+                        disabled={!hasEnoughPlayers}
                         endIcon={<ArrowForwardIos />}>
                             {t("Travel to Auction!")}
                         </CommonButton>

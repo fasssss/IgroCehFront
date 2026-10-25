@@ -53,7 +53,8 @@
         "Move on to the auction?": "Move on to the auction?",
         "After moving on to the next stage new players won't be able to join the event.": "After moving on to the next stage new players won't be able to join the event.",
         "Activate the event?": "Activate the event?",
-        "After the activation the guessed games can't be changed.": "After the activation the guessed games can't be changed."
+        "After the activation the guessed games can't be changed.": "After the activation the guessed games can't be changed.",
+        "At least 2 players are needed": "At least 2 players are needed"
     },
     "ru": {
         "Create event": "Создать событие",
@@ -109,6 +110,7 @@
         "Move on to the auction?": "Перейти к аукциону?",
         "After moving on to the next stage new players won't be able to join the event.": "После перехода на следующий этап новые игроки не смогут присоединиться к событию.",
         "Activate the event?": "Активировать событие?",
-        "After the activation the guessed games can't be changed.": "После активации изменить выбранные игры будет нельзя."
+        "After the activation the guessed games can't be changed.": "После активации изменить выбранные игры будет нельзя.",
+        "At least 2 players are needed": "Нужно хотя бы 2 участника"
     }
 }

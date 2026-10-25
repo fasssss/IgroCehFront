@@ -19,7 +19,13 @@
 
 .event-page__header-buttons {
     display: flex;
+    align-items: center;
+    gap: 12px;
     height: fit-content;
+}
+
+.event-page__hint {
+    font-size: large;
 }
 
 .event-page__guild-image {
