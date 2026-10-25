@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom"
-import { ArrowForwardIos, Logout } from "@mui/icons-material";
+import { ArrowForwardIos, Logout, SportsEsportsOutlined } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import { skipToken } from "@reduxjs/toolkit/query";
 import { CommonModal } from "root/shared/components/CommonModal";
@@ -13,6 +13,9 @@ import {
     useMoveEventToNextStageMutation,
     useRemoveFromEventMutation
 } from "../../eventsApi";
+import { useGetNewcomerPoolQuery } from "../../newcomerPoolApi";
+import { newcomerPoolPath } from "../../newcomerPoolPath";
+import type { NewcomerPoolPageState } from "../NewcomerPoolPage";
 import type { EventStageProps } from "../EventStageRouter";
 import './styles.scss';
 
@@ -31,6 +34,16 @@ const EventPage = ({ event, currentUser }: EventStageProps) => {
     const isCreator = event.eventCreatorId === currentUser.id;
     const isParticipant = event.eventRecords.some(record => record.participant.id === currentUser.id);
     const hasEnoughPlayers = event.eventRecords.length >= MIN_PLAYERS_COUNT;
+    // with newcomers allowed the registration ends once the pool has enough games for them
+    const pool = useGetNewcomerPoolQuery(event.allowsNewcomers ? event.id : skipToken).data;
+    const hasEnoughPoolGames = !event.allowsNewcomers || (!!pool && pool.games.length >= pool.minGames);
+    // the pool counts up to the games the registration needs, then just counts
+    const poolCountText = pool && (pool.games.length < pool.minGames
+        ? t("Games for newcomers: {{count}} of {{min}}", { count: pool.games.length, min: pool.minGames })
+        : t("Games for newcomers: {{count}}", { count: pool.games.length }));
+    const nextStageHint = !hasEnoughPlayers ? t("At least 2 players are needed")
+        : !hasEnoughPoolGames && pool ? t("At least {{min}} games are needed in the pool", { min: pool.minGames })
+        : null;
     // proposal is shown only on opening, so a kicked participant doesn't get it
     const [isJoinProposalShown, setIsJoinProposalShown] = useState(!isParticipant);
     const [isNextStageConfirmShown, setIsNextStageConfirmShown] = useState(false);
@@ -38,6 +51,15 @@ const EventPage = ({ event, currentUser }: EventStageProps) => {
     const leaveEvent = async () => {
         await removeFromEvent({ userId: currentUser.id, eventId: event.id }).unwrap();
         navigate(`/guild/${guildId}`);
+    };
+
+    // a player who has joined is offered to put a game for newcomers at once
+    const join = async () => {
+        await joinEvent({ eventId: event.id }).unwrap();
+        if(event.allowsNewcomers) {
+            const state: NewcomerPoolPageState = { isJustJoined: true };
+            navigate(newcomerPoolPath(guildId, event.id), { state });
+        }
     };
 
     return (
@@ -49,15 +71,25 @@ const EventPage = ({ event, currentUser }: EventStageProps) => {
                 </div>
                 <div className="event-page__header-buttons">
                     {
-                        isCreator && !hasEnoughPlayers &&
-                        <div className="event-page__hint">{t("At least 2 players are needed")}</div>
+                        isCreator && nextStageHint &&
+                        <div className="event-page__hint">{nextStageHint}</div>
+                    }
+                    {
+                        pool && (
+                            isParticipant ?
+                            <CommonButton onClick={() => navigate(newcomerPoolPath(guildId, event.id))} endIcon={<SportsEsportsOutlined />}>
+                                {poolCountText}
+                            </CommonButton>
+                            :
+                            <div className="event-page__hint">{poolCountText}</div>
+                        )
                     }
                     {
                         isCreator &&
                         <CommonButton
                         onClick={() => setIsNextStageConfirmShown(true)}
                         color="success"
-                        disabled={!hasEnoughPlayers}
+                        disabled={!hasEnoughPlayers || !hasEnoughPoolGames}
                         endIcon={<ArrowForwardIos />}>
                             {t("Travel to Auction!")}
                         </CommonButton>
@@ -105,7 +137,7 @@ const EventPage = ({ event, currentUser }: EventStageProps) => {
                 onCloseText={t("No")}
                 onConfirm={() => {
                     setIsJoinProposalShown(false);
-                    joinEvent({ eventId: event.id })
+                    join();
                 }}
                 onClose={() => { setIsJoinProposalShown(false) }}>
                     {t("Do you want to join this event?")}
@@ -122,7 +154,12 @@ const EventPage = ({ event, currentUser }: EventStageProps) => {
                     moveEventToNextStage({ eventId: event.id, statusId: EventStatus.PlayersShuffle });
                 }}
                 onClose={() => setIsNextStageConfirmShown(false)}>
-                    {t("After moving on to the next stage new players won't be able to join the event.")}
+                    {
+                        event.allowsNewcomers ?
+                        t("After moving on to the next stage new players will join only after the start, getting a game from the pool.")
+                        :
+                        t("After moving on to the next stage new players won't be able to join the event.")
+                    }
                 </CommonModal>
             }
         </div>

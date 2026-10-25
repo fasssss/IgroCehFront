@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import AddIcon from '@mui/icons-material/Add';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 import { useEffect, useState } from "react";
-import { CircularProgress, Fab, TextField } from "@mui/material";
+import { CircularProgress, Fab, FormControlLabel, Switch, TextField } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { CommonButton } from "root/shared/components/CommonButton";
 import { CommonModal } from "root/shared/components/CommonModal";
@@ -20,7 +20,7 @@ const GuildPage = () => {
     const [postNewEvent, postNewEventResult] = usePostNewEventMutation();
     const [getEventsList, eventsList] = useLazyGetEventsByGuildIdQuery();
     const [isCreateNewOpened, setIsCreateNewOpened] = useState(false);
-    const [eventToCreate, setEventToCreate] = useState({ eventName: "" });
+    const [eventToCreate, setEventToCreate] = useState({ eventName: "", allowsNewcomers: true });
     const [isScrollUpButtonShown, setIsScrollUpButtonShown] = useState(false);
     const [isScrolledDown, setIsScrolledDown] = useState(false);
 
@@ -68,7 +68,7 @@ const GuildPage = () => {
     }, [isScrolledDown]);
 
     const createEvent = async () => {
-        const { eventId } = await postNewEvent({ guildId, eventName: eventToCreate.eventName }).unwrap();
+        const { eventId } = await postNewEvent({ guildId, ...eventToCreate }).unwrap();
         navigate(`/guild/${guildId}/event/${eventId}`);
     };
 
@@ -124,11 +124,23 @@ const GuildPage = () => {
                 >
                     {
                         !postNewEventResult.isLoading ?
-                        <TextField value={eventToCreate.eventName} 
-                        onChange={(e) => setEventToCreate({ eventName: e.target.value })} 
-                        fullWidth variant="outlined" 
-                        label={ t("Event name") } 
-                        />
+                        <div className="guild-page__create-event-form">
+                            <TextField value={eventToCreate.eventName} 
+                            onChange={(e) => setEventToCreate({ ...eventToCreate, eventName: e.target.value })} 
+                            fullWidth variant="outlined" 
+                            label={ t("Event name") } 
+                            />
+                            <FormControlLabel
+                            control={
+                                <Switch
+                                checked={eventToCreate.allowsNewcomers}
+                                onChange={(e) => setEventToCreate({ ...eventToCreate, allowsNewcomers: e.target.checked })} />
+                            }
+                            label={t("Newcomers can join")} />
+                            <div className="guild-page__create-event-hint">
+                                {t("Participants fill a pool of games during the registration, and new players can join after the start.")}
+                            </div>
+                        </div>
                         :
                         <div className="guild-page__create-event-spinner">
                             <CircularProgress color="primary" />

@@ -31,7 +31,13 @@ const eventsApi = igroCehApi.injectEndpoints({
                 }
 
                 const unsubscribe = subscribeToRoom<EventRoomMessage>(eventRoom(eventId), {
-                    onMessage: (message) => updateCachedData((draft) => applyEventRoomMessage(draft, message)),
+                    onMessage: (message) => {
+                        updateCachedData((draft) => applyEventRoomMessage(draft, message));
+                        // the pool for newcomers is cached apart from the event, a player who leaves takes their games out of it
+                        if(message.type === 'updateNewcomerPool' || message.type === 'removeUserFromEvent') {
+                            dispatch(igroCehApi.util.invalidateTags([{ type: 'NewcomerPool', id: eventId }]));
+                        }
+                    },
                     onReconnect: () => dispatch(igroCehApi.util.invalidateTags([{ type: 'Event', id: eventId }])),
                 });
 
@@ -164,6 +170,8 @@ export type EventObject = {
     eventName: string,
     eventCreatorId: string,
     statusId: EventStatus,
+    // participants fill a pool of games for newcomers who join after the start
+    allowsNewcomers: boolean,
     eventRecords: EventRecord[],
     // set by the event room when an admin deletes the opened event
     isDeleted?: boolean
@@ -203,7 +211,8 @@ export type RemoveFromEventResponse = {
 
 export type PostNewEventRequest = {
     guildId: string,
-    eventName: string
+    eventName: string,
+    allowsNewcomers: boolean
 }
 
 export type PostNewEventResponse = {

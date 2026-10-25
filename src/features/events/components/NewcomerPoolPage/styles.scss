@@ -1,0 +1,134 @@
+@use '../../../../shared/default.module.scss' as default;
+
+$muted-text: rgba(255, 255, 255, 0.7);
+$cover-width: 140px;
+
+.newcomer-pool {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: default.$margin_large;
+    padding: default.$padding_big;
+}
+
+.newcomer-pool__loader {
+    display: flex;
+    justify-content: center;
+    padding: default.$padding_large;
+}
+
+.newcomer-pool__header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: default.$margin_small;
+    max-width: 700px;
+    text-align: center;
+}
+
+.newcomer-pool__title {
+    margin: 0;
+}
+
+.newcomer-pool__description {
+    color: $muted-text;
+    font-size: large;
+}
+
+.newcomer-pool__count {
+    margin-bottom: default.$margin_small;
+    font-size: x-large;
+    font-weight: 700;
+}
+
+.newcomer-pool__games {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: default.$margin_big;
+    width: 100%;
+    max-width: 1100px;
+}
+
+.newcomer-pool__game {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: $cover-width;
+    padding: default.$padding_small;
+    border: 2px solid transparent;
+    border-radius: default.$border-radius_small;
+    background-color: default.$dark-grey;
+}
+
+// the own game being replaced
+.newcomer-pool__game--replaced {
+    border-color: default.$discord-bluerple;
+}
+
+.newcomer-pool__cover {
+    width: 100%;
+    // global img rule in DragNDropImage styles caps every image at 300px
+    max-width: none;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    border-radius: default.$border-radius_small;
+    background-color: default.$grey;
+}
+
+.newcomer-pool__cover--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.newcomer-pool__game-name {
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.newcomer-pool__own {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    margin-top: auto;
+}
+
+.newcomer-pool__own-label {
+    padding: 2px default.$padding_small;
+    border-radius: default.$border-radius_small;
+    background-color: default.$discord-bluerple;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.newcomer-pool__own-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+}
+
+.newcomer-pool__empty,
+.newcomer-pool__done {
+    color: $muted-text;
+    font-size: large;
+    text-align: center;
+}
+
+.newcomer-pool__picker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.newcomer-pool__picker-title {
+    display: flex;
+    align-items: center;
+    gap: default.$margin_big;
+    font-size: x-large;
+    font-weight: 700;
+}

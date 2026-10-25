@@ -64,6 +64,18 @@
     gap: default.$margin_small;
 }
 
+.guild-page__create-event-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.guild-page__create-event-hint {
+    max-width: 400px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+}
+
 .guild-page__create-event-spinner {
     display: flex;
     justify-content: center;

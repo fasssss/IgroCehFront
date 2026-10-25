@@ -9,7 +9,9 @@ import { EventPage } from "../EventPage";
 import { AuctionShufflingStagePage } from "../AuctionShufflingStagePage";
 import { GameGuessPage } from "../GameGuessPage";
 import { AuctionProgressPage } from "../AuctionProgressPage";
+import { NewcomerPoolPage } from "../NewcomerPoolPage";
 import { GUESS_GAME_SUBPATH } from "../../guessGamePath";
+import { NEWCOMER_POOL_SUBPATH } from "../../newcomerPoolPath";
 import './styles.scss';
 
 export type EventStageProps = {
@@ -57,6 +59,14 @@ const EventStageRouter = () => {
         const ownRecord = getEventById.data.eventRecords.find(record => record.participant.id === currentUser.id);
         return getEventById.data.statusId === EventStatus.GuessingGames && ownRecord
             ? <GameGuessPage event={getEventById.data} currentUser={currentUser} />
+            : <Navigate to={`/guild/${guildId}/event/${eventId}`} replace />;
+    }
+
+    if(subPath === NEWCOMER_POOL_SUBPATH) {
+        // participants fill the pool while the event gathers players, then the page leads back to the event
+        const isParticipant = getEventById.data.eventRecords.some(record => record.participant.id === currentUser.id);
+        return getEventById.data.allowsNewcomers && getEventById.data.statusId === EventStatus.PlayersRegistration && isParticipant
+            ? <NewcomerPoolPage event={getEventById.data} currentUser={currentUser} />
             : <Navigate to={`/guild/${guildId}/event/${eventId}`} replace />;
     }
 
