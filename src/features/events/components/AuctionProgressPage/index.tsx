@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import { playerProfilePath } from "root/features/players/playerProfilePath";
 import { useGetGuildByIdQuery } from "root/features/guilds/guildsApi";
 import { guessGamePath } from "../../guessGamePath";
+import { newcomerJoinPath } from "../../newcomerJoinPath";
 
 // progress of passing the guessed games, after summarizing shows results of the event
 const AuctionProgressPage = ({ event, currentUser }: EventStageProps) => {
@@ -27,6 +28,9 @@ const AuctionProgressPage = ({ event, currentUser }: EventStageProps) => {
     const isActive = event.statusId === EventStatus.Active;
     const isGuessing = event.statusId === EventStatus.GuessingGames;
     const guessedCount = event.eventRecords.filter(record => record.game).length;
+    // a member of the guild who isn't in the active event with a pool may join it as a newcomer
+    const canJoinAsNewcomer = isActive && event.allowsNewcomers
+        && !event.eventRecords.some(record => record.participant.id === currentUser.id || record.toUser?.id === currentUser.id);
     // the creator activates the event once every participant has guessed, until then the games can be changed
     const canActivate = guessedCount > 0 && guessedCount === event.eventRecords.length;
 
@@ -52,6 +56,12 @@ const AuctionProgressPage = ({ event, currentUser }: EventStageProps) => {
                             {t("Activate event")}
                         </CommonButton>
                     </>
+                }
+                {
+                    canJoinAsNewcomer &&
+                    <CommonButton color="success" onClick={() => navigate(newcomerJoinPath(guildId, event.id))}>
+                        {t("Join")}
+                    </CommonButton>
                 }
                 {/* the games are played only after the activation, so there is nothing to summarize before it */}
                 { isCreator && isActive &&
@@ -86,6 +96,7 @@ const AuctionProgressPage = ({ event, currentUser }: EventStageProps) => {
                         >
                             {record.toUser?.userName}
                             <img src={record.toUser?.avatarUrl ?? undefined} />
+                            {record.isNewcomer && <div className="auction-progress__newcomer">{t("Newcomer")}</div>}
                         </div>
                     </div>
                     <div className="auction-progress__status-part">

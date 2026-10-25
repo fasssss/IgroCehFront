@@ -1,0 +1,128 @@
+@use '../../../../shared/default.module.scss' as default;
+
+$muted-text: rgba(255, 255, 255, 0.7);
+$failed: #e5534b;
+$cover-width: 140px;
+
+.newcomer-join {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: default.$margin_large;
+    padding: default.$padding_big;
+}
+
+.newcomer-join__message {
+    gap: default.$margin_big;
+    color: $muted-text;
+    font-size: large;
+    text-align: center;
+}
+
+.newcomer-join__header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: default.$margin_small;
+    max-width: 700px;
+    text-align: center;
+}
+
+.newcomer-join__title {
+    margin: 0;
+    text-align: center;
+}
+
+.newcomer-join__description {
+    color: $muted-text;
+    font-size: large;
+}
+
+.newcomer-join__note {
+    color: $muted-text;
+    text-align: center;
+}
+
+.newcomer-join__games {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: default.$margin_big;
+    width: 100%;
+    max-width: 1100px;
+}
+
+.newcomer-join__game {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: $cover-width;
+    padding: default.$padding_small;
+    border-radius: default.$border-radius_small;
+    background-color: default.$dark-grey;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.newcomer-join__game .common-button {
+    margin-top: auto;
+}
+
+// a game the newcomer has passed doesn't drop
+.newcomer-join__game--excluded {
+    opacity: 0.45;
+}
+
+.newcomer-join__game--excluded .newcomer-join__game-name {
+    text-decoration: line-through;
+}
+
+.newcomer-join__cover {
+    width: 100%;
+    // global img rule in DragNDropImage styles caps every image at 300px
+    max-width: none;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    border-radius: default.$border-radius_small;
+    background-color: default.$grey;
+}
+
+.newcomer-join__cover--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.newcomer-join__game-name {
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.newcomer-join__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: default.$margin_small;
+}
+
+.newcomer-join__count {
+    font-size: x-large;
+    font-weight: 700;
+}
+
+.newcomer-join__error {
+    color: $failed;
+}
+
+.newcomer-join__dropped {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: default.$margin_big;
+}
+
+.newcomer-join__dropped-text {
+    font-size: xx-large;
+    font-weight: 800;
+    text-align: center;
+}

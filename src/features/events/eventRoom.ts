@@ -14,9 +14,10 @@ export type EventRoomMessage =
     | WebSocketMessage<'deleteEvent', { eventId: string }>
     | WebSocketMessage<'updateNewcomerPool', { eventId: string }>;
 
-// orders records along the chain "who guesses" -> "for whom", so cards can be shown with arrows between them
+// orders records along the chain "who guesses" -> "for whom", so cards can be shown with arrows between them;
+// newcomers aren't in the chain, they go after it in the order they joined
 export const sortByChain = (records: EventRecord[]) => {
-    const remaining = [...records];
+    const remaining = records.filter(record => !record.isNewcomer);
     const sorted: EventRecord[] = [];
     while(remaining.length > 0) {
         const previous = sorted[sorted.length - 1];
@@ -24,7 +25,7 @@ export const sortByChain = (records: EventRecord[]) => {
         sorted.push(...remaining.splice(Math.max(nextIndex, 0), 1));
     }
 
-    return sorted;
+    return [...sorted, ...records.filter(record => record.isNewcomer)];
 };
 
 const patchRecord = (event: EventObject, patch: Pick<EventRecord, 'id'> & Partial<EventRecord>) => {

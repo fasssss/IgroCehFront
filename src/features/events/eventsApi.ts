@@ -162,7 +162,9 @@ export type EventRecord = {
     participant: UserShortObject,
     toUser: UserShortObject | null,
     game: GameObject | null,
-    reward: number | null
+    reward: number | null,
+    // the newcomer is toUser, the game came from the pool and participant is the one who put it there
+    isNewcomer: boolean
 }
 
 export type EventObject = {
@@ -185,7 +187,9 @@ export type EventShortObject = {
     endDate: string,
     guildName: string,
     statusId: EventStatus,
-    participantsIds: Array<string>
+    // newcomers are counted with the participants
+    participantsIds: Array<string>,
+    allowsNewcomers: boolean
 }
 
 export type GetEventByIdRequest = {

@@ -93,6 +93,17 @@
     cursor: pointer;
 }
 
+.auction-progress__newcomer {
+    align-self: center;
+    margin-top: 4px;
+    padding: 2px 8px;
+    border-radius: default.$border-radius_small;
+    background-color: default.$yellow;
+    color: default.$black;
+    font-size: 14px;
+    font-weight: 700;
+}
+
 .auction-progress__item-to img,
 .auction-progress__item-from img{
     width: 128px;

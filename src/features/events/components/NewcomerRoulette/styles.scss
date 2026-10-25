@@ -1,0 +1,74 @@
+@use '../../../../shared/default.module.scss' as default;
+
+$cover-width: 140px;
+$cover-width_phone: 104px;
+
+.newcomer-roulette {
+    position: relative;
+    width: 100%;
+    max-width: 1100px;
+    overflow: hidden;
+    padding: default.$padding_big 0;
+    border-radius: default.$border-radius_big;
+    background-color: default.$dark-grey;
+}
+
+// the line the strip stops under
+.newcomer-roulette__mark {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    z-index: 1;
+    width: 4px;
+    border-radius: 2px;
+    background-color: default.$yellow;
+    box-shadow: 0 0 12px default.$yellow;
+    transform: translateX(-50%);
+}
+
+// fast at first, slowing down to the dropped game
+.newcomer-roulette__strip {
+    display: flex;
+    column-gap: default.$margin_big;
+    width: max-content;
+    transition-property: transform;
+    transition-timing-function: cubic-bezier(0.1, 0.7, 0.15, 1);
+}
+
+.newcomer-roulette__item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: $cover-width;
+}
+
+.newcomer-roulette__cover {
+    width: 100%;
+    // global img rule in DragNDropImage styles caps every image at 300px
+    max-width: none;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    border-radius: default.$border-radius_small;
+    background-color: default.$grey;
+}
+
+.newcomer-roulette__cover--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.newcomer-roulette__name {
+    overflow: hidden;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+    .newcomer-roulette__item {
+        width: $cover-width_phone;
+    }
+}

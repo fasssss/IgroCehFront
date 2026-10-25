@@ -111,7 +111,15 @@ const PlayerHistory = ({ userId, guildId }: PlayerHistoryProps) => {
                             </div>
                         </div>
                         {renderRecord(t('Received game'), t('from'), item.receivedGame, item)}
-                        {renderRecord(t('Guessed game'), t('for'), item.suggestedGame, item)}
+                        {
+                            item.isNewcomer ?
+                            <div className="player-history__record">
+                                <div className="player-history__record-title">{t('Guessed game')}</div>
+                                <div className="player-history__no-game">{t('Joined as a newcomer and guessed nothing')}</div>
+                            </div>
+                            :
+                            renderRecord(t('Guessed game'), t('for'), item.suggestedGame, item)
+                        }
                     </div>
                 )
             }

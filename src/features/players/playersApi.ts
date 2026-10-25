@@ -116,7 +116,9 @@ export type PlayerHistoryItem = {
     startDate: string,
     endDate: string,
     receivedGame: PlayerHistoryRecord | null,
-    suggestedGame: PlayerHistoryRecord | null
+    suggestedGame: PlayerHistoryRecord | null,
+    // the player joined the active event and rolled a game of the pool, so they guessed nothing
+    isNewcomer: boolean
 }
 
 export type GetPlayerProfileRequest = {

@@ -1,5 +1,5 @@
 import { igroCehApi } from "root/shared/igroCehApi";
-import type { GameObject } from "./eventsApi";
+import type { EventRecord, GameObject } from "./eventsApi";
 
 const postTo = (url: string) => <TBody>(body: TBody) => ({ url, method: 'POST', body });
 
@@ -27,6 +27,15 @@ const newcomerPoolApi = igroCehApi.injectEndpoints({
         removeNewcomerPoolGame: build.mutation<void, RemoveNewcomerPoolGameRequest>({
             query: postTo('/api/removeNewcomerPoolGame'),
             invalidatesTags: invalidatePool,
+        }),
+        // the games of the pool that may drop to the current user in the active event
+        getNewcomerRoll: build.query<NewcomerRoll, string>({
+            query: (eventId) => ({ url: '/api/getNewcomerRoll', params: { eventId } }),
+        }),
+        // the server picks the game, the record comes to the opened event through its room as well
+        joinAsNewcomer: build.mutation<JoinAsNewcomerResponse, JoinAsNewcomerRequest>({
+            query: postTo('/api/joinAsNewcomer'),
+            invalidatesTags: (_result, _error, { eventId }) => [{ type: 'Event', id: eventId }],
         }),
     })
 });
@@ -65,9 +74,28 @@ export type ChangeNewcomerPoolResponse = {
     poolGame: NewcomerPoolGame
 }
 
+export type NewcomerRoll = {
+    games: NewcomerPoolGame[],
+    // the games of the pool the user has already got somewhere, they don't drop again
+    hiddenCount: number,
+    // games are crossed out while at least this many stay
+    minGames: number
+}
+
+export type JoinAsNewcomerRequest = {
+    eventId: string,
+    excludedPoolGameIds: string[]
+}
+
+export type JoinAsNewcomerResponse = {
+    eventRecordObject: EventRecord
+}
+
 export const {
     useGetNewcomerPoolQuery,
     useAddNewcomerPoolGameMutation,
     useReplaceNewcomerPoolGameMutation,
     useRemoveNewcomerPoolGameMutation,
+    useGetNewcomerRollQuery,
+    useJoinAsNewcomerMutation,
 } = newcomerPoolApi;

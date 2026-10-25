@@ -12,9 +12,10 @@ import { CommonModal } from 'root/shared/components/CommonModal';
 import { EVENT_STATUS_COLOR, EVENT_STATUS_NAME, EventStatus } from 'root/shared/constants';
 import { useCurrentUser } from 'root/features/authorization/authorizationApi';
 import { EventShortObject, useDeleteEventMutation } from '../../eventsApi';
+import { newcomerJoinPath } from '../../newcomerJoinPath';
 import './styles.scss';
 
-const EventTile = ({ id, name, creatorUserName, statusId, startDate, endDate, participantsIds, canDelete = false }: EventTileProps) => {
+const EventTile = ({ id, name, creatorUserName, statusId, startDate, endDate, participantsIds, allowsNewcomers, canDelete = false }: EventTileProps) => {
     const { t, i18n } = useTranslation();
     const [isDeleteConfirmShown, setIsDeleteConfirmShown] = useState(false);
     const [deleteEvent] = useDeleteEventMutation();
@@ -67,12 +68,24 @@ const EventTile = ({ id, name, creatorUserName, statusId, startDate, endDate, pa
                         </div>
                         :
                         <div className='event-tile__buttons'>
-                            <CommonButton color='success' 
-                            onClick={() => navigate(`/guild/${guildId}/event/${id}`)} 
-                            startIcon={<PersonAddIcon />}
-                            >
-                                { t('Join') }
-                            </CommonButton>
+                            {
+                                // players join while the event gathers them, newcomers join the active event with a pool;
+                                // otherwise the event is only watched
+                                statusId === EventStatus.PlayersRegistration || (statusId === EventStatus.Active && allowsNewcomers) ?
+                                <CommonButton color='success'
+                                onClick={() => navigate(statusId === EventStatus.Active ? newcomerJoinPath(guildId, id) : `/guild/${guildId}/event/${id}`)}
+                                startIcon={<PersonAddIcon />}
+                                >
+                                    { t('Join') }
+                                </CommonButton>
+                                :
+                                <CommonButton color='success'
+                                onClick={() => navigate(`/guild/${guildId}/event/${id}`)}
+                                startIcon={<Search />}
+                                >
+                                    { t('Inspect') }
+                                </CommonButton>
+                            }
                         </div>
                     )
                 }
