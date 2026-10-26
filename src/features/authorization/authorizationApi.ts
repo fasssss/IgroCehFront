@@ -40,11 +40,14 @@ export type GetDiscordAuthLinkResponse = {
     discordApiLink: string
 }
 
+// the signed in user
 export type UserObject = {
     userName: string,
     email: string,
     avatarUrl: string | null,
-    id: string
+    id: string,
+    // the administrator of the whole site, set by hand in the database
+    isAppAdmin: boolean
 }
 
 export const {
