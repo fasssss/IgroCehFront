@@ -2,15 +2,16 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { skipToken } from "@reduxjs/toolkit/query";
 import { CircularProgress, SvgIcon } from "@mui/material";
-import { AutoAwesome, Edit } from "@mui/icons-material";
+import { AutoAwesome, Edit, FactCheck } from "@mui/icons-material";
 import { CommonButton } from "root/shared/components/CommonButton";
 import { SvgSelector } from "root/shared/components/SvgSelector";
 import { resolveImageUrl } from "root/shared/helpers/imageUrl";
 import { useCurrentUser } from "root/features/authorization/authorizationApi";
 import { SteamSignInButton } from "root/features/steam/components/SteamSignInButton";
 import { SteamProfileWarning } from "root/features/steam/components/SteamProfileWarning";
-import { useGetGlobalEventQuery } from "../../globalEventsApi";
-import { globalEventEditPath } from "../../globalEventPath";
+import { useGetGlobalEventClaimsQuery, useGetGlobalEventParticipationQuery, useGetGlobalEventQuery } from "../../globalEventsApi";
+import { globalEventClaimsPath, globalEventEditPath } from "../../globalEventPath";
+import { ClaimStatus } from "../../globalEventClaims";
 import { GlobalEventGameCard } from "../GlobalEventGameCard";
 import { GlobalEventParticipation } from "../GlobalEventParticipation";
 import './styles.scss';
@@ -24,6 +25,11 @@ const GlobalEventPage = () => {
     const user = useCurrentUser();
     const globalEventQuery = useGetGlobalEventQuery(globalEventId ?? skipToken, { refetchOnMountOrArgChange: true });
     const globalEvent = globalEventQuery.data?.globalEvent;
+    // the administrators see how many claims wait for them
+    const claimsQuery = useGetGlobalEventClaimsQuery(user?.isAppAdmin && globalEventId ? globalEventId : skipToken, { refetchOnMountOrArgChange: true });
+    const pendingClaimCount = claimsQuery.data?.claims.filter(claim => claim.status === ClaimStatus.Pending).length;
+    // the same query as the participation below reads, it isn't sent twice
+    const participationQuery = useGetGlobalEventParticipationQuery(globalEventId ?? skipToken);
 
     if(globalEventQuery.isError) {
         const isNotFound = 'status' in globalEventQuery.error && globalEventQuery.error.status === 404;
@@ -58,6 +64,7 @@ const GlobalEventPage = () => {
                     <h1 className="global-event-page__name">{globalEvent.name}</h1>
                     <span className="global-event-page__participants">
                         {t("Players taking part: {{count}}", { count: globalEvent.participantCount })}
+                        {` · ${t("Passed: {{count}}", { count: globalEvent.passedCount })}`}
                     </span>
                     {
                         globalEvent.finishedAt &&
@@ -77,13 +84,17 @@ const GlobalEventPage = () => {
                             <CommonButton startIcon={<Edit />} onClick={() => navigate(globalEventEditPath(globalEvent.id))}>
                                 {t("Edit the global event")}
                             </CommonButton>
+                            <CommonButton startIcon={<FactCheck />} onClick={() => navigate(globalEventClaimsPath(globalEvent.id))}>
+                                {t("Claims of the passing")}
+                                {!!pendingClaimCount && ` (${pendingClaimCount})`}
+                            </CommonButton>
                         </div>
                     }
                 </div>
             </header>
             {
-                // Steam isn't required, it only checks the passing by itself
-                !globalEvent.finishedAt && user &&
+                // Steam isn't required, it only checks the passing by itself, so it isn't needed after the passing
+                !globalEvent.finishedAt && user && !participationQuery.data?.participation?.passedAt &&
                 (
                     user.steamId ?
                     <SteamProfileWarning className="global-event-page__steam-warning" />

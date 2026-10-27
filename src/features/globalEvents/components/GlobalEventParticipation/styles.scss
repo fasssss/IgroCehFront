@@ -44,6 +44,16 @@ $failed: #ef6a5a;
     gap: default.$margin_big;
 }
 
+.global-event-participation__passed {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    color: default.$green;
+    font-size: 18px;
+    font-weight: 700;
+}
+
 .global-event-participation__error {
     color: $failed;
 }

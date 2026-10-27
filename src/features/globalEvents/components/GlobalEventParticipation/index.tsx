@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { TFunction } from "i18next";
 import { CircularProgress } from "@mui/material";
-import { Casino } from "@mui/icons-material";
+import { Casino, CheckCircle } from "@mui/icons-material";
 import { CommonButton } from "root/shared/components/CommonButton";
 import { CommonModal } from "root/shared/components/CommonModal";
 import { useCurrentUser } from "root/features/authorization/authorizationApi";
@@ -15,7 +15,9 @@ import {
     useRollGlobalEventGamesMutation
 } from "../../globalEventsApi";
 import { GLOBAL_EVENT_REFUSAL_DELAY_DAYS } from "../../globalEventLimits";
+import { ClaimStatus } from "../../globalEventClaims";
 import { GlobalEventGameCard } from "../GlobalEventGameCard";
+import { GlobalEventPassingProof } from "../GlobalEventPassingProof";
 import { GlobalEventRoll } from "../GlobalEventRoll";
 import './styles.scss';
 
@@ -46,9 +48,9 @@ const formatTimeLeft = (ms: number, t: TFunction) => {
 };
 
 // the roll of the current user on the page of a global event: three games drop, the player picks one of them,
-// a week after the pick it can be refused for a new roll
+// a week after the pick it can be refused for a new roll; the passing of the picked game ends the participation
 const GlobalEventParticipation = ({ globalEvent }: GlobalEventParticipationProps) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const user = useCurrentUser();
     const participationQuery = useGetGlobalEventParticipationQuery(globalEvent.id, { refetchOnMountOrArgChange: true });
     const participation = participationQuery.data?.participation;
@@ -69,6 +71,8 @@ const GlobalEventParticipation = ({ globalEvent }: GlobalEventParticipationProps
     const refusableAt = participation?.refusableAt ? Date.parse(participation.refusableAt) : null;
     const now = useNow(refusableAt !== null && !isFinished);
     const canRefuse = refusableAt !== null && now >= refusableAt;
+
+    const formatDate = (date: string) => new Date(date).toLocaleDateString(i18n.language, { day: 'numeric', month: 'long', year: 'numeric' });
 
     const toErrorText = (requestError: unknown) => errorStatus(requestError) === 422
         ? t("No game of the event can drop to you: you have unlocked an achievement of every one")
@@ -170,12 +174,30 @@ const GlobalEventParticipation = ({ globalEvent }: GlobalEventParticipationProps
             );
         }
 
+        const isPassed = !!participation.passedAt;
+        const isClaimPending = participation.claim?.status === ClaimStatus.Pending;
         return(
             <>
                 <h2 className="global-event-participation__title">{t("Your game")}</h2>
                 <GlobalEventGameCard name={pickedGame.game.name} imageUrl={pickedGame.game.imageUrl} achievements={pickedGame.achievements} />
                 {
-                    !isFinished && refusableAt !== null &&
+                    participation.passedAt ?
+                    <div className="global-event-participation__passed">
+                        <CheckCircle />
+                        {t("Passed on {{date}}", { date: formatDate(participation.passedAt) })}
+                        {" · "}
+                        {participation.claim?.status === ClaimStatus.Approved ? t("by a claim") : t("by Steam")}
+                    </div>
+                    : isFinished ?
+                    <p className="global-event-participation__text">
+                        {isClaimPending ? t("The claim is under review") : t("The event is finished, the game isn't passed")}
+                    </p>
+                    :
+                    <GlobalEventPassingProof globalEvent={globalEvent} game={pickedGame} participation={participation} />
+                }
+                {
+                    // a passed game or one with a claim under review stays
+                    !isFinished && !isPassed && !isClaimPending && refusableAt !== null &&
                     <div className="global-event-participation__refusal">
                         <CommonButton color="warning" disabled={!canRefuse || isBusy} onClick={() => setIsConfirmingRefusal(true)}>
                             {t("Refuse and roll again")}

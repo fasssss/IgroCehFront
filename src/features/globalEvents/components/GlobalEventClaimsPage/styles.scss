@@ -1,0 +1,133 @@
+@use '../../../../shared/default.module.scss' as default;
+
+$muted-text: rgba(255, 255, 255, 0.7);
+$failed: #ef6a5a;
+$page-width: 900px;
+
+.global-event-claims {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: default.$margin_large;
+    padding: default.$padding_big;
+}
+
+.global-event-claims__message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: default.$margin_big;
+    padding: default.$padding_large;
+    text-align: center;
+}
+
+.global-event-claims__header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: default.$margin_small;
+    text-align: center;
+}
+
+.global-event-claims__title {
+    margin: 0;
+}
+
+.global-event-claims__event {
+    color: $muted-text;
+    font-size: 18px;
+}
+
+.global-event-claims__section {
+    display: flex;
+    flex-direction: column;
+    gap: default.$margin_big;
+    width: 100%;
+    max-width: $page-width;
+}
+
+.global-event-claims__section-title {
+    margin: 0;
+}
+
+.global-event-claims__info {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: default.$margin_big;
+    row-gap: default.$margin_small;
+    padding-top: default.$padding_small;
+    border-top: 1px solid default.$grey;
+}
+
+.global-event-claims__player {
+    display: inline-flex;
+    align-items: center;
+    gap: default.$margin_small;
+    font-weight: 700;
+}
+
+.global-event-claims__avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+}
+
+// Discord shows the first letter for a player without an avatar
+.global-event-claims__avatar--empty {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: default.$discord-bluerple;
+}
+
+.global-event-claims__profile {
+    color: white;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.global-event-claims__muted {
+    margin: 0;
+    color: $muted-text;
+}
+
+.global-event-claims__status {
+    flex-basis: 100%;
+    font-weight: 600;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+}
+
+.global-event-claims__status--approved {
+    color: default.$green;
+}
+
+.global-event-claims__status--rejected,
+.global-event-claims__error {
+    color: $failed;
+}
+
+.global-event-claims__modal-text {
+    max-width: 420px;
+    text-align: center;
+}
+
+.global-event-claims__comment {
+    width: min(420px, 70vw);
+    box-sizing: border-box;
+    min-height: 100px;
+    padding: default.$padding_small;
+    border: none;
+    border-radius: default.$border-radius_small;
+    background-color: default.$grey;
+    color: white;
+    font-family: inherit;
+    font-size: 16px;
+    resize: vertical;
+
+    &:focus {
+        outline: none;
+        background-color: default.$light-grey;
+    }
+}

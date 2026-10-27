@@ -1,0 +1,97 @@
+@use '../../../../shared/default.module.scss' as default;
+
+$muted-text: rgba(255, 255, 255, 0.7);
+$failed: #ef6a5a;
+$pending: #f0b232;
+
+.global-event-passing {
+    display: flex;
+    flex-direction: column;
+    gap: default.$margin_big;
+    padding: default.$padding_big;
+    border-radius: default.$border-radius_small;
+    background-color: default.$dark-grey;
+}
+
+.global-event-passing__title,
+.global-event-passing__text {
+    margin: 0;
+}
+
+.global-event-passing__text {
+    color: $muted-text;
+}
+
+// MUI resets the margin of CommonButton
+.global-event-passing__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: default.$margin_big;
+}
+
+.global-event-passing__pending {
+    color: $pending;
+    font-weight: 600;
+}
+
+.global-event-passing__rejected,
+.global-event-passing__error {
+    color: $failed;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+}
+
+.global-event-passing__form {
+    display: flex;
+    flex-direction: column;
+    gap: default.$margin_small;
+}
+
+.global-event-passing__platforms {
+    display: flex;
+    flex-wrap: wrap;
+    gap: default.$margin_small;
+}
+
+.global-event-passing__platform {
+    padding: 6px default.$padding_big;
+    border: 1px solid default.$light-grey;
+    border-radius: default.$border-radius_small;
+    background-color: default.$grey;
+    color: white;
+    font: inherit;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+
+    &:hover {
+        background-color: default.$light-grey;
+    }
+}
+
+.global-event-passing__platform--selected {
+    border-color: default.$discord-bluerple;
+    background-color: default.$discord-bluerple;
+
+    &:hover {
+        background-color: default.$discord-bluerple;
+    }
+}
+
+.global-event-passing__profile {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px default.$padding_big;
+    border: none;
+    border-radius: default.$border-radius_small;
+    background-color: default.$grey;
+    color: white;
+    font-family: inherit;
+    font-size: 16px;
+    transition: background-color 0.2s ease-in-out;
+
+    &:focus {
+        outline: none;
+        background-color: default.$light-grey;
+    }
+}

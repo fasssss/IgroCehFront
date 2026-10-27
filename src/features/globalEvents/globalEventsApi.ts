@@ -1,5 +1,6 @@
 import { igroCehApi } from "root/shared/igroCehApi";
-import type { GameObject } from "root/features/events/eventsApi";
+import type { GameObject, UserShortObject } from "root/features/events/eventsApi";
+import type { ClaimPlatform, ClaimStatus, PassingCheck } from "./globalEventClaims";
 
 const postTo = (url: string) => <TBody>(body: TBody) => ({ url, method: 'POST', body });
 
@@ -65,6 +66,29 @@ const globalEventsApi = igroCehApi.injectEndpoints({
             query: postTo('/api/refuseGlobalEventGame'),
             onQueryStarted: setParticipation,
         }),
+        // Steam is asked about the picked game, 503 when it doesn't answer
+        checkGlobalEventPassing: build.mutation<CheckGlobalEventPassingResponse, GlobalEventRequest>({
+            query: postTo('/api/checkGlobalEventPassing'),
+            // the event counts the passed players
+            invalidatesTags: ['GlobalEvent'],
+            onQueryStarted: setParticipation,
+        }),
+        // one claim at a time is under review
+        submitGlobalEventClaim: build.mutation<GlobalEventParticipationResponse, SubmitGlobalEventClaimRequest>({
+            query: postTo('/api/submitGlobalEventClaim'),
+            invalidatesTags: ['GlobalEventClaims'],
+            onQueryStarted: setParticipation,
+        }),
+        // only for the administrators, the claims under review first
+        getGlobalEventClaims: build.query<GlobalEventClaimsResponse, string>({
+            query: (globalEventId) => ({ url: '/api/getGlobalEventClaims', params: { globalEventId } }),
+            providesTags: ['GlobalEventClaims'],
+        }),
+        // 409 when another administrator has decided it already
+        decideGlobalEventClaim: build.mutation<void, DecideGlobalEventClaimRequest>({
+            query: postTo('/api/decideGlobalEventClaim'),
+            invalidatesTags: ['GlobalEventClaims', 'GlobalEvent'],
+        }),
     })
 });
 
@@ -76,7 +100,7 @@ async function setParticipation({ globalEventId }: GlobalEventRequest, { dispatc
 }) {
     try {
         const { data } = await queryFulfilled;
-        dispatch(globalEventsApi.util.upsertQueryData('getGlobalEventParticipation', globalEventId, data));
+        dispatch(globalEventsApi.util.upsertQueryData('getGlobalEventParticipation', globalEventId, { participation: data.participation }));
     } catch {
         dispatch(globalEventsApi.endpoints.getGlobalEventParticipation.initiate(globalEventId, { subscribe: false, forceRefetch: true }));
     }
@@ -117,6 +141,8 @@ export type GlobalEvent = {
     finishedAt: string | null,
     // the players who rolled its games; with any of them the games can't change
     participantCount: number,
+    // the participants who passed their picked game
+    passedCount: number,
     games: GlobalEventGame[]
 }
 
@@ -129,11 +155,53 @@ export type GlobalEventParticipation = {
     pickedAppId: number | null,
     pickedAt: string | null,
     // from then on the picked game can be refused for a new roll
-    refusableAt: string | null
+    refusableAt: string | null,
+    // the picked game is passed, the participation is over
+    passedAt: string | null,
+    // the last claim for the picked game
+    claim: GlobalEventClaim | null
 }
 
 export type GlobalEventParticipationResponse = {
     participation: GlobalEventParticipation | null
+}
+
+// a claim that the picked game is passed, with the profile that shows it
+export type GlobalEventClaim = {
+    id: string,
+    // null in the participation of the player themselves
+    player: UserShortObject | null,
+    // the Steam app id of the game the claim is about
+    appId: number,
+    platform: ClaimPlatform,
+    profile: string,
+    status: ClaimStatus,
+    // the reason of a rejection
+    comment: string | null,
+    createdAt: string,
+    decidedAt: string | null,
+    // null while it is under review and for the player themselves
+    decidedBy: UserShortObject | null
+}
+
+export type CheckGlobalEventPassingResponse = GlobalEventParticipationResponse & {
+    passingCheck: PassingCheck
+}
+
+export type SubmitGlobalEventClaimRequest = GlobalEventRequest & {
+    platform: ClaimPlatform,
+    profile: string
+}
+
+export type GlobalEventClaimsResponse = {
+    claims: GlobalEventClaim[]
+}
+
+export type DecideGlobalEventClaimRequest = {
+    claimId: string,
+    isApproved: boolean,
+    // the reason of a rejection, may be empty
+    comment?: string
 }
 
 export type PickGlobalEventGameRequest = GlobalEventRequest & {
@@ -183,5 +251,9 @@ export const {
     useGetGlobalEventParticipationQuery,
     useRollGlobalEventGamesMutation,
     usePickGlobalEventGameMutation,
-    useRefuseGlobalEventGameMutation
+    useRefuseGlobalEventGameMutation,
+    useCheckGlobalEventPassingMutation,
+    useSubmitGlobalEventClaimMutation,
+    useGetGlobalEventClaimsQuery,
+    useDecideGlobalEventClaimMutation
 } = globalEventsApi;

@@ -9,4 +9,5 @@ export * from './reviews/components/ReviewPage';
 export * from './reviews/components/ReviewsPage';
 export * from './globalEvents/components/GlobalEventConstructorPage';
 export * from './globalEvents/components/GlobalEventPage';
+export * from './globalEvents/components/GlobalEventClaimsPage';
 export * from './steam/components/SteamLinkPage';
