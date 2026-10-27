@@ -164,15 +164,6 @@ $header-gap: default.$margin_big;
     font-size: 22px;
 }
 
-// achievements and reviews until they are implemented
-.player-profile__placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 156px;
-    color: $muted-text;
-}
-
 // the history takes the left half, reviews the right one; on narrow screens reviews go under the history
 .player-profile__columns {
     display: grid;

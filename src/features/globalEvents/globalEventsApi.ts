@@ -89,6 +89,11 @@ const globalEventsApi = igroCehApi.injectEndpoints({
             query: postTo('/api/decideGlobalEventClaim'),
             invalidatesTags: ['GlobalEventClaims', 'GlobalEvent'],
         }),
+        // only for the administrators: the events that give badges, the latest first
+        getGlobalEventBadgeUses: build.query<GlobalEventBadgeUsesResponse, void>({
+            query: () => '/api/getGlobalEventBadgeUses',
+            providesTags: ['GlobalEvent'],
+        }),
     })
 });
 
@@ -136,6 +141,8 @@ export type GlobalEvent = {
     name: string,
     description: string | null,
     imageUrl: string | null,
+    // the badge a player gets for passing the event, see badges.ts; null for the events made before the badges
+    badgeId: string | null,
     createdAt: string,
     // null while the event is active
     finishedAt: string | null,
@@ -224,7 +231,21 @@ export type NewGlobalEventGame = {
 export type CreateGlobalEventRequest = {
     name: string,
     description: string,
+    badgeId: string,
     games: NewGlobalEventGame[]
+}
+
+// a global event that gives a badge for its passing
+export type GlobalEventBadgeUse = {
+    badgeId: string,
+    globalEventId: string,
+    globalEventName: string,
+    // the players who got the badge for this event
+    passedCount: number
+}
+
+export type GlobalEventBadgeUsesResponse = {
+    badgeUses: GlobalEventBadgeUse[]
 }
 
 export type UpdateGlobalEventRequest = CreateGlobalEventRequest & {
@@ -255,5 +276,6 @@ export const {
     useCheckGlobalEventPassingMutation,
     useSubmitGlobalEventClaimMutation,
     useGetGlobalEventClaimsQuery,
-    useDecideGlobalEventClaimMutation
+    useDecideGlobalEventClaimMutation,
+    useGetGlobalEventBadgeUsesQuery
 } = globalEventsApi;

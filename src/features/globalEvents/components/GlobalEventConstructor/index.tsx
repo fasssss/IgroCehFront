@@ -30,6 +30,7 @@ import {
 } from "../../globalEventLimits";
 import { globalEventEditPath } from "../../globalEventPath";
 import { AchievementPicker } from "../AchievementPicker";
+import { BadgePicker } from "../BadgePicker";
 import { GlobalEventGameCard } from "../GlobalEventGameCard";
 import type { GlobalEventConstructorPageState } from "../GlobalEventConstructorPage";
 import './styles.scss';
@@ -54,6 +55,9 @@ const toChosenGames = (globalEvent?: GlobalEvent): ChosenGame[] => globalEvent?.
 const errorStatus = (error: unknown) =>
     typeof error === 'object' && error !== null && 'status' in error ? error.status : undefined;
 
+const conflictText = (error: unknown) =>
+    typeof error === 'object' && error !== null && 'data' in error && typeof error.data === 'string' ? error.data : "";
+
 // two steps like on the mockup: the banner with the name and the description, then the games with their achievements;
 // the same page changes an existing event, then it can be saved from either step
 const GlobalEventConstructor = ({ globalEvent, isImageFailed }: GlobalEventConstructorProps) => {
@@ -68,6 +72,7 @@ const GlobalEventConstructor = ({ globalEvent, isImageFailed }: GlobalEventConst
     const [image, setImage] = useState<Blob>();
     const [name, setName] = useState(globalEvent?.name ?? "");
     const [description, setDescription] = useState(globalEvent?.description ?? "");
+    const [badgeId, setBadgeId] = useState(globalEvent?.badgeId ?? null);
     const [games, setGames] = useState(() => toChosenGames(globalEvent));
     const [selectedGame, setSelectedGame] = useState<CatalogGameObject | null>(null);
     const [selectedAchievements, setSelectedAchievements] = useState<GlobalEventAchievement[]>([]);
@@ -82,12 +87,13 @@ const GlobalEventConstructor = ({ globalEvent, isImageFailed }: GlobalEventConst
         : !GLOBAL_EVENT_IMAGE_TYPES.includes(image.type) ? t("The image should be PNG, JPEG, WebP or GIF")
         : image.size > GLOBAL_EVENT_IMAGE_MAX_SIZE ? t("The image should be up to 10 MB")
         : null;
-    const isBannerMissing = !(image || globalEvent?.imageUrl) || !name.trim();
+    const isBannerMissing = !(image || globalEvent?.imageUrl) || !name.trim() || !badgeId;
     const isBannerReady = !isBannerMissing && !imageProblem;
     const canSave = isBannerReady && games.length >= GLOBAL_EVENT_MIN_GAMES && !editedGame && !isSaving;
     const isSelectedInEvent = !!selectedGame && games.some(game => game.appId === selectedGame.vgcId);
-    // once a player has rolled, the games and their achievements stay as they are
+    // once a player has rolled, the games and their achievements stay as they are; once a player has passed, the badge stays
     const isGamesLocked = !!globalEvent?.participantCount;
+    const isBadgeLocked = !!globalEvent?.passedCount;
 
     const selectGame = (game: CatalogGameObject) => {
         setSelectedGame(game);
@@ -116,8 +122,10 @@ const GlobalEventConstructor = ({ globalEvent, isImageFailed }: GlobalEventConst
         }
     };
 
+    // the API names what is locked in the text of a conflict
     const toSaveErrorText = (error: unknown) =>
-        isConflictError(error) && globalEvent ? t("Players have rolled the games already, the games and the achievements can't change")
+        isConflictError(error) && globalEvent && conflictText(error).includes("badge") ? t("Players have got the badge already, it can't change")
+        : isConflictError(error) && globalEvent ? t("Players have rolled the games already, the games and the achievements can't change")
         : isConflictError(error) ? t("Another global event is active, finish it first")
         : errorStatus(error) === 400 ? t("Steam or the catalog doesn't know a game or an achievement, check the games")
         : errorStatus(error) === 503 ? t("Steam or the catalog doesn't answer, try later")
@@ -129,6 +137,7 @@ const GlobalEventConstructor = ({ globalEvent, isImageFailed }: GlobalEventConst
         const request = {
             name,
             description,
+            badgeId: badgeId ?? "",
             games: games.map(game => ({ appId: game.appId, achievementApiNames: game.achievements.map(achievement => achievement.apiName) }))
         };
         let savedId: string;
@@ -192,7 +201,7 @@ const GlobalEventConstructor = ({ globalEvent, isImageFailed }: GlobalEventConst
             <div className="global-event-constructor__header">
                 <h1 className="global-event-constructor__title">{globalEvent ? t("Editing the global event") : t("New global event")}</h1>
                 <div className="global-event-constructor__step">
-                    {step === 1 ? t("Step 1 of 2: the banner") : t("Step 2 of 2: the games")}
+                    {step === 1 ? t("Step 1 of 2: the banner and the reward") : t("Step 2 of 2: the games")}
                 </div>
                 {
                     globalEvent &&
@@ -235,8 +244,13 @@ const GlobalEventConstructor = ({ globalEvent, isImageFailed }: GlobalEventConst
                     value={description}
                     maxLength={GLOBAL_EVENT_DESCRIPTION_MAX_LENGTH}
                     onChange={e => setDescription(e.target.value)} />
+                    <h2 className="global-event-constructor__reward-title">{t("The reward for the passing")}</h2>
+                    <div className="global-event-constructor__reward-hint">
+                        {isBadgeLocked ? t("Players have got the badge already, it can't change") : t("Players who pass the event get the badge in their profile")}
+                    </div>
+                    <BadgePicker globalEventId={globalEvent?.id} value={badgeId} isLocked={isBadgeLocked} onChange={setBadgeId} />
                     <div className="global-event-constructor__actions">
-                        {isBannerMissing && <div className="global-event-constructor__note">{t("Add an image and a name")}</div>}
+                        {isBannerMissing && <div className="global-event-constructor__note">{t("Add an image, a name and a reward")}</div>}
                         <CommonButton disabled={!isBannerReady} onClick={() => setStep(2)}>{t("Next")}</CommonButton>
                         {/* a saved event can be changed without the games step */}
                         {globalEvent && saveButton}

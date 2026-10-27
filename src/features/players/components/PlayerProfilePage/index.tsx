@@ -17,6 +17,7 @@ import { PlayerReviews } from "root/features/reviews/components/PlayerReviews";
 import { useCurrentUser } from "root/features/authorization/authorizationApi";
 import { SteamAccount } from "root/features/steam/components/SteamAccount";
 import { SteamProfileWarning } from "root/features/steam/components/SteamProfileWarning";
+import { PlayerBadges } from "../PlayerBadges";
 import './styles.scss';
 
 const StatTile = ({ label, value, note }: StatTileProps) => {
@@ -184,9 +185,9 @@ const PlayerProfilePage = () => {
                         </section>
                     }
                 </div>
-                {/* place for achievements until they are implemented */}
-                <section className="player-profile__panel player-profile__placeholder">
-                    {t('Achievements will appear here soon')}
+                <section className="player-profile__panel">
+                    <h2 className="player-profile__panel-title">{t('Achievements')}</h2>
+                    <PlayerBadges badges={profile.badges} />
                 </section>
                 <div className="player-profile__columns">
                     <section>

@@ -1,0 +1,57 @@
+@use '../../../../shared/default.module.scss' as default;
+
+$muted-text: rgba(255, 255, 255, 0.7);
+$used: #f0b232;
+$badge-size: 112px;
+
+.badge-picker {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: default.$margin_big;
+}
+
+.badge-picker__badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: default.$margin_small;
+    padding: default.$padding_big;
+    border: 2px solid transparent;
+    border-radius: default.$border-radius_big;
+    background-color: default.$grey;
+    color: white;
+    font: inherit;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+
+    &:hover:not(:disabled) {
+        background-color: default.$light-grey;
+    }
+
+    &:disabled {
+        opacity: 0.45;
+        cursor: default;
+    }
+}
+
+.badge-picker__badge--selected {
+    border-color: default.$green;
+}
+
+.badge-picker__image {
+    width: $badge-size;
+    height: $badge-size;
+    // global img rule in DragNDropImage styles caps every image at 300px
+    max-width: none;
+}
+
+.badge-picker__uses {
+    color: $muted-text;
+    font-size: 14px;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.badge-picker__uses--used {
+    color: $used;
+}

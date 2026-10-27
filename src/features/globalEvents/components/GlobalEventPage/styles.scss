@@ -107,6 +107,22 @@ $steam-text: #c7d5e0;
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
 }
 
+.global-event-page__reward {
+    display: flex;
+    align-items: center;
+    gap: default.$margin_small;
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 600;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+.global-event-page__reward-image {
+    width: 56px;
+    height: 56px;
+    // global img rule in DragNDropImage styles caps every image at 300px
+    max-width: none;
+}
+
 // MUI resets the margin of CommonButton
 .global-event-page__admin {
     display: flex;

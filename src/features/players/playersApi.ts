@@ -83,6 +83,15 @@ export type PlayerStatistics = {
     rewards: Array<{ reward: number, count: number }>
 }
 
+// a badge a player got for passing a global event
+export type PlayerBadge = {
+    // the name of a badge image, see globalEvents/badges.ts
+    badgeId: string,
+    globalEventId: string,
+    globalEventName: string,
+    passedAt: string
+}
+
 export type PlayerProfileObject = {
     id: string,
     userName: string,
@@ -97,7 +106,9 @@ export type PlayerProfileObject = {
     // statistics of the selected guild or of every guild of the player
     statistics: PlayerStatistics,
     // platforms of completed games from every guild of the player
-    favoritePlatforms: Array<{ platform: string, count: number }>
+    favoritePlatforms: Array<{ platform: string, count: number }>,
+    // the badges of the passed global events, the latest first; they don't depend on the guilds
+    badges: PlayerBadge[]
 }
 
 export type PlayerHistoryRecord = {

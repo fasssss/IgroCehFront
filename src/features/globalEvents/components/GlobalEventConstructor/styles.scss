@@ -114,6 +114,15 @@ $form-width: 900px;
     }
 }
 
+.global-event-constructor__reward-title {
+    margin: default.$margin_small 0 0 0;
+}
+
+.global-event-constructor__reward-hint {
+    margin-top: -(default.$margin_small);
+    color: $muted-text;
+}
+
 // the hint, the next step and the saving stand in one row at the right
 .global-event-constructor__actions {
     display: flex;

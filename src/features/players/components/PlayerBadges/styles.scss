@@ -1,0 +1,39 @@
+@use '../../../../shared/default.module.scss' as default;
+
+$badge-size: 88px;
+
+.player-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: default.$margin_big;
+}
+
+.player-badges__badge {
+    display: flex;
+    border-radius: 50%;
+    transition: transform 0.2s ease-in-out;
+
+    &:hover,
+    &:focus-visible {
+        transform: scale(1.08);
+    }
+}
+
+.player-badges__image {
+    width: $badge-size;
+    height: $badge-size;
+    // global img rule in DragNDropImage styles caps every image at 300px
+    max-width: none;
+}
+
+.player-badges__image--missing.MuiSvgIcon-root {
+    padding: default.$padding_big;
+    box-sizing: border-box;
+    border-radius: 50%;
+    background-color: default.$grey;
+    color: default.$yellow;
+}
+
+.player-badges__empty {
+    color: rgba(255, 255, 255, 0.7);
+}
