@@ -8,7 +8,8 @@ import {
     LeaderBoardPage,
     PlayerProfilePage,
     ReviewPage,
-    ReviewsPage
+    ReviewsPage,
+    GlobalEventConstructorPage
 } from "../features";
 import Layout from "./components/Layout";
 
@@ -51,6 +52,16 @@ const router = createBrowserRouter([
                 // the paired review of a passed game
                 path: "reviews/:eventRecordId",
                 element: <ReviewPage />
+            },
+            {
+                // the administrator of the site constructs a global event
+                path: "global-event/new",
+                element: <GlobalEventConstructorPage />
+            },
+            {
+                // the same constructor changes an existing global event
+                path: "global-event/:globalEventId/edit",
+                element: <GlobalEventConstructorPage />
             },
             {
                 // stage is chosen by event status, "/*" keeps old stage links (ordering-stage etc.) working

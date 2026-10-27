@@ -6,6 +6,7 @@ import guildsLocale from '../features/guilds/guildsLocale.json';
 import eventsLocale from '../features/events/eventsLocale.json';
 import playersLocale from '../features/players/playersLocale.json';
 import reviewsLocale from '../features/reviews/reviewsLocale.json';
+import globalEventsLocale from '../features/globalEvents/globalEventsLocale.json';
 import sharedLocale from './sharedLocale.json';
 
 function getDefaults() {
@@ -29,6 +30,7 @@ const resources = {
         ...eventsLocale.en,
         ...playersLocale.en,
         ...reviewsLocale.en,
+        ...globalEventsLocale.en,
         ...sharedLocale.en
     }
   },
@@ -39,6 +41,7 @@ const resources = {
         ...eventsLocale.ru,
         ...playersLocale.ru,
         ...reviewsLocale.ru,
+        ...globalEventsLocale.ru,
         ...sharedLocale.ru
     }
   }

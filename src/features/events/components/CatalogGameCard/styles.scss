@@ -1,0 +1,141 @@
+@use '../../../../shared/default.module.scss' as default;
+
+// layout follows the mockup: cover with attribution under it on the left, info with the action button on the right
+// right column is as wide as the scores, so the action button ends at the right edge of the scores
+.catalog-game-card {
+    display: grid;
+    grid-template-columns: 330px max-content;
+    grid-template-areas:
+        "image info"
+        "powered action";
+    column-gap: 32px;
+    row-gap: 24px;
+    max-width: 100%;
+    margin-top: 24px;
+}
+
+.catalog-game-card__image {
+    grid-area: image;
+    align-self: start;
+    width: 100%;
+    // global img rule in DragNDropImage styles caps every image at 300px
+    max-width: none;
+    max-height: none;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    border-radius: default.$border-radius_small;
+    background-color: default.$dark-grey;
+}
+
+.catalog-game-card__info {
+    grid-area: info;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+// name may stick out to the right of the scores, longer names wrap at this width
+$name-max-width: 360px;
+
+// container doesn't widen the column, so the action button still ends at the right edge of the scores
+.catalog-game-card__name-container {
+    width: 0;
+    min-width: 100%;
+}
+
+.catalog-game-card__name {
+    width: max-content;
+    max-width: max($name-max-width, 100%);
+    font-size: 28px;
+    font-weight: 700;
+}
+
+// platforms don't widen the column either, they wrap inside the width of the scores
+.catalog-game-card__info .pills {
+    width: 0;
+    min-width: 100%;
+}
+
+// labels in the first column, so both score boxes stand right after the longest label
+.catalog-game-card__scores {
+    display: grid;
+    grid-template-columns: max-content max-content;
+    column-gap: 16px;
+    row-gap: 24px;
+    align-items: center;
+    font-size: 20px;
+}
+
+.catalog-game-card__score {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: default.$border-radius_small;
+    font-size: 34px;
+    font-weight: 800;
+}
+
+.catalog-game-card__score--high {
+    background-color: default.$green;
+    color: default.$black;
+}
+
+.catalog-game-card__score--medium {
+    background-color: default.$yellow;
+    color: default.$black;
+}
+
+.catalog-game-card__score--low {
+    background-color: #e5534b;
+}
+
+.catalog-game-card__score--none {
+    background-color: default.$dark-grey;
+}
+
+.catalog-game-card__powered-by {
+    grid-area: powered;
+    align-self: center;
+}
+
+.catalog-game-card__action {
+    grid-area: action;
+    align-self: center;
+}
+
+.catalog-game-card__action .common-button {
+    width: 100%;
+}
+
+// takes its own row only when rendered
+.catalog-game-card__footer {
+    grid-column: 1 / -1;
+}
+
+// phones: the cover above the info, everything in one column
+@media (max-width: 700px) {
+    .catalog-game-card {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas:
+            "image"
+            "info"
+            "powered"
+            "action";
+        justify-items: center;
+        width: 100%;
+    }
+
+    .catalog-game-card__image {
+        max-width: 240px;
+    }
+
+    .catalog-game-card__name {
+        max-width: 100%;
+    }
+
+    .catalog-game-card__powered-by {
+        align-self: auto;
+    }
+}

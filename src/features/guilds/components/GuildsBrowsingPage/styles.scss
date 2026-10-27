@@ -2,6 +2,15 @@
 
 $muted-text: rgba(255, 255, 255, 0.7);
 
+// the same width as the search bar under it, the button of the administrator stands at its right edge
+.guild-browser__global-event {
+    display: flex;
+    justify-content: flex-end;
+    width: 50%;
+    min-width: 230px;
+    margin: 0 auto default.$margin_big auto;
+}
+
 // the same width as the search bar above
 .guild-browser__played {
     width: 50%;

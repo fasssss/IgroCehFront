@@ -1,0 +1,119 @@
+@use '../../../../shared/default.module.scss' as default;
+
+$muted-text: rgba(255, 255, 255, 0.7);
+$cover-width: 90px;
+$icon-size: 32px;
+
+.global-event-game-card {
+    display: grid;
+    grid-template-columns: $cover-width 1fr auto;
+    column-gap: default.$margin_big;
+    row-gap: default.$margin_big;
+    align-items: start;
+    padding: default.$padding_big;
+    border-radius: default.$border-radius_small;
+    background-color: default.$dark-grey;
+}
+
+.global-event-game-card__cover {
+    width: 100%;
+    // global img rule in DragNDropImage styles caps every image at 300px
+    max-width: none;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    border-radius: default.$border-radius_small;
+    background-color: default.$grey;
+}
+
+.global-event-game-card__cover--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.global-event-game-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: default.$margin_small;
+    min-width: 0;
+}
+
+.global-event-game-card__name {
+    font-size: 22px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.global-event-game-card__no-achievements {
+    color: $muted-text;
+}
+
+.global-event-game-card__achievements {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.global-event-game-card__achievement {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.global-event-game-card__icon {
+    flex-shrink: 0;
+    width: $icon-size;
+    height: $icon-size;
+    border-radius: 4px;
+}
+
+.global-event-game-card__icon--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: default.$grey;
+    color: $muted-text;
+}
+
+.global-event-game-card__achievement-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.global-event-game-card__achievement-name {
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.global-event-game-card__achievement-description {
+    color: $muted-text;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+// MUI resets the margin of CommonButton
+.global-event-game-card__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: default.$margin_small;
+}
+
+.global-event-game-card__extra {
+    grid-column: 1 / -1;
+}
+
+@media (max-width: 600px) {
+    .global-event-game-card {
+        grid-template-columns: 64px 1fr;
+    }
+
+    .global-event-game-card__actions {
+        grid-column: 1 / -1;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+}

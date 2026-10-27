@@ -1,12 +1,9 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { SearchBar } from "root/shared/components/SearchBar";
 import { CommonButton } from "root/shared/components/CommonButton";
 import { CommonField } from "root/shared/components/CommonField";
 import { DragNDropImage } from "root/shared/components/DragNDropImage";
 import { CommonModal } from "root/shared/components/CommonModal";
-import { Pills } from "root/shared/components/Pills";
-import { PoweredBy } from "root/shared/components/PoweredBy";
 import { resolveImageUrl } from "root/shared/helpers/imageUrl";
 import { isConflictError } from "root/shared/igroCehApi";
 import {
@@ -14,23 +11,17 @@ import {
     GameObject,
     useCreateGameFromVgcMutation,
     useCreateGameMutation,
-    useLazyFindGameByNameQuery,
-    useLazySearchGamesQuery
+    useLazyFindGameByNameQuery
 } from "../../eventsApi";
-import { toPlatformPills } from "../../platformPills";
+import { CatalogGameSearch } from "../CatalogGameSearch";
+import { CatalogGameCard } from "../CatalogGameCard";
 import './styles.scss';
-
-const MIN_CATALOG_SEARCH_LENGTH = 2; // VideoGamesCritic doesn't search by a single character
-
-const getScoreLevel = (score: number | null) =>
-    score === null ? 'none' : score >= 75 ? 'high' : score >= 50 ? 'medium' : 'low';
 
 // a game from VideoGamesCritic or a custom one; the page decides where the picked game goes
 const GamePicker = ({ onPick, isPicking = false, conflictText }: GamePickerProps) => {
     const { t } = useTranslation();
     const [findGameByName] = useLazyFindGameByNameQuery();
     const [createGame] = useCreateGameMutation();
-    const [searchGames, searchGamesResult] = useLazySearchGamesQuery();
     const [createGameFromVgc, createGameFromVgcResult] = useCreateGameFromVgcMutation();
     const [selectedGame, setSelectedGame] = useState<CatalogGameObject | null>(null);
     const [selectError, setSelectError] = useState<string | null>(null);
@@ -48,7 +39,6 @@ const GamePicker = ({ onPick, isPicking = false, conflictText }: GamePickerProps
         await onPick(gameId);
     };
 
-    const foundGames = searchGamesResult.data?.games;
     const isSelecting = createGameFromVgcResult.isLoading || isPicking;
 
     // the place the game goes refuses a game with 409, e.g. a player never gets the same game twice
@@ -101,54 +91,22 @@ const GamePicker = ({ onPick, isPicking = false, conflictText }: GamePickerProps
             {
                 isSearchInVideoGamesCritic ?
                 <div className="game-picker__catalog">
-                    <SearchBar
-                    placeholder= {t("Search in VideoGamesCritic")}
-                    minSearchLength={MIN_CATALOG_SEARCH_LENGTH}
-                    imageShape="portrait"
-                    onTyping={({ searchString }) => searchGames({ query: searchString }, true)}
-                    isFetchingResult={searchGamesResult.isFetching}
-                    errorText={searchGamesResult.isError ? t("Search is unavailable, try later or create a custom game") : undefined}
-                    optionsSelect={foundGames?.map(game => ({
-                        id: String(game.vgcId),
-                        label: game.releaseDate ? `${game.name} (${game.releaseDate.slice(0, 4)})` : game.name,
-                        iconUrl: game.coverUrl,
-                        tags: toPlatformPills(game.platforms)
-                    }))}
-                    handleOptionClick={id => setSelectedGame(foundGames?.find(game => String(game.vgcId) === id) ?? null)} />
+                    <CatalogGameSearch
+                    onSelect={setSelectedGame}
+                    unavailableText={t("Search is unavailable, try later or create a custom game")} />
                     {
                         selectedGame &&
-                        <div className="game-picker__selected-game">
-                            <img src={selectedGame.coverUrl ?? undefined} className="game-picker__selected-game-image" />
-                            <div className="game-picker__selected-game-info">
-                                <div className="game-picker__selected-game-name-container">
-                                    <div className="game-picker__selected-game-name">{selectedGame.name}</div>
-                                </div>
-                                <Pills items={toPlatformPills(selectedGame.platforms)} />
-                                <div className="game-picker__selected-game-scores">
-                                    <div className="game-picker__selected-game-score-label">{t("Critics score")}:</div>
-                                    <div className={`game-picker__score game-picker__score--${getScoreLevel(selectedGame.criticsScore)}`}>
-                                        {selectedGame.criticsScore ?? "—"}
-                                    </div>
-                                    <div className="game-picker__selected-game-score-label">{t("Players score")}:</div>
-                                    <div className={`game-picker__score game-picker__score--${getScoreLevel(selectedGame.playersScore)}`}>
-                                        {selectedGame.playersScore ?? "—"}
-                                    </div>
-                                </div>
-                            </div>
-                            <PoweredBy href={selectedGame.pageUrl} className="game-picker__selected-game-powered-by" />
-                            <div className="game-picker__selected-game-select">
-                                <CommonButton
-                                color="success"
-                                disabled={isSelecting}
-                                onClick={() => selectCatalogGame(selectedGame)}>
-                                    {t("Select game")}
-                                </CommonButton>
-                            </div>
-                            {
-                                selectError &&
-                                <div className="game-picker__selected-game-error">{selectError}</div>
-                            }
-                        </div>
+                        <CatalogGameCard
+                        game={selectedGame}
+                        action={
+                            <CommonButton
+                            color="success"
+                            disabled={isSelecting}
+                            onClick={() => selectCatalogGame(selectedGame)}>
+                                {t("Select game")}
+                            </CommonButton>
+                        }
+                        footer={selectError && <div className="game-picker__select-error">{selectError}</div>} />
                     }
                 </div>
                 :

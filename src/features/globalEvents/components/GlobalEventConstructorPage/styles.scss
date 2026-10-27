@@ -1,0 +1,10 @@
+@use '../../../../shared/default.module.scss' as default;
+
+.global-event-constructor-page__message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: default.$margin_big;
+    padding: default.$padding_large;
+    font-size: large;
+}

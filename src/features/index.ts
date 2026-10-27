@@ -7,3 +7,4 @@ export * from './events/components/EventStageRouter';
 export * from './players/components/PlayerProfilePage';
 export * from './reviews/components/ReviewPage';
 export * from './reviews/components/ReviewsPage';
+export * from './globalEvents/components/GlobalEventConstructorPage';

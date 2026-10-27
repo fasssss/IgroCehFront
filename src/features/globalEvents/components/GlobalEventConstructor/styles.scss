@@ -1,0 +1,169 @@
+@use '../../../../shared/default.module.scss' as default;
+
+$muted-text: rgba(255, 255, 255, 0.7);
+$failed: #ef6a5a;
+$form-width: 900px;
+
+.global-event-constructor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: default.$margin_large;
+    padding: default.$padding_big;
+}
+
+.global-event-constructor__header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: default.$margin_small;
+    max-width: $form-width;
+    text-align: center;
+}
+
+.global-event-constructor__title {
+    margin: 0;
+}
+
+.global-event-constructor__step {
+    color: $muted-text;
+    font-size: large;
+}
+
+// MUI resets the margin of CommonButton, so the rows of buttons keep their gaps themselves
+.global-event-constructor__event-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: default.$margin_small;
+}
+
+.global-event-constructor__finished {
+    padding: 6px default.$padding_big;
+    border-radius: default.$border-radius_small;
+    background-color: default.$grey;
+    font-weight: 700;
+}
+
+.global-event-constructor__error {
+    color: $failed;
+    text-align: center;
+}
+
+.global-event-constructor__note {
+    color: $muted-text;
+    text-align: center;
+}
+
+.global-event-constructor__banner-step,
+.global-event-constructor__games-step {
+    display: flex;
+    flex-direction: column;
+    gap: default.$margin_big;
+    width: 100%;
+    max-width: $form-width;
+}
+
+// the banner of the main page is wide, the drop area and the chosen image keep its proportions
+.global-event-constructor__image.drag-n-drop {
+    width: 100%;
+}
+
+.global-event-constructor__image .drag-n-drop__placeholder,
+.global-event-constructor__image img {
+    width: 100%;
+    height: auto;
+    // global img rule in DragNDropImage styles caps every image at 300px
+    max-width: none;
+    max-height: none;
+    aspect-ratio: 4 / 1;
+    object-fit: cover;
+    border-radius: default.$border-radius_big;
+}
+
+.global-event-constructor__image .drag-n-drop__placeholder {
+    gap: default.$margin_small;
+    color: $muted-text;
+}
+
+.global-event-constructor__image-hint {
+    margin-top: -(default.$margin_small);
+    color: $muted-text;
+    font-size: 14px;
+    text-align: center;
+}
+
+.global-event-constructor__description {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 160px;
+    padding: default.$padding_big;
+    border: none;
+    border-radius: default.$border-radius_small;
+    background-color: default.$grey;
+    color: white;
+    font-family: inherit;
+    font-size: 16px;
+    resize: vertical;
+    transition: background-color 0.2s ease-in-out;
+
+    &:focus {
+        outline: none;
+        background-color: default.$light-grey;
+    }
+}
+
+// the hint, the next step and the saving stand in one row at the right
+.global-event-constructor__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: default.$margin_small;
+}
+
+.global-event-constructor__actions + .global-event-constructor__error {
+    text-align: right;
+}
+
+.global-event-constructor__back {
+    display: flex;
+}
+
+.global-event-constructor__search {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+// the achievements of a game with the button that applies them
+.global-event-constructor__picked {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: default.$margin_small;
+    width: 100%;
+}
+
+.global-event-constructor__edited-actions {
+    display: flex;
+    justify-content: center;
+    gap: default.$margin_small;
+}
+
+.global-event-constructor__games-title {
+    margin: default.$margin_big 0 0 0;
+}
+
+.global-event-constructor__games {
+    display: flex;
+    flex-direction: column;
+    gap: default.$margin_big;
+}
+
+.global-event-constructor__modal-text {
+    max-width: 420px;
+    text-align: center;
+}

@@ -3,7 +3,7 @@ import { SvgSelector } from '../SvgSelector';
 import { Dispatch, SetStateAction, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const DragNDropImage = ({ value, stateMutator }: DragNDropProperty) => {
+const DragNDropImage = ({ value, stateMutator, imageUrl, className }: DragNDropProperty) => {
     const { t } = useTranslation();
     const inputFile = useRef<HTMLInputElement | null>(null);
     const dragNDropElement = useRef<HTMLDivElement | null>(null);
@@ -68,10 +68,10 @@ const DragNDropImage = ({ value, stateMutator }: DragNDropProperty) => {
     }, [stateMutator])
 
     return(
-    <div ref={dragNDropElement} className="drag-n-drop">
+    <div ref={dragNDropElement} className={`drag-n-drop ${className || ""}`}>
         <input type='file' id='file' ref={inputFile} style={{display: 'none'}}/>
         {
-            !previewUrl ?
+            !previewUrl && !imageUrl ?
             <div className="drag-n-drop__placeholder">
                 {
                     <SvgSelector iconName="image-icon" />
@@ -79,7 +79,7 @@ const DragNDropImage = ({ value, stateMutator }: DragNDropProperty) => {
                 {t('Drag or Ctrl-V to paste')}
             </div>
             :
-            <img src={previewUrl}/>
+            <img src={previewUrl || imageUrl}/>
         }
     </div>
     );
@@ -87,7 +87,10 @@ const DragNDropImage = ({ value, stateMutator }: DragNDropProperty) => {
 
 type DragNDropProperty = {
     value: Blob | undefined,
-    stateMutator: Dispatch<SetStateAction<Blob | undefined>>
+    stateMutator: Dispatch<SetStateAction<Blob | undefined>>,
+    // the image saved before, shown until another one is chosen
+    imageUrl?: string,
+    className?: string
 }
 
 export { DragNDropImage }
