@@ -1,0 +1,54 @@
+@use '../../../../shared/default.module.scss' as default;
+
+$muted-text: rgba(255, 255, 255, 0.7);
+$failed: #ef6a5a;
+
+.global-event-participation {
+    display: flex;
+    flex-direction: column;
+    gap: default.$margin_big;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 900px;
+    padding: default.$padding_big;
+    border: 1px solid default.$light-grey;
+    border-radius: default.$border-radius_big;
+    background-color: default.$grey;
+}
+
+.global-event-participation--loading {
+    align-items: center;
+}
+
+.global-event-participation__title,
+.global-event-participation__text {
+    margin: 0;
+}
+
+.global-event-participation__text {
+    color: $muted-text;
+}
+
+// MUI resets the margin of CommonButton
+.global-event-participation__actions,
+.global-event-participation__refusal {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: default.$margin_big;
+}
+
+.global-event-participation__games {
+    display: flex;
+    flex-direction: column;
+    gap: default.$margin_big;
+}
+
+.global-event-participation__error {
+    color: $failed;
+}
+
+.global-event-participation__modal-text {
+    max-width: 420px;
+    text-align: center;
+}

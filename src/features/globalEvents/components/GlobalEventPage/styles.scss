@@ -85,6 +85,12 @@ $steam-text: #c7d5e0;
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
 }
 
+.global-event-page__participants {
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 600;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
 .global-event-page__finished {
     padding: 4px default.$padding_small;
     border-radius: default.$border-radius_small;

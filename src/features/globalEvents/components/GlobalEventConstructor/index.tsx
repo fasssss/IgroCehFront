@@ -86,6 +86,8 @@ const GlobalEventConstructor = ({ globalEvent, isImageFailed }: GlobalEventConst
     const isBannerReady = !isBannerMissing && !imageProblem;
     const canSave = isBannerReady && games.length >= GLOBAL_EVENT_MIN_GAMES && !editedGame && !isSaving;
     const isSelectedInEvent = !!selectedGame && games.some(game => game.appId === selectedGame.vgcId);
+    // once a player has rolled, the games and their achievements stay as they are
+    const isGamesLocked = !!globalEvent?.participantCount;
 
     const selectGame = (game: CatalogGameObject) => {
         setSelectedGame(game);
@@ -115,7 +117,8 @@ const GlobalEventConstructor = ({ globalEvent, isImageFailed }: GlobalEventConst
     };
 
     const toSaveErrorText = (error: unknown) =>
-        isConflictError(error) ? t("Another global event is active, finish it first")
+        isConflictError(error) && globalEvent ? t("Players have rolled the games already, the games and the achievements can't change")
+        : isConflictError(error) ? t("Another global event is active, finish it first")
         : errorStatus(error) === 400 ? t("Steam or the catalog doesn't know a game or an achievement, check the games")
         : errorStatus(error) === 503 ? t("Steam or the catalog doesn't answer, try later")
         : t("Couldn't save the event, try again");
@@ -246,7 +249,11 @@ const GlobalEventConstructor = ({ globalEvent, isImageFailed }: GlobalEventConst
                         <CommonButton onClick={() => setStep(1)}>{t("Back")}</CommonButton>
                     </div>
                     {
-                        games.length < GLOBAL_EVENT_MAX_GAMES ?
+                        isGamesLocked ?
+                        <div className="global-event-constructor__note">
+                            {t("Players have rolled the games already, the games and the achievements can't change")}
+                        </div>
+                        : games.length < GLOBAL_EVENT_MAX_GAMES ?
                         <div className="global-event-constructor__search">
                             <CatalogGameSearch onSelect={selectGame} unavailableText={t("Search is unavailable, try later")} />
                             {
@@ -287,7 +294,7 @@ const GlobalEventConstructor = ({ globalEvent, isImageFailed }: GlobalEventConst
                                         imageUrl={game.imageUrl}
                                         achievements={isEdited ? editedGame.achievements : game.achievements}
                                         actions={
-                                            !isEdited &&
+                                            !isEdited && !isGamesLocked &&
                                             <>
                                                 <CommonButton disabled={!!editedGame} onClick={() => setEditedGame(game)}>
                                                     {game.achievements.length ? t("Change achievements") : t("Choose achievements")}

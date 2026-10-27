@@ -1,0 +1,82 @@
+@use '../../../../shared/default.module.scss' as default;
+
+$cover-width: 140px;
+$cover-width_phone: 92px;
+
+.global-event-roll {
+    display: flex;
+    justify-content: center;
+    gap: default.$margin_big;
+    padding: default.$padding_big;
+    border-radius: default.$border-radius_big;
+    background-color: default.$dark-grey;
+}
+
+// the window of a reel shows one game, its frame marks the place the reel stops at
+.global-event-roll__reel {
+    position: relative;
+    overflow: hidden;
+    border: 3px solid default.$yellow;
+    border-radius: default.$border-radius_small;
+    box-shadow: 0 0 12px rgba(default.$yellow, 0.6);
+}
+
+// fast at first, slowing down to the rolled game
+.global-event-roll__strip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    row-gap: default.$margin_small;
+    transition-property: transform;
+    transition-timing-function: cubic-bezier(0.1, 0.7, 0.15, 1);
+}
+
+.global-event-roll__item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: $cover-width;
+    padding-bottom: 6px;
+}
+
+.global-event-roll__item--placeholder {
+    visibility: hidden;
+}
+
+.global-event-roll__cover {
+    display: block;
+    width: 100%;
+    // global img rule in DragNDropImage styles caps every image at 300px
+    max-width: none;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    background-color: default.$grey;
+}
+
+.global-event-roll__cover--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.global-event-roll__name {
+    padding: 0 6px;
+    overflow: hidden;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+    .global-event-roll {
+        gap: default.$margin_small;
+        padding: default.$padding_small;
+    }
+
+    .global-event-roll__item {
+        width: $cover-width_phone;
+    }
+}

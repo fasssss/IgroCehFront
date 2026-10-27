@@ -12,6 +12,7 @@ import { SteamProfileWarning } from "root/features/steam/components/SteamProfile
 import { useGetGlobalEventQuery } from "../../globalEventsApi";
 import { globalEventEditPath } from "../../globalEventPath";
 import { GlobalEventGameCard } from "../GlobalEventGameCard";
+import { GlobalEventParticipation } from "../GlobalEventParticipation";
 import './styles.scss';
 
 // a global event with the whole description and every game with the achievements that count as its passing,
@@ -55,6 +56,9 @@ const GlobalEventPage = () => {
                         {t("Global event")}
                     </div>
                     <h1 className="global-event-page__name">{globalEvent.name}</h1>
+                    <span className="global-event-page__participants">
+                        {t("Players taking part: {{count}}", { count: globalEvent.participantCount })}
+                    </span>
                     {
                         globalEvent.finishedAt &&
                         <span className="global-event-page__finished">
@@ -90,6 +94,7 @@ const GlobalEventPage = () => {
                     </div>
                 )
             }
+            <GlobalEventParticipation globalEvent={globalEvent} />
             <section className="global-event-page__games">
                 <h2 className="global-event-page__games-title">{t("Games of the event: {{count}}", { count: globalEvent.games.length })}</h2>
                 <p className="global-event-page__hint">{t("Any one of the achievements of a game counts as its passing")}</p>

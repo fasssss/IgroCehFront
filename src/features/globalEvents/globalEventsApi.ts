@@ -45,8 +45,42 @@ const globalEventsApi = igroCehApi.injectEndpoints({
             query: postTo('/api/deleteGlobalEvent'),
             invalidatesTags: ['GlobalEvent'],
         }),
+        // the games the current user rolled in the event, participation is null before the roll
+        getGlobalEventParticipation: build.query<GlobalEventParticipationResponse, string>({
+            query: (globalEventId) => ({ url: '/api/getGlobalEventParticipation', params: { globalEventId } }),
+        }),
+        // three games drop at once; 422 when every game has an achievement the player unlocked already, 409 when the roll is done
+        rollGlobalEventGames: build.mutation<GlobalEventParticipationResponse, GlobalEventRequest>({
+            query: postTo('/api/rollGlobalEventGames'),
+            // the event counts its participants
+            invalidatesTags: ['GlobalEvent'],
+            onQueryStarted: setParticipation,
+        }),
+        pickGlobalEventGame: build.mutation<GlobalEventParticipationResponse, PickGlobalEventGameRequest>({
+            query: postTo('/api/pickGlobalEventGame'),
+            onQueryStarted: setParticipation,
+        }),
+        // a week after the pick the game can be refused, three new games drop at once
+        refuseGlobalEventGame: build.mutation<GlobalEventParticipationResponse, GlobalEventRequest>({
+            query: postTo('/api/refuseGlobalEventGame'),
+            onQueryStarted: setParticipation,
+        }),
     })
 });
+
+// the answer of a roll, a pick or a refusal is the new participation, it isn't asked for again;
+// a refused request means the page shows an old one, so it is read again
+async function setParticipation({ globalEventId }: GlobalEventRequest, { dispatch, queryFulfilled }: {
+    dispatch: (action: unknown) => unknown,
+    queryFulfilled: Promise<{ data: GlobalEventParticipationResponse }>
+}) {
+    try {
+        const { data } = await queryFulfilled;
+        dispatch(globalEventsApi.util.upsertQueryData('getGlobalEventParticipation', globalEventId, data));
+    } catch {
+        dispatch(globalEventsApi.endpoints.getGlobalEventParticipation.initiate(globalEventId, { subscribe: false, forceRefetch: true }));
+    }
+}
 
 // an achievement that means a game of the event is passed, in both languages of the site
 export type GlobalEventAchievement = {
@@ -81,7 +115,29 @@ export type GlobalEvent = {
     createdAt: string,
     // null while the event is active
     finishedAt: string | null,
+    // the players who rolled its games; with any of them the games can't change
+    participantCount: number,
     games: GlobalEventGame[]
+}
+
+// the roll of the current user in a global event, games by their Steam app ids
+export type GlobalEventParticipation = {
+    // in the order they dropped, up to three
+    rolledAppIds: number[],
+    rolledAt: string,
+    // null until the player picks one of the rolled games
+    pickedAppId: number | null,
+    pickedAt: string | null,
+    // from then on the picked game can be refused for a new roll
+    refusableAt: string | null
+}
+
+export type GlobalEventParticipationResponse = {
+    participation: GlobalEventParticipation | null
+}
+
+export type PickGlobalEventGameRequest = GlobalEventRequest & {
+    appId: number
 }
 
 export type GlobalEventResponse = {
@@ -123,5 +179,9 @@ export const {
     useUpdateGlobalEventMutation,
     useSetGlobalEventImageMutation,
     useFinishGlobalEventMutation,
-    useDeleteGlobalEventMutation
+    useDeleteGlobalEventMutation,
+    useGetGlobalEventParticipationQuery,
+    useRollGlobalEventGamesMutation,
+    usePickGlobalEventGameMutation,
+    useRefuseGlobalEventGameMutation
 } = globalEventsApi;
