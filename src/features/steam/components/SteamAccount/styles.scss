@@ -1,0 +1,66 @@
+// the dark blues and the light text of Steam, so the chip is recognized at once
+$steam-dark: #171a21;
+$steam-blue: #2a475e;
+$steam-text: #c7d5e0;
+
+.steam-account {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.steam-account__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px 6px 10px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, $steam-dark 0%, $steam-blue 100%);
+    color: $steam-text;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.steam-account__profile {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: inherit;
+    text-decoration: none;
+
+    &:hover {
+        color: white;
+    }
+}
+
+.steam-account__logo.MuiSvgIcon-root {
+    color: white;
+    font-size: 22px;
+}
+
+.steam-account__unlink {
+    display: inline-flex;
+    margin: 0 -6px 0 2px;
+    padding: 2px;
+    border: none;
+    border-radius: 50%;
+    background: none;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+    }
+}
+
+.steam-account__error {
+    color: #ef6a5a;
+    font-size: 14px;
+}
+
+.steam-account__modal-text {
+    max-width: 420px;
+    text-align: center;
+}

@@ -47,7 +47,9 @@ export type UserObject = {
     avatarUrl: string | null,
     id: string,
     // the administrator of the whole site, set by hand in the database
-    isAppAdmin: boolean
+    isAppAdmin: boolean,
+    // the Steam account linked through the sign-in to Steam
+    steamId: string | null
 }
 
 export const {

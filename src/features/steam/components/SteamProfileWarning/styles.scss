@@ -1,0 +1,41 @@
+@use '../../../../shared/default.module.scss' as default;
+
+$warning: #f0b232;
+
+.steam-profile-warning {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: default.$margin_big;
+    padding: default.$padding_big;
+    border: 1px solid $warning;
+    border-radius: default.$border-radius_small;
+    background-color: default.$dark-grey;
+}
+
+.steam-profile-warning__icon {
+    color: $warning;
+}
+
+.steam-profile-warning__text {
+    display: flex;
+    flex: 1 1 320px;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.steam-profile-warning__title {
+    font-weight: 700;
+}
+
+// MUI resets the margin of CommonButton
+.steam-profile-warning__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: default.$margin_big;
+}
+
+.steam-profile-warning__settings {
+    color: #66c0f4;
+}

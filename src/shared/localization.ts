@@ -7,6 +7,7 @@ import eventsLocale from '../features/events/eventsLocale.json';
 import playersLocale from '../features/players/playersLocale.json';
 import reviewsLocale from '../features/reviews/reviewsLocale.json';
 import globalEventsLocale from '../features/globalEvents/globalEventsLocale.json';
+import steamLocale from '../features/steam/steamLocale.json';
 import sharedLocale from './sharedLocale.json';
 
 function getDefaults() {
@@ -31,6 +32,7 @@ const resources = {
         ...playersLocale.en,
         ...reviewsLocale.en,
         ...globalEventsLocale.en,
+        ...steamLocale.en,
         ...sharedLocale.en
     }
   },
@@ -42,6 +44,7 @@ const resources = {
         ...playersLocale.ru,
         ...reviewsLocale.ru,
         ...globalEventsLocale.ru,
+        ...steamLocale.ru,
         ...sharedLocale.ru
     }
   }

@@ -14,6 +14,9 @@ import { PlayerGuilds } from "../PlayerGuilds";
 import { PlayerHistory } from "../PlayerHistory";
 import { PlayerPreferences } from "../PlayerPreferences";
 import { PlayerReviews } from "root/features/reviews/components/PlayerReviews";
+import { useCurrentUser } from "root/features/authorization/authorizationApi";
+import { SteamAccount } from "root/features/steam/components/SteamAccount";
+import { SteamProfileWarning } from "root/features/steam/components/SteamProfileWarning";
 import './styles.scss';
 
 const StatTile = ({ label, value, note }: StatTileProps) => {
@@ -32,6 +35,7 @@ const PlayerProfilePage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const guildId = searchParams.get('guild') ?? undefined;
     const { t, i18n } = useTranslation();
+    const currentUser = useCurrentUser();
     const profileQuery = useGetPlayerProfileQuery({ userId, guildId }, { refetchOnMountOrArgChange: true });
     // data of the previous guild stays on screen while another one is loading, data of another player doesn't
     const profile = profileQuery.data?.playerProfile.id === userId ? profileQuery.data.playerProfile : undefined;
@@ -91,6 +95,7 @@ const PlayerProfilePage = () => {
                                 <Pills items={profile.favoritePlatforms.map(({ platform, count }) => toPlatformPill(platform, `${platform} · ${count}`))} />
                             </div>
                         }
+                        <SteamAccount userId={profile.id} steamId={profile.steamId} />
                     </div>
                     {
                         profile.playingSince &&
@@ -102,6 +107,11 @@ const PlayerProfilePage = () => {
                     }
                 </div>
                 <PlayerPreferences userId={profile.id} className="player-profile__preferences" />
+                {
+                    // the owner learns that Steam won't give their achievements
+                    currentUser?.id === profile.id && currentUser.steamId &&
+                    <SteamProfileWarning className="player-profile__steam-warning" />
+                }
             </div>
             {
                 profile.guilds.length > 0 &&

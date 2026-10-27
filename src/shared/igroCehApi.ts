@@ -20,7 +20,7 @@ export const igroCehApi = createApi({
   reducerPath: 'igroCehApi',
   baseQuery: baseQueryWithReauth,
   // ReviewLists covers the reviews of a player, the reviews to write or answer and the community reviews
-  tagTypes: ['User', 'Event', 'Review', 'ReviewLists', 'NewcomerPool', 'GlobalEvent'],
+  tagTypes: ['User', 'Event', 'Review', 'ReviewLists', 'NewcomerPool', 'GlobalEvent', 'SteamProfile'],
   endpoints: () => ({}),
 })
 

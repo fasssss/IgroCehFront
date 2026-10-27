@@ -9,7 +9,8 @@ import {
     PlayerProfilePage,
     ReviewPage,
     ReviewsPage,
-    GlobalEventConstructorPage
+    GlobalEventConstructorPage,
+    SteamLinkPage
 } from "../features";
 import Layout from "./components/Layout";
 
@@ -62,6 +63,11 @@ const router = createBrowserRouter([
                 // the same constructor changes an existing global event
                 path: "global-event/:globalEventId/edit",
                 element: <GlobalEventConstructorPage />
+            },
+            {
+                // Steam sends the user here after the sign-in that links their Steam account
+                path: "steam-link",
+                element: <SteamLinkPage />
             },
             {
                 // stage is chosen by event status, "/*" keeps old stage links (ordering-stage etc.) working

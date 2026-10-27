@@ -16,6 +16,11 @@ $header-gap: default.$margin_big;
     padding: 0 $content-inset default.$padding_big $content-inset;
 }
 
+// a line of its own under the avatar and the name
+.player-profile__steam-warning {
+    flex-basis: 100%;
+}
+
 // the two lists take the rest of the header next to the name
 .player-profile__preferences {
     flex: 1 1 520px;
@@ -42,11 +47,14 @@ $header-gap: default.$margin_big;
     height: $avatar-size;
 }
 
+// the platforms and Steam go under the name when they don't fit next to it
 .player-profile__name-row {
     grid-row: 2;
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: $header-gap;
+    column-gap: $header-gap;
+    row-gap: default.$margin_small;
 }
 
 .player-profile__name {
