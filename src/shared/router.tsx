@@ -10,6 +10,7 @@ import {
     ReviewPage,
     ReviewsPage,
     GlobalEventConstructorPage,
+    GlobalEventPage,
     SteamLinkPage
 } from "../features";
 import Layout from "./components/Layout";
@@ -58,6 +59,11 @@ const router = createBrowserRouter([
                 // the administrator of the site constructs a global event
                 path: "global-event/new",
                 element: <GlobalEventConstructorPage />
+            },
+            {
+                // the games of a global event, the banner of the main page leads here
+                path: "global-event/:globalEventId",
+                element: <GlobalEventPage />
             },
             {
                 // the same constructor changes an existing global event

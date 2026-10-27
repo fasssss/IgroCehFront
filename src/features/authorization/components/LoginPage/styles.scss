@@ -56,8 +56,7 @@ body {
     transform: skew(15deg, 15deg);
     border-radius: 30%;
 
-    &::after {
-        content: '';
+    .line__drop {
         display: block;
         position: absolute;
         height: 15vh;
@@ -72,14 +71,14 @@ body {
 
     &:nth-child(1){
         margin-left: -25%;
-        &::after {
+        .line__drop {
             animation-delay: 2s;
         }
     }
   
     &:nth-child(3){
         margin-left: 35%;
-        &::after {
+        .line__drop {
             animation-delay: 2.5s;
         }
     }

@@ -45,7 +45,14 @@
         "{{percent}}% of players": "{{percent}}% of players",
         "Hidden achievement": "Hidden achievement",
         "Steam doesn't answer, the achievements can be chosen later": "Steam doesn't answer, the achievements can be chosen later",
-        "This game has no achievements in Steam, its passing is confirmed by hand only": "This game has no achievements in Steam, its passing is confirmed by hand only"
+        "This game has no achievements in Steam, its passing is confirmed by hand only": "This game has no achievements in Steam, its passing is confirmed by hand only",
+        "Global event": "Global event",
+        "Start the event": "Start the event",
+        "Couldn't load the event": "Couldn't load the event",
+        "The event finished on {{date}}": "The event finished on {{date}}",
+        "Link Steam, and the passing of the games with achievements will be checked automatically": "Link Steam, and the passing of the games with achievements will be checked automatically",
+        "Any one of the achievements of a game counts as its passing": "Any one of the achievements of a game counts as its passing",
+        "In Steam": "In Steam"
     },
     "ru": {
         "Construct a global event": "Сконструировать глобальное событие",
@@ -93,6 +100,13 @@
         "{{percent}}% of players": "Есть у {{percent}}% игроков",
         "Hidden achievement": "Скрытая ачивка",
         "Steam doesn't answer, the achievements can be chosen later": "Steam не отвечает, ачивки можно выбрать позже",
-        "This game has no achievements in Steam, its passing is confirmed by hand only": "У этой игры нет ачивок в Steam, её прохождение подтверждается только вручную"
+        "This game has no achievements in Steam, its passing is confirmed by hand only": "У этой игры нет ачивок в Steam, её прохождение подтверждается только вручную",
+        "Global event": "Глобальное событие",
+        "Start the event": "Приступить к событию",
+        "Couldn't load the event": "Не удалось загрузить событие",
+        "The event finished on {{date}}": "Событие завершилось {{date}}",
+        "Link Steam, and the passing of the games with achievements will be checked automatically": "Привяжите Steam, и прохождение игр с ачивками будет проверяться автоматически",
+        "Any one of the achievements of a game counts as its passing": "Прохождение игры засчитывает любая из её ачивок",
+        "In Steam": "В Steam"
     }
 }

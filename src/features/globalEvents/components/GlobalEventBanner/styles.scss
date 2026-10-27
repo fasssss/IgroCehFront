@@ -1,0 +1,113 @@
+@use '../../../../shared/default.module.scss' as default;
+
+$accent: #f0b232;
+
+// the widest block of the main page, as wide as the constructor shows the image of the banner;
+// the image is its background, a longer text makes it taller than the image's 4:1
+.global-event-banner {
+    position: relative;
+    display: flex;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto default.$margin_large auto;
+    border: 1px solid rgba($accent, 0.45);
+    border-radius: default.$border-radius_big;
+    background-color: default.$dark-grey;
+    box-shadow: 0 0 24px rgba($accent, 0.12);
+    // the text keeps the banner at least 4:1 by its width (cqw), aspect-ratio would cut the text instead
+    container-type: inline-size;
+}
+
+.global-event-banner__image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    // global img rule in DragNDropImage styles caps every image at 300px
+    max-width: none;
+    max-height: none;
+    object-fit: cover;
+    border-radius: inherit;
+}
+
+// darkens the image under the text, which starts at the left
+.global-event-banner__body {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: default.$margin_small;
+    box-sizing: border-box;
+    min-height: 25cqw;
+    padding: default.$padding_large;
+    border-radius: inherit;
+    background: linear-gradient(90deg, rgba(default.$black, 0.85) 0%, rgba(default.$black, 0.6) 55%, rgba(default.$black, 0.25) 100%);
+}
+
+.global-event-banner__label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: $accent;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.global-event-banner__name {
+    margin: 0;
+    font-size: 32px;
+    overflow-wrap: anywhere;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+// the whole description is on the page of the event
+.global-event-banner__description {
+    display: -webkit-box;
+    max-width: 640px;
+    margin: 0;
+    overflow: hidden;
+    color: rgba(255, 255, 255, 0.85);
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+}
+
+// MUI resets the margin of CommonButton
+.global-event-banner__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: default.$margin_small;
+    margin-top: default.$margin_small;
+}
+
+// the button of the administrator stands apart from the ones of the players
+.global-event-banner__admin {
+    margin-left: auto;
+}
+
+@media (max-width: 600px) {
+    // the page has no side padding of its own
+    .global-event-banner {
+        width: calc(100% - #{2 * default.$margin_big});
+    }
+
+    .global-event-banner__body {
+        padding: default.$padding_big;
+        background: rgba(default.$black, 0.7);
+    }
+
+    .global-event-banner__name {
+        font-size: 24px;
+    }
+
+    .global-event-banner__admin {
+        margin-left: 0;
+    }
+}

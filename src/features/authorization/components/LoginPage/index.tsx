@@ -42,9 +42,9 @@ const LoginPage = () => {
     return(
         <div className="login-page">
             <div style={{left: leftPosition}} className="lines">
-                <div className="line"></div>
-                <div className="line"></div>
-                <div className="line"></div>
+                <div className="line"><span className="line__drop" /></div>
+                <div className="line"><span className="line__drop" /></div>
+                <div className="line"><span className="line__drop" /></div>
             </div>
             <div className="login-page__container">
                 <h1>{t('Show Thyself')}</h1>
