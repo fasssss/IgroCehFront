@@ -259,9 +259,6 @@ const GlobalEventConstructor = ({ globalEvent, isImageFailed }: GlobalEventConst
                 </div>
                 :
                 <div className="global-event-constructor__games-step">
-                    <div className="global-event-constructor__back">
-                        <CommonButton onClick={() => setStep(1)}>{t("Back")}</CommonButton>
-                    </div>
                     {
                         isGamesLocked ?
                         <div className="global-event-constructor__note">
@@ -351,6 +348,7 @@ const GlobalEventConstructor = ({ globalEvent, isImageFailed }: GlobalEventConst
                                 {t("Add at least {{min}} games, a player rolls {{min}} at once", { min: GLOBAL_EVENT_MIN_GAMES })}
                             </div>
                         }
+                        <CommonButton onClick={() => setStep(1)}>{t("Back")}</CommonButton>
                         {saveButton}
                     </div>
                     {saveErrorText}
