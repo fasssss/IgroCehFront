@@ -1,19 +1,29 @@
 import { useTranslation } from "react-i18next";
-import { useGetGlobalEventBadgeUsesQuery } from "../../globalEventsApi";
-import { BADGES } from "../../badges";
+import { CircularProgress } from "@mui/material";
+import { useGetBadgesQuery } from "../../globalEventsApi";
+import { badgeImageUrl } from "../../badges";
+import { BadgeUpload } from "../BadgeUpload";
 import './styles.scss';
 
-// the administrator picks the badge a player gets for passing the event; under every badge the other events that give it already
+// the administrator picks the badge a player gets for passing the event or uploads a new one;
+// under every badge the other events that give it already
 const BadgePicker = ({ globalEventId, value, isLocked, onChange }: BadgePickerProps) => {
     const { t } = useTranslation();
-    const badgeUses = useGetGlobalEventBadgeUsesQuery(undefined, { refetchOnMountOrArgChange: true });
-    const usesOf = (badgeId: string) => badgeUses.data?.badgeUses.filter(use => use.badgeId === badgeId && use.globalEventId !== globalEventId) ?? [];
+    const badgesQuery = useGetBadgesQuery(undefined, { refetchOnMountOrArgChange: true });
+
+    if(badgesQuery.isError) {
+        return <div className="badge-picker__message">{t("Couldn't load the badges, try later")}</div>;
+    }
+
+    if(!badgesQuery.data) {
+        return <CircularProgress color="primary" />;
+    }
 
     return(
         <div className="badge-picker" role="radiogroup" aria-label={t("The reward for the passing")}>
             {
-                BADGES.map(badge => {
-                    const uses = usesOf(badge.id);
+                badgesQuery.data.badges.map(badge => {
+                    const uses = badge.uses.filter(use => use.globalEventId !== globalEventId);
                     const isSelected = value === badge.id;
                     return(
                         <button
@@ -24,7 +34,8 @@ const BadgePicker = ({ globalEventId, value, isLocked, onChange }: BadgePickerPr
                         disabled={isLocked && !isSelected}
                         className={`badge-picker__badge ${isSelected ? "badge-picker__badge--selected" : ""}`}
                         onClick={() => onChange(badge.id)}>
-                            <img src={badge.url} className="badge-picker__image" alt={badge.id} />
+                            <img src={badgeImageUrl(badge.id)} className="badge-picker__image" alt="" />
+                            <span className="badge-picker__name">{badge.name}</span>
                             <span className={`badge-picker__uses ${uses.length ? "badge-picker__uses--used" : ""}`}>
                                 {
                                     uses.length ?
@@ -39,6 +50,8 @@ const BadgePicker = ({ globalEventId, value, isLocked, onChange }: BadgePickerPr
                     );
                 })
             }
+            {/* an uploaded badge becomes the reward at once */}
+            {!isLocked && <BadgeUpload onUploaded={badge => onChange(badge.id)} />}
         </div>
     );
 };

@@ -12,7 +12,7 @@ import { SteamProfileWarning } from "root/features/steam/components/SteamProfile
 import { useGetGlobalEventClaimsQuery, useGetGlobalEventParticipationQuery, useGetGlobalEventQuery } from "../../globalEventsApi";
 import { globalEventClaimsPath, globalEventEditPath } from "../../globalEventPath";
 import { ClaimStatus } from "../../globalEventClaims";
-import { badgeUrl } from "../../badges";
+import { badgeImageUrl } from "../../badges";
 import { GlobalEventGameCard } from "../GlobalEventGameCard";
 import { GlobalEventParticipation } from "../GlobalEventParticipation";
 import './styles.scss';
@@ -50,8 +50,6 @@ const GlobalEventPage = () => {
         );
     }
 
-    const rewardUrl = badgeUrl(globalEvent.badgeId);
-
     return(
         <div className="global-event-page">
             <header className="global-event-page__header">
@@ -82,9 +80,9 @@ const GlobalEventPage = () => {
                         <p className="global-event-page__description">{globalEvent.description}</p>
                     }
                     {
-                        rewardUrl &&
+                        globalEvent.badgeId &&
                         <div className="global-event-page__reward">
-                            <img src={rewardUrl} className="global-event-page__reward-image" alt="" />
+                            <img src={badgeImageUrl(globalEvent.badgeId)} className="global-event-page__reward-image" alt="" />
                             {t("The reward for the passing")}
                         </div>
                     }

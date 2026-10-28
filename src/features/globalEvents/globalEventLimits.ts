@@ -14,3 +14,8 @@ export const GLOBAL_EVENT_CLAIM_COMMENT_MAX_LENGTH = 500;
 // the API takes these images (API.Helpers.UploadedImages)
 export const GLOBAL_EVENT_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
 export const GLOBAL_EVENT_IMAGE_MAX_SIZE = 10 * 1024 * 1024;
+
+// a badge (Application.Consts.BadgeLimits): a small picture, it goes with every profile that shows it
+export const BADGE_NAME_MAX_LENGTH = 50;
+export const BADGE_IMAGE_TYPES = ['image/svg+xml', 'image/png', 'image/webp'];
+export const BADGE_IMAGE_MAX_SIZE = 256 * 1024;

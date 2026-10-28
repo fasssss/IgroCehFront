@@ -89,10 +89,16 @@ const globalEventsApi = igroCehApi.injectEndpoints({
             query: postTo('/api/decideGlobalEventClaim'),
             invalidatesTags: ['GlobalEventClaims', 'GlobalEvent'],
         }),
-        // only for the administrators: the events that give badges, the latest first
-        getGlobalEventBadgeUses: build.query<GlobalEventBadgeUsesResponse, void>({
-            query: () => '/api/getGlobalEventBadgeUses',
-            providesTags: ['GlobalEvent'],
+        // only for the administrators: every badge, the oldest first, with the events that give it
+        getBadges: build.query<BadgesResponse, void>({
+            query: () => '/api/getBadges',
+            providesTags: ['Badge', 'GlobalEvent'],
+        }),
+        // only for the administrators: FormData with name and image (SVG, PNG or WebP); 400 when the file isn't such an image
+        // or an SVG has scripts or links outside of itself
+        uploadBadge: build.mutation<UploadBadgeResponse, { data: FormData }>({
+            query: ({ data }) => postTo('/api/uploadBadge')(data),
+            invalidatesTags: ['Badge'],
         }),
     })
 });
@@ -141,7 +147,7 @@ export type GlobalEvent = {
     name: string,
     description: string | null,
     imageUrl: string | null,
-    // the badge a player gets for passing the event, see badges.ts; null for the events made before the badges
+    // the badge a player gets for passing the event, its image is badgeImageUrl; null for the events made before the badges
     badgeId: string | null,
     createdAt: string,
     // null while the event is active
@@ -244,8 +250,21 @@ export type GlobalEventBadgeUse = {
     passedCount: number
 }
 
-export type GlobalEventBadgeUsesResponse = {
-    badgeUses: GlobalEventBadgeUse[]
+// a badge the administrator uploaded, its image never changes
+export type Badge = {
+    id: string,
+    name: string,
+    createdAt: string | null,
+    // the latest first
+    uses: GlobalEventBadgeUse[]
+}
+
+export type BadgesResponse = {
+    badges: Badge[]
+}
+
+export type UploadBadgeResponse = {
+    badge: Badge
 }
 
 export type UpdateGlobalEventRequest = CreateGlobalEventRequest & {
@@ -277,5 +296,6 @@ export const {
     useSubmitGlobalEventClaimMutation,
     useGetGlobalEventClaimsQuery,
     useDecideGlobalEventClaimMutation,
-    useGetGlobalEventBadgeUsesQuery
+    useGetBadgesQuery,
+    useUploadBadgeMutation
 } = globalEventsApi;

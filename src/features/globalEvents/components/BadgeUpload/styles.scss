@@ -1,0 +1,91 @@
+@use '../../../../shared/default.module.scss' as default;
+
+$muted-text: rgba(255, 255, 255, 0.7);
+$error: #ef6a5a;
+// the same size as the images of the badges beside it
+$badge-size: 112px;
+
+// a tile of the picker grid, dashed apart from the badges
+.badge-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: default.$margin_small;
+    padding: default.$padding_big;
+    border: 2px dashed default.$light-grey;
+    border-radius: default.$border-radius_big;
+}
+
+.badge-upload__image {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: $badge-size;
+    height: $badge-size;
+    border-radius: default.$border-radius_small;
+    background-color: default.$grey;
+    color: $muted-text;
+    font-size: 14px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+
+    &:hover,
+    &:has(.badge-upload__input:focus-visible) {
+        background-color: default.$light-grey;
+    }
+
+    &:has(.badge-upload__input:focus-visible) {
+        outline: 2px solid white;
+    }
+}
+
+.badge-upload__icon.MuiSvgIcon-root {
+    font-size: 40px;
+}
+
+.badge-upload__preview {
+    width: 100%;
+    height: 100%;
+    // global img rule in DragNDropImage styles caps every image at 300px
+    max-width: none;
+    object-fit: contain;
+}
+
+// hidden, but still reachable by the keyboard
+.badge-upload__input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+
+.badge-upload__hint {
+    color: $muted-text;
+    font-size: 14px;
+    text-align: center;
+}
+
+.badge-upload__name {
+    width: 100%;
+
+    // the tile is narrow, the field doesn't keep room for an icon at the right
+    .common-field__input {
+        padding-right: default.$padding_big;
+    }
+}
+
+.badge-upload__actions {
+    display: flex;
+    align-items: center;
+    gap: default.$margin_small;
+}
+
+.badge-upload__error {
+    color: $error;
+    font-size: 14px;
+    text-align: center;
+}

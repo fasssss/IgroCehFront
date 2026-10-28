@@ -10,6 +10,10 @@ $badge-size: 112px;
     gap: default.$margin_big;
 }
 
+.badge-picker__message {
+    color: $muted-text;
+}
+
 .badge-picker__badge {
     display: flex;
     flex-direction: column;
@@ -43,6 +47,12 @@ $badge-size: 112px;
     height: $badge-size;
     // global img rule in DragNDropImage styles caps every image at 300px
     max-width: none;
+    object-fit: contain;
+}
+
+.badge-picker__name {
+    font-weight: 700;
+    overflow-wrap: anywhere;
 }
 
 .badge-picker__uses {

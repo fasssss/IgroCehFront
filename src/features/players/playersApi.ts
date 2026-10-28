@@ -85,7 +85,7 @@ export type PlayerStatistics = {
 
 // a badge a player got for passing a global event
 export type PlayerBadge = {
-    // the name of a badge image, see globalEvents/badges.ts
+    // its image is badgeImageUrl of globalEvents/badges.ts
     badgeId: string,
     globalEventId: string,
     globalEventName: string,

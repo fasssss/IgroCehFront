@@ -116,7 +116,16 @@
         "Add an image, a name and a reward": "Add an image, a name and a reward",
         "Already the reward of: {{events}}": "Already the reward of: {{events}}",
         "«{{name}}» (got: {{count}})": "«{{name}}» (got: {{count}})",
-        "Not a reward yet": "Not a reward yet"
+        "Not a reward yet": "Not a reward yet",
+        "Couldn't load the badges, try later": "Couldn't load the badges, try later",
+        "Choose a picture": "Choose a picture",
+        "A new badge: SVG, PNG or WebP up to {{size}} KB": "A new badge: SVG, PNG or WebP up to {{size}} KB",
+        "The badge should be SVG, PNG or WebP": "The badge should be SVG, PNG or WebP",
+        "The badge should be up to {{size}} KB": "The badge should be up to {{size}} KB",
+        "Name": "Name",
+        "Upload the badge": "Upload the badge",
+        "The file doesn't fit a badge: an SVG without scripts and outer links, a PNG or a WebP": "The file doesn't fit a badge: an SVG without scripts and outer links, a PNG or a WebP",
+        "Couldn't upload the badge, try again": "Couldn't upload the badge, try again"
     },
     "ru": {
         "Construct a global event": "Сконструировать глобальное событие",
@@ -235,6 +244,15 @@
         "Add an image, a name and a reward": "Добавьте картинку, название и награду",
         "Already the reward of: {{events}}": "Уже награда за: {{events}}",
         "«{{name}}» (got: {{count}})": "«{{name}}» (получили: {{count}})",
-        "Not a reward yet": "Ещё не был наградой"
+        "Not a reward yet": "Ещё не был наградой",
+        "Couldn't load the badges, try later": "Не удалось загрузить бэйджики, попробуйте позже",
+        "Choose a picture": "Выбрать картинку",
+        "A new badge: SVG, PNG or WebP up to {{size}} KB": "Новый бэйджик: SVG, PNG или WebP до {{size}} КБ",
+        "The badge should be SVG, PNG or WebP": "Бэйджик должен быть в SVG, PNG или WebP",
+        "The badge should be up to {{size}} KB": "Бэйджик должен весить до {{size}} КБ",
+        "Name": "Название",
+        "Upload the badge": "Загрузить бэйджик",
+        "The file doesn't fit a badge: an SVG without scripts and outer links, a PNG or a WebP": "Файл не подходит для бэйджика: нужен SVG без скриптов и внешних ссылок, PNG или WebP",
+        "Couldn't upload the badge, try again": "Не удалось загрузить бэйджик, попробуйте ещё раз"
     }
 }
