@@ -13,6 +13,7 @@ import {
     useSubmitGlobalEventClaimMutation
 } from "../../globalEventsApi";
 import { CLAIM_PLATFORM_NAME, CLAIM_PLATFORMS, ClaimPlatform, ClaimStatus, PassingCheck } from "../../globalEventClaims";
+import { AchievementPlatform } from "../../achievementPlatforms";
 import { GLOBAL_EVENT_CLAIM_PROFILE_MAX_LENGTH, GLOBAL_EVENT_PASSING_CHECK_DELAY_MINUTES } from "../../globalEventLimits";
 import { formatTimeLeft, useNow } from "../../globalEventTime";
 import './styles.scss';
@@ -33,6 +34,8 @@ const GlobalEventPassingProof = ({ globalEvent, game, participation }: GlobalEve
     const [profile, setProfile] = useState("");
     const [claimError, setClaimError] = useState<string | null>(null);
     const claim = participation.claim;
+    // Steam checks only its own achievements of the game
+    const hasSteamAchievements = game.achievements.some(achievement => achievement.platform === AchievementPlatform.Steam);
     const steamCheckableAt = participation.steamCheckableAt ? Date.parse(participation.steamCheckableAt) : null;
     const now = useNow(steamCheckableAt !== null);
     const checkWait = steamCheckableAt === null ? 0 : steamCheckableAt - now;
@@ -87,6 +90,8 @@ const GlobalEventPassingProof = ({ globalEvent, game, participation }: GlobalEve
             {
                 !game.achievements.length ?
                 <p className="global-event-passing__text">{t("The game has no achievements, its passing is proved by a claim only")}</p>
+                : !hasSteamAchievements ?
+                null
                 : user?.steamId ?
                 <div className="global-event-passing__row">
                     <CommonButton

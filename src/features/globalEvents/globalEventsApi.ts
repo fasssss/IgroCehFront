@@ -1,10 +1,11 @@
 import { igroCehApi } from "root/shared/igroCehApi";
 import type { GameObject, UserShortObject } from "root/features/events/eventsApi";
 import type { ClaimPlatform, ClaimStatus, PassingCheck } from "./globalEventClaims";
+import type { AchievementPlatform } from "./achievementPlatforms";
 
 const postTo = (url: string) => <TBody>(body: TBody) => ({ url, method: 'POST', body });
 
-// events of the whole site made by its administrator, a game of such an event is passed by a Steam achievement;
+// events of the whole site made by its administrator, a game of such an event is passed by a Steam or an Xbox achievement;
 // every change invalidates all of them, there are few
 const globalEventsApi = igroCehApi.injectEndpoints({
     endpoints: (build) => ({
@@ -20,6 +21,16 @@ const globalEventsApi = igroCehApi.injectEndpoints({
         // only for the administrator, 503 when Steam doesn't answer; the API keeps them for hours, so do we
         getSteamAchievements: build.query<GetSteamAchievementsResponse, number>({
             query: (appId) => ({ url: '/api/getSteamAchievements', params: { appId } }),
+            keepUnusedDataFor: 600,
+        }),
+        // only for the administrator: the games of the Microsoft Store with an Xbox title id, 503 when OpenXBL doesn't answer
+        searchXboxTitles: build.query<SearchXboxTitlesResponse, string>({
+            query: (query) => ({ url: '/api/searchXboxTitles', params: { query } }),
+            keepUnusedDataFor: 600,
+        }),
+        // only for the administrator: 404 when the game in Xbox has no achievements or there is no such title id
+        getXboxAchievements: build.query<GetXboxAchievementsResponse, string>({
+            query: (titleId) => ({ url: '/api/getXboxAchievements', params: { titleId } }),
             keepUnusedDataFor: 600,
         }),
         // 409 while another event is active, 400 when Steam or the catalog doesn't know a game or an achievement, 503 when they don't answer
@@ -119,6 +130,8 @@ async function setParticipation({ globalEventId }: GlobalEventRequest, { dispatc
 
 // an achievement that means a game of the event is passed, in both languages of the site
 export type GlobalEventAchievement = {
+    platform: AchievementPlatform,
+    // the API name in Steam or the id in Xbox
     apiName: string,
     name: string,
     nameRu: string,
@@ -127,18 +140,30 @@ export type GlobalEventAchievement = {
     iconUrl: string | null
 }
 
-export type SteamAchievement = GlobalEventAchievement & {
+// an achievement as Steam or Xbox gives it to the administrator, the platform is the one asked
+export type PlatformAchievement = Omit<GlobalEventAchievement, 'platform'> & {
     // the share of the players who unlocked it, rare ones usually mean the game is passed
     percent: number | null,
-    // Steam doesn't tell what to do for a hidden one
+    // Steam doesn't tell what to do for a hidden one, Xbox tells it for a secret one
     isHidden: boolean
+}
+
+// a game in Xbox, its achievements are kept by its title id
+export type XboxTitle = {
+    titleId: string,
+    name: string,
+    // the box art of the store
+    imageUrl: string | null
 }
 
 export type GlobalEventGame = {
     game: Pick<GameObject, 'id' | 'name' | 'imageUrl' | 'steamUrl'>,
     // the Steam app id, the same as the catalog id of the game
     appId: number,
-    // any one of them unlocked means the game is passed
+    // the game in Xbox the Xbox achievements belong to, null without them
+    xboxTitleId: string | null,
+    xboxTitleName: string | null,
+    // any one of them unlocked means the game is passed; the Steam ones first
     achievements: GlobalEventAchievement[]
 }
 
@@ -229,12 +254,25 @@ export type GlobalEventResponse = {
 }
 
 export type GetSteamAchievementsResponse = {
-    achievements: SteamAchievement[]
+    achievements: PlatformAchievement[]
+}
+
+export type SearchXboxTitlesResponse = {
+    titles: XboxTitle[]
+}
+
+export type GetXboxAchievementsResponse = {
+    title: Pick<XboxTitle, 'titleId' | 'name'>,
+    achievements: PlatformAchievement[]
 }
 
 export type NewGlobalEventGame = {
     appId: number,
-    achievementApiNames: string[]
+    // in Steam
+    achievementApiNames: string[],
+    // the game in Xbox, needed only with Xbox achievements
+    xboxTitleId: string | null,
+    xboxAchievementIds: string[]
 }
 
 export type CreateGlobalEventRequest = {
@@ -286,6 +324,8 @@ export const {
     useGetActiveGlobalEventQuery,
     useGetGlobalEventQuery,
     useGetSteamAchievementsQuery,
+    useSearchXboxTitlesQuery,
+    useGetXboxAchievementsQuery,
     useCreateGlobalEventMutation,
     useUpdateGlobalEventMutation,
     useSetGlobalEventImageMutation,

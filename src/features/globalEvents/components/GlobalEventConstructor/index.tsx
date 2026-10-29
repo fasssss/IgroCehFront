@@ -13,7 +13,6 @@ import { CatalogGameSearch } from "root/features/events/components/CatalogGameSe
 import { CatalogGameCard } from "root/features/events/components/CatalogGameCard";
 import {
     GlobalEvent,
-    GlobalEventAchievement,
     useCreateGlobalEventMutation,
     useDeleteGlobalEventMutation,
     useFinishGlobalEventMutation,
@@ -29,28 +28,34 @@ import {
     GLOBAL_EVENT_NAME_MAX_LENGTH
 } from "../../globalEventLimits";
 import { globalEventEditPath } from "../../globalEventPath";
-import { AchievementPicker } from "../AchievementPicker";
+import { AchievementPlatform } from "../../achievementPlatforms";
+import { AchievementPicker, AchievementsChoice } from "../AchievementPicker";
 import { BadgePicker } from "../BadgePicker";
 import { GlobalEventGameCard } from "../GlobalEventGameCard";
 import type { GlobalEventConstructorPageState } from "../GlobalEventConstructorPage";
 import './styles.scss';
 
-// a game the administrator has put into the event with the achievements that mean it is passed,
+// a game the administrator has put into the event with the achievements in Steam and in Xbox that mean it is passed,
 // without them the passing is confirmed only by hand
-type ChosenGame = {
+type ChosenGame = AchievementsChoice & {
     appId: number,
     name: string,
     // a catalog cover or an image uploaded to the API
-    imageUrl: string | null,
-    achievements: GlobalEventAchievement[]
+    imageUrl: string | null
 }
+
+const NO_ACHIEVEMENTS: AchievementsChoice = { achievements: [], xboxTitle: null };
 
 const toChosenGames = (globalEvent?: GlobalEvent): ChosenGame[] => globalEvent?.games.map(eventGame => ({
     appId: eventGame.appId,
     name: eventGame.game.name,
     imageUrl: eventGame.game.imageUrl,
-    achievements: eventGame.achievements
+    achievements: eventGame.achievements,
+    xboxTitle: eventGame.xboxTitleId ? { titleId: eventGame.xboxTitleId, name: eventGame.xboxTitleName ?? eventGame.xboxTitleId } : null
 })) ?? [];
+
+const apiNamesOf = (game: ChosenGame, platform: AchievementPlatform) =>
+    game.achievements.filter(achievement => achievement.platform === platform).map(achievement => achievement.apiName);
 
 const errorStatus = (error: unknown) =>
     typeof error === 'object' && error !== null && 'status' in error ? error.status : undefined;
@@ -75,7 +80,7 @@ const GlobalEventConstructor = ({ globalEvent, isImageFailed }: GlobalEventConst
     const [badgeId, setBadgeId] = useState(globalEvent?.badgeId ?? null);
     const [games, setGames] = useState(() => toChosenGames(globalEvent));
     const [selectedGame, setSelectedGame] = useState<CatalogGameObject | null>(null);
-    const [selectedAchievements, setSelectedAchievements] = useState<GlobalEventAchievement[]>([]);
+    const [selectedChoice, setSelectedChoice] = useState(NO_ACHIEVEMENTS);
     // a chosen game whose achievements are being changed, it replaces the game on "Done"
     const [editedGame, setEditedGame] = useState<ChosenGame | null>(null);
     const [saveError, setSaveError] = useState<string | null>(null);
@@ -97,7 +102,7 @@ const GlobalEventConstructor = ({ globalEvent, isImageFailed }: GlobalEventConst
 
     const selectGame = (game: CatalogGameObject) => {
         setSelectedGame(game);
-        setSelectedAchievements([]);
+        setSelectedChoice(NO_ACHIEVEMENTS);
     };
 
     const addSelectedGame = () => {
@@ -109,10 +114,10 @@ const GlobalEventConstructor = ({ globalEvent, isImageFailed }: GlobalEventConst
             appId: selectedGame.vgcId,
             name: selectedGame.name,
             imageUrl: selectedGame.coverUrl,
-            achievements: selectedAchievements
+            ...selectedChoice
         }]);
         setSelectedGame(null);
-        setSelectedAchievements([]);
+        setSelectedChoice(NO_ACHIEVEMENTS);
     };
 
     const applyEditedGame = () => {
@@ -127,8 +132,8 @@ const GlobalEventConstructor = ({ globalEvent, isImageFailed }: GlobalEventConst
         isConflictError(error) && globalEvent && conflictText(error).includes("badge") ? t("Players have got the badge already, it can't change")
         : isConflictError(error) && globalEvent ? t("Players have rolled the games already, the games and the achievements can't change")
         : isConflictError(error) ? t("Another global event is active, finish it first")
-        : errorStatus(error) === 400 ? t("Steam or the catalog doesn't know a game or an achievement, check the games")
-        : errorStatus(error) === 503 ? t("Steam or the catalog doesn't answer, try later")
+        : errorStatus(error) === 400 ? t("Steam, Xbox or the catalog doesn't know a game or an achievement, check the games")
+        : errorStatus(error) === 503 ? t("Steam, Xbox or the catalog doesn't answer, try later")
         : t("Couldn't save the event, try again");
 
     // the image goes with its own request after the event is saved
@@ -138,7 +143,12 @@ const GlobalEventConstructor = ({ globalEvent, isImageFailed }: GlobalEventConst
             name,
             description,
             badgeId: badgeId ?? "",
-            games: games.map(game => ({ appId: game.appId, achievementApiNames: game.achievements.map(achievement => achievement.apiName) }))
+            games: games.map(game => ({
+                appId: game.appId,
+                achievementApiNames: apiNamesOf(game, AchievementPlatform.Steam),
+                xboxTitleId: game.xboxTitle?.titleId ?? null,
+                xboxAchievementIds: apiNamesOf(game, AchievementPlatform.Xbox)
+            }))
         };
         let savedId: string;
         try {
@@ -279,8 +289,9 @@ const GlobalEventConstructor = ({ globalEvent, isImageFailed }: GlobalEventConst
                                         <AchievementPicker
                                         key={selectedGame.vgcId}
                                         appId={selectedGame.vgcId}
-                                        chosen={selectedAchievements}
-                                        onChange={setSelectedAchievements} />
+                                        gameName={selectedGame.name}
+                                        value={selectedChoice}
+                                        onChange={setSelectedChoice} />
                                         <CommonButton color="success" onClick={addSelectedGame}>
                                             {t("Add to the event")}
                                         </CommonButton>
@@ -323,8 +334,9 @@ const GlobalEventConstructor = ({ globalEvent, isImageFailed }: GlobalEventConst
                                                 <div className="global-event-constructor__picked">
                                                     <AchievementPicker
                                                     appId={game.appId}
-                                                    chosen={editedGame.achievements}
-                                                    onChange={achievements => setEditedGame({ ...editedGame, achievements })} />
+                                                    gameName={game.name}
+                                                    value={editedGame}
+                                                    onChange={choice => setEditedGame({ ...editedGame, ...choice })} />
                                                     <div className="global-event-constructor__edited-actions">
                                                         <CommonButton onClick={() => setEditedGame(null)}>{t("Cancel")}</CommonButton>
                                                         <CommonButton color="success" onClick={applyEditedGame}>

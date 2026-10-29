@@ -5,7 +5,7 @@ import type { GlobalEventAchievement } from "./globalEventsApi";
 export const useAchievementText = () => {
     const { i18n } = useTranslation();
     const isRussian = i18n.resolvedLanguage === "ru";
-    return (achievement: GlobalEventAchievement) => ({
+    return (achievement: Pick<GlobalEventAchievement, 'name' | 'nameRu' | 'description' | 'descriptionRu'>) => ({
         name: isRussian ? achievement.nameRu : achievement.name,
         description: isRussian ? achievement.descriptionRu : achievement.description
     });

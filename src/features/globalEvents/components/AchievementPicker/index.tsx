@@ -1,17 +1,72 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Checkbox, CircularProgress } from "@mui/material";
-import { EmojiEventsOutlined } from "@mui/icons-material";
+import { CircularProgress, SvgIcon } from "@mui/material";
+import { SvgSelector } from "root/shared/components/SvgSelector";
 import { GlobalEventAchievement, useGetSteamAchievementsQuery } from "../../globalEventsApi";
-import { GLOBAL_EVENT_MAX_ACHIEVEMENTS_PER_GAME } from "../../globalEventLimits";
-import { useAchievementText } from "../../achievementText";
+import {
+    ACHIEVEMENT_PLATFORM_ICON,
+    ACHIEVEMENT_PLATFORM_NAME,
+    ACHIEVEMENT_PLATFORMS,
+    AchievementPlatform,
+    toEventAchievement
+} from "../../achievementPlatforms";
+import { AchievementChecklist } from "../AchievementChecklist";
+import { XboxAchievementPicker, XboxTitleChoice } from "../XboxAchievementPicker";
 import './styles.scss';
 
-// the Steam achievements of a game, the administrator ticks the ones that mean the game is passed;
-// the chosen ones keep the order of Steam, the share of the players helps to find the rare ones;
-// none of them may be chosen, then the passing is confirmed only by a claim checked by hand
-const AchievementPicker = ({ appId, chosen, onChange }: AchievementPickerProps) => {
-    const { t, i18n } = useTranslation();
-    const achievementText = useAchievementText();
+// the achievements of a game that mean it is passed, in Steam and in Xbox on two tabs; any one of them counts,
+// none may be chosen, then the passing is confirmed only by a claim checked by hand
+const AchievementPicker = ({ appId, gameName, value, onChange }: AchievementPickerProps) => {
+    const { t } = useTranslation();
+    const [platform, setPlatform] = useState<AchievementPlatform>(AchievementPlatform.Steam);
+    // the game in Xbox stays found while the tabs switch, even with no achievement chosen yet
+    const [xboxTitleId, setXboxTitleId] = useState(value.xboxTitle?.titleId ?? null);
+    const chosenOf = (item: AchievementPlatform) => value.achievements.filter(achievement => achievement.platform === item);
+    const steamChosen = chosenOf(AchievementPlatform.Steam);
+    const xboxChosen = chosenOf(AchievementPlatform.Xbox);
+
+    return(
+        <div className="achievement-picker">
+            <div className="achievement-picker__hint">
+                {t("Pick the achievements that mean the game is passed, any one of them counts. Without them the passing is confirmed by hand only")}
+            </div>
+            <div className="achievement-picker__tabs" role="tablist">
+                {
+                    ACHIEVEMENT_PLATFORMS.map(item =>
+                        <button
+                        key={item}
+                        type="button"
+                        role="tab"
+                        aria-selected={platform === item}
+                        className={`achievement-picker__tab ${platform === item ? "achievement-picker__tab--selected" : ""}`}
+                        onClick={() => setPlatform(item)}>
+                            <SvgIcon className="achievement-picker__tab-icon"><SvgSelector iconName={ACHIEVEMENT_PLATFORM_ICON[item]} /></SvgIcon>
+                            {ACHIEVEMENT_PLATFORM_NAME[item]} · {chosenOf(item).length}
+                        </button>
+                    )
+                }
+            </div>
+            {
+                platform === AchievementPlatform.Steam ?
+                <SteamAchievementPicker
+                appId={appId}
+                chosen={steamChosen}
+                onChange={chosen => onChange({ ...value, achievements: [...chosen, ...xboxChosen] })} />
+                :
+                <XboxAchievementPicker
+                gameName={gameName}
+                titleId={xboxTitleId}
+                chosen={xboxChosen}
+                onTitleIdChange={setXboxTitleId}
+                onChange={(chosen, xboxTitle) => onChange({ achievements: [...steamChosen, ...chosen], xboxTitle })} />
+            }
+        </div>
+    );
+};
+
+// the catalog id of a game is its Steam app id
+const SteamAchievementPicker = ({ appId, chosen, onChange }: SteamAchievementPickerProps) => {
+    const { t } = useTranslation();
     const steamAchievements = useGetSteamAchievementsQuery(appId);
 
     // the data of the previous game isn't shown while another one loads
@@ -30,69 +85,36 @@ const AchievementPicker = ({ appId, chosen, onChange }: AchievementPickerProps) 
 
     const achievements = steamAchievements.currentData.achievements;
     if(!achievements.length) {
-        return <div className="achievement-picker__message">{t("This game has no achievements in Steam, its passing is confirmed by hand only")}</div>;
+        return <div className="achievement-picker__message">{t("This game has no achievements in Steam, they may be in Xbox")}</div>;
     }
 
-    const chosenNames = new Set(chosen.map(achievement => achievement.apiName));
-    const isFull = chosenNames.size >= GLOBAL_EVENT_MAX_ACHIEVEMENTS_PER_GAME;
-    const percentFormat = new Intl.NumberFormat(i18n.resolvedLanguage);
-
-    const toggle = (apiName: string) => {
-        const names = new Set(chosenNames);
-        if(!names.delete(apiName)) {
-            names.add(apiName);
-        }
-        onChange(achievements.filter(achievement => names.has(achievement.apiName)));
-    };
-
     return(
-        <div className="achievement-picker">
-            <div className="achievement-picker__hint">
-                {t("Pick the achievements that mean the game is passed, any one of them counts. Without them the passing is confirmed by hand only")}
-            </div>
-            <div className="achievement-picker__count">
-                {t("Chosen {{count}} of {{max}}", { count: chosenNames.size, max: GLOBAL_EVENT_MAX_ACHIEVEMENTS_PER_GAME })}
-            </div>
-            <div className="achievement-picker__list">
-                {
-                    achievements.map(achievement => {
-                        const isChosen = chosenNames.has(achievement.apiName);
-                        const isDisabled = !isChosen && isFull;
-                        const { name, description } = achievementText(achievement);
-                        return(
-                            <label
-                            key={achievement.apiName}
-                            className={`achievement-picker__item ${isChosen ? "achievement-picker__item--chosen" : ""} ${isDisabled ? "achievement-picker__item--disabled" : ""}`}>
-                                <Checkbox checked={isChosen} disabled={isDisabled} onChange={() => toggle(achievement.apiName)} />
-                                {
-                                    achievement.iconUrl ?
-                                    <img src={achievement.iconUrl} className="achievement-picker__icon" alt="" />
-                                    :
-                                    <span className="achievement-picker__icon achievement-picker__icon--empty"><EmojiEventsOutlined /></span>
-                                }
-                                <span className="achievement-picker__text">
-                                    <span className="achievement-picker__name">{name}</span>
-                                    <span className="achievement-picker__description">
-                                        {description || (achievement.isHidden ? t("Hidden achievement") : "")}
-                                    </span>
-                                </span>
-                                {
-                                    achievement.percent !== null &&
-                                    <span className="achievement-picker__percent">
-                                        {t("{{percent}}% of players", { percent: percentFormat.format(achievement.percent) })}
-                                    </span>
-                                }
-                            </label>
-                        );
-                    })
-                }
-            </div>
-        </div>
+        <AchievementChecklist
+        achievements={achievements}
+        chosen={chosen.map(achievement => achievement.apiName)}
+        onChange={apiNames => onChange(achievements
+            .filter(achievement => apiNames.includes(achievement.apiName))
+            .map(achievement => toEventAchievement(achievement, AchievementPlatform.Steam)))} />
     );
 };
 
+// the chosen achievements of a game on both platforms, the Xbox ones with their game in Xbox
+export type AchievementsChoice = {
+    achievements: GlobalEventAchievement[],
+    // null without Xbox achievements
+    xboxTitle: XboxTitleChoice | null
+}
+
 type AchievementPickerProps = {
     // the Steam app id, the same as the catalog id of the game
+    appId: number,
+    // the name of the catalog game, the game in Xbox is looked for by it
+    gameName: string,
+    value: AchievementsChoice,
+    onChange: (value: AchievementsChoice) => void
+}
+
+type SteamAchievementPickerProps = {
     appId: number,
     chosen: GlobalEventAchievement[],
     onChange: (chosen: GlobalEventAchievement[]) => void

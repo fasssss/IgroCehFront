@@ -1,12 +1,16 @@
 import { PropsWithChildren, ReactNode } from "react";
 import { useTranslation } from "react-i18next";
+import { SvgIcon } from "@mui/material";
 import { EmojiEventsOutlined, ImageNotSupportedOutlined } from "@mui/icons-material";
 import { resolveImageUrl } from "root/shared/helpers/imageUrl";
+import { SvgSelector } from "root/shared/components/SvgSelector";
 import { GlobalEventAchievement } from "../../globalEventsApi";
+import { ACHIEVEMENT_PLATFORM_ICON, ACHIEVEMENT_PLATFORM_NAME } from "../../achievementPlatforms";
 import { useAchievementText } from "../../achievementText";
 import './styles.scss';
 
-// a game of a global event with the achievements that mean it is passed; children take a row under the card
+// a game of a global event with the achievements in Steam and in Xbox that mean it is passed, each marked with its platform;
+// children take a row under the card
 const GlobalEventGameCard = ({ name, imageUrl, achievements, actions, children }: PropsWithChildren<GlobalEventGameCardProps>) => {
     const { t } = useTranslation();
     const achievementText = useAchievementText();
@@ -32,7 +36,7 @@ const GlobalEventGameCard = ({ name, imageUrl, achievements, actions, children }
                         achievements.map(achievement => {
                             const { name, description } = achievementText(achievement);
                             return(
-                                <div key={achievement.apiName} className="global-event-game-card__achievement">
+                                <div key={`${achievement.platform}-${achievement.apiName}`} className="global-event-game-card__achievement">
                                     {
                                         achievement.iconUrl ?
                                         <img src={achievement.iconUrl} className="global-event-game-card__icon" alt="" />
@@ -40,7 +44,14 @@ const GlobalEventGameCard = ({ name, imageUrl, achievements, actions, children }
                                         <span className="global-event-game-card__icon global-event-game-card__icon--empty"><EmojiEventsOutlined /></span>
                                     }
                                     <span className="global-event-game-card__achievement-text">
-                                        <span className="global-event-game-card__achievement-name">{name}</span>
+                                        <span className="global-event-game-card__achievement-name">
+                                            <span className="global-event-game-card__platform" title={ACHIEVEMENT_PLATFORM_NAME[achievement.platform]}>
+                                                <SvgIcon className="global-event-game-card__platform-icon">
+                                                    <SvgSelector iconName={ACHIEVEMENT_PLATFORM_ICON[achievement.platform]} />
+                                                </SvgIcon>
+                                            </span>
+                                            {name}
+                                        </span>
                                         {
                                             description &&
                                             <span className="global-event-game-card__achievement-description">{description}</span>

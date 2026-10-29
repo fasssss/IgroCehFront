@@ -87,6 +87,18 @@ $icon-size: 32px;
     overflow-wrap: anywhere;
 }
 
+// the platform where the achievement is unlocked, before its name
+.global-event-game-card__platform {
+    display: inline-flex;
+    margin-right: 6px;
+    vertical-align: -2px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.global-event-game-card__platform-icon.MuiSvgIcon-root {
+    font-size: 16px;
+}
+
 .global-event-game-card__achievement-description {
     color: $muted-text;
     font-size: 14px;

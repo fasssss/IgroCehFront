@@ -1,7 +1,6 @@
 @use '../../../../shared/default.module.scss' as default;
 
 $muted-text: rgba(255, 255, 255, 0.7);
-$icon-size: 48px;
 
 .achievement-picker {
     display: flex;
@@ -22,90 +21,37 @@ $icon-size: 48px;
     color: $muted-text;
 }
 
-.achievement-picker__count {
-    font-weight: 700;
-}
-
-// a game may have hundreds of achievements, the list scrolls on its own
-.achievement-picker__list {
+.achievement-picker__tabs {
     display: flex;
-    flex-direction: column;
-    gap: 4px;
-    max-height: 440px;
-    overflow-y: auto;
-    padding-right: 4px;
+    flex-wrap: wrap;
+    gap: default.$margin_small;
+    border-bottom: 1px solid default.$light-grey;
 }
 
-.achievement-picker__item {
-    display: grid;
-    grid-template-columns: auto $icon-size 1fr auto;
+.achievement-picker__tab {
+    display: inline-flex;
     align-items: center;
-    column-gap: 12px;
-    padding: 4px 12px 4px 0;
-    border: 2px solid transparent;
-    border-radius: default.$border-radius_small;
-    background-color: default.$grey;
+    gap: 6px;
+    margin-bottom: -1px;
+    padding: 6px default.$padding_big;
+    border: none;
+    border-bottom: 3px solid transparent;
+    background: none;
+    color: $muted-text;
+    font: inherit;
+    font-weight: 700;
     cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
-}
 
-.achievement-picker__item:hover {
-    background-color: default.$light-grey;
-}
-
-.achievement-picker__item--chosen {
-    border-color: default.$discord-bluerple;
-}
-
-// the limit of the achievements is reached
-.achievement-picker__item--disabled {
-    opacity: 0.5;
-    cursor: default;
-}
-
-.achievement-picker__icon {
-    width: $icon-size;
-    height: $icon-size;
-    border-radius: 4px;
-}
-
-.achievement-picker__icon--empty {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: default.$dark-grey;
-    color: $muted-text;
-}
-
-.achievement-picker__text {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-}
-
-.achievement-picker__name {
-    font-weight: 700;
-    overflow-wrap: anywhere;
-}
-
-.achievement-picker__description {
-    color: $muted-text;
-    font-size: 14px;
-    overflow-wrap: anywhere;
-}
-
-.achievement-picker__percent {
-    color: $muted-text;
-    font-size: 14px;
-    white-space: nowrap;
-}
-
-@media (max-width: 600px) {
-    .achievement-picker__item {
-        grid-template-columns: auto $icon-size 1fr;
+    &:hover {
+        color: white;
     }
+}
 
-    .achievement-picker__percent {
-        grid-column: 3;
-    }
+.achievement-picker__tab--selected {
+    border-bottom-color: default.$discord-bluerple;
+    color: white;
+}
+
+.achievement-picker__tab-icon.MuiSvgIcon-root {
+    font-size: 20px;
 }

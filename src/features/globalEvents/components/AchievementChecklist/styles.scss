@@ -1,0 +1,98 @@
+@use '../../../../shared/default.module.scss' as default;
+
+$muted-text: rgba(255, 255, 255, 0.7);
+$icon-size: 48px;
+
+.achievement-checklist {
+    display: flex;
+    flex-direction: column;
+    gap: default.$margin_small;
+}
+
+.achievement-checklist__count {
+    font-weight: 700;
+}
+
+// a game may have hundreds of achievements, the list scrolls on its own
+.achievement-checklist__list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 440px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.achievement-checklist__item {
+    display: grid;
+    grid-template-columns: auto $icon-size 1fr auto;
+    align-items: center;
+    column-gap: 12px;
+    padding: 4px 12px 4px 0;
+    border: 2px solid transparent;
+    border-radius: default.$border-radius_small;
+    background-color: default.$grey;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.achievement-checklist__item:hover {
+    background-color: default.$light-grey;
+}
+
+.achievement-checklist__item--chosen {
+    border-color: default.$discord-bluerple;
+}
+
+// the limit of the achievements is reached
+.achievement-checklist__item--disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.achievement-checklist__icon {
+    width: $icon-size;
+    height: $icon-size;
+    border-radius: 4px;
+}
+
+.achievement-checklist__icon--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: default.$dark-grey;
+    color: $muted-text;
+}
+
+.achievement-checklist__text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.achievement-checklist__name {
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.achievement-checklist__description {
+    color: $muted-text;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+.achievement-checklist__percent {
+    color: $muted-text;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+    .achievement-checklist__item {
+        grid-template-columns: auto $icon-size 1fr;
+    }
+
+    .achievement-checklist__percent {
+        grid-column: 3;
+    }
+}
