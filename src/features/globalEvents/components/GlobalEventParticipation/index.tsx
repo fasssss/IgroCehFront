@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { TFunction } from "i18next";
 import { CircularProgress } from "@mui/material";
 import { Casino, CheckCircle } from "@mui/icons-material";
 import { CommonButton } from "root/shared/components/CommonButton";
@@ -15,6 +14,7 @@ import {
     useRollGlobalEventGamesMutation
 } from "../../globalEventsApi";
 import { GLOBAL_EVENT_REFUSAL_DELAY_DAYS } from "../../globalEventLimits";
+import { formatTimeLeft, useNow } from "../../globalEventTime";
 import { ClaimStatus } from "../../globalEventClaims";
 import { GlobalEventGameCard } from "../GlobalEventGameCard";
 import { GlobalEventPassingProof } from "../GlobalEventPassingProof";
@@ -23,29 +23,6 @@ import './styles.scss';
 
 const errorStatus = (error: unknown) =>
     typeof error === 'object' && error !== null && 'status' in error ? error.status : undefined;
-
-// the current time, ticking every second while it is needed
-const useNow = (isTicking: boolean) => {
-    const [now, setNow] = useState(() => Date.now());
-    useEffect(() => {
-        if(!isTicking) return;
-        // the time of the first render is old by now, e.g. a game was picked long after the page opened
-        setNow(Date.now());
-        const timer = setInterval(() => setNow(Date.now()), 1000);
-        return () => clearInterval(timer);
-    }, [isTicking]);
-    return now;
-};
-
-// "6 d 23:59:12", the days only while there are any
-const formatTimeLeft = (ms: number, t: TFunction) => {
-    const seconds = Math.max(0, Math.ceil(ms / 1000));
-    const days = Math.floor(seconds / 86400);
-    const time = [Math.floor(seconds % 86400 / 3600), Math.floor(seconds % 3600 / 60), seconds % 60]
-        .map(part => String(part).padStart(2, '0'))
-        .join(':');
-    return days ? t("{{days}} d {{time}}", { days, time }) : time;
-};
 
 // the roll of the current user on the page of a global event: three games drop, the player picks one of them,
 // a week after the pick it can be refused for a new roll; the passing of the picked game ends the participation

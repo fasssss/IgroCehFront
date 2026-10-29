@@ -171,6 +171,9 @@ export type GlobalEventParticipation = {
     refusableAt: string | null,
     // the picked game is passed, the participation is over
     passedAt: string | null,
+    // the last check of the passing through Steam and from when the next one is allowed, null before the first check
+    steamCheckedAt: string | null,
+    steamCheckableAt: string | null,
     // the last claim for the picked game
     claim: GlobalEventClaim | null
 }

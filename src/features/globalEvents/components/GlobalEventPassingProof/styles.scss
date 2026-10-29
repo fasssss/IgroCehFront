@@ -22,6 +22,13 @@ $pending: #f0b232;
     color: $muted-text;
 }
 
+// the answer of the last check and the wait until the next one
+.global-event-passing__notes {
+    display: flex;
+    flex-direction: column;
+    gap: default.$margin_small;
+}
+
 // MUI resets the margin of CommonButton
 .global-event-passing__row {
     display: flex;

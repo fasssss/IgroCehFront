@@ -13,13 +13,14 @@ import {
     useSubmitGlobalEventClaimMutation
 } from "../../globalEventsApi";
 import { CLAIM_PLATFORM_NAME, CLAIM_PLATFORMS, ClaimPlatform, ClaimStatus, PassingCheck } from "../../globalEventClaims";
-import { GLOBAL_EVENT_CLAIM_PROFILE_MAX_LENGTH } from "../../globalEventLimits";
+import { GLOBAL_EVENT_CLAIM_PROFILE_MAX_LENGTH, GLOBAL_EVENT_PASSING_CHECK_DELAY_MINUTES } from "../../globalEventLimits";
+import { formatTimeLeft, useNow } from "../../globalEventTime";
 import './styles.scss';
 
 const errorStatus = (error: unknown) =>
     typeof error === 'object' && error !== null && 'status' in error ? error.status : undefined;
 
-// the player proves the passing of the picked game: Steam counts a chosen achievement unlocked after the pick,
+// the player proves the passing of the picked game: Steam counts a chosen achievement unlocked after the pick (checked once in ten minutes),
 // a claim with a profile on PSN, Xbox Live or Steam is checked by an administrator; one claim at a time is under review
 const GlobalEventPassingProof = ({ globalEvent, game, participation }: GlobalEventPassingProofProps) => {
     const { t, i18n } = useTranslation();
@@ -32,6 +33,9 @@ const GlobalEventPassingProof = ({ globalEvent, game, participation }: GlobalEve
     const [profile, setProfile] = useState("");
     const [claimError, setClaimError] = useState<string | null>(null);
     const claim = participation.claim;
+    const steamCheckableAt = participation.steamCheckableAt ? Date.parse(participation.steamCheckableAt) : null;
+    const now = useNow(steamCheckableAt !== null);
+    const checkWait = steamCheckableAt === null ? 0 : steamCheckableAt - now;
     const formatDate = (date: string) => new Date(date).toLocaleDateString(i18n.language, { day: 'numeric', month: 'long' });
 
     const check = async () => {
@@ -46,7 +50,9 @@ const GlobalEventPassingProof = ({ globalEvent, game, participation }: GlobalEve
                 : null
             );
         } catch(error) {
-            setCheckText(errorStatus(error) === 503 ? t("Steam doesn't answer, try later") : t("Something went wrong, try again"));
+            // the participation is fetched again after a failure, so a check made too early shows the wait below
+            const status = errorStatus(error);
+            setCheckText(status === 429 ? null : status === 503 ? t("Steam doesn't answer, try later") : t("Something went wrong, try again"));
         }
     };
 
@@ -85,13 +91,24 @@ const GlobalEventPassingProof = ({ globalEvent, game, participation }: GlobalEve
                 <div className="global-event-passing__row">
                     <CommonButton
                     startIcon={<SvgIcon><SvgSelector iconName="steam-icon" /></SvgIcon>}
-                    disabled={checkResult.isLoading}
+                    disabled={checkResult.isLoading || checkWait > 0}
                     onClick={check}>
                         {t("Check in Steam")}
                     </CommonButton>
-                    <span className="global-event-passing__text">
-                        {checkText ?? t("Any one of the achievements of the game unlocked after the pick counts")}
-                    </span>
+                    <div className="global-event-passing__notes">
+                        <span className="global-event-passing__text">
+                            {checkText ?? t("Any one of the achievements of the game unlocked after the pick counts")}
+                        </span>
+                        {
+                            checkWait > 0 &&
+                            <span className="global-event-passing__text">
+                                {t("Steam is checked once in {{minutes}} minutes. The next check in {{left}}", {
+                                    minutes: GLOBAL_EVENT_PASSING_CHECK_DELAY_MINUTES,
+                                    left: formatTimeLeft(checkWait, t)
+                                })}
+                            </span>
+                        }
+                    </div>
                 </div>
                 :
                 <div className="global-event-passing__row">
