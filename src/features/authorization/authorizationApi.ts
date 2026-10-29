@@ -49,7 +49,9 @@ export type UserObject = {
     // the administrator of the whole site, set by hand in the database
     isAppAdmin: boolean,
     // the Steam account linked through the sign-in to Steam
-    steamId: string | null
+    steamId: string | null,
+    // the gamertag of the Xbox account linked through the sign-in to Xbox
+    xboxGamertag: string | null
 }
 
 export const {

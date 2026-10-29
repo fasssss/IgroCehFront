@@ -99,6 +99,8 @@ export type PlayerProfileObject = {
     playingSince: string | null,
     // the linked Steam account
     steamId: string | null,
+    // the gamertag of the linked Xbox account
+    xboxGamertag: string | null,
     // shared guilds where the player took part in events
     guilds: PlayerGuildObject[],
     // guilds where the player took part in events, but the current user is not a member

@@ -12,7 +12,8 @@ import {
     GlobalEventConstructorPage,
     GlobalEventPage,
     GlobalEventClaimsPage,
-    SteamLinkPage
+    SteamLinkPage,
+    XboxLinkPage
 } from "../features";
 import Layout from "./components/Layout";
 
@@ -80,6 +81,11 @@ const router = createBrowserRouter([
                 // Steam sends the user here after the sign-in that links their Steam account
                 path: "steam-link",
                 element: <SteamLinkPage />
+            },
+            {
+                // OpenXBL sends the user here after the sign-in that links their Xbox account
+                path: "xbox-link",
+                element: <XboxLinkPage />
             },
             {
                 // stage is chosen by event status, "/*" keeps old stage links (ordering-stage etc.) working

@@ -40,11 +40,12 @@ $header-gap: default.$margin_big;
     background-color: default.$discord-bluerple;
 }
 
-// the name is centered on the avatar, the date sits at its bottom
+// the name is centered on the avatar, the date sits at its bottom;
+// on a narrow screen the name row wraps into several lines and the block grows past the avatar
 .player-profile__identity {
     display: grid;
     grid-template-rows: 1fr auto 1fr;
-    height: $avatar-size;
+    min-height: $avatar-size;
 }
 
 // the platforms and Steam go under the name when they don't fit next to it

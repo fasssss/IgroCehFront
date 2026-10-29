@@ -1,0 +1,34 @@
+{
+    "en": {
+        "Link Xbox": "Link Xbox",
+        "Unlink Xbox": "Unlink Xbox",
+        "Unlink Xbox?": "Unlink Xbox?",
+        "Profile on Xbox": "Profile on Xbox",
+        "The Xbox account disappears from your profile, you can link it again at any time.": "The Xbox account disappears from your profile, you can link it again at any time.",
+        "Couldn't open Xbox, try again": "Couldn't open Xbox, try again",
+        "Couldn't unlink Xbox, try again": "Couldn't unlink Xbox, try again",
+        "Checking the sign-in to Xbox": "Checking the sign-in to Xbox",
+        "The sign-in to Xbox is cancelled": "The sign-in to Xbox is cancelled",
+        "The sign-in to Xbox wasn't started in this tab": "The sign-in to Xbox wasn't started in this tab",
+        "Press the button of the sign-in on the site once more.": "Press the button of the sign-in on the site once more.",
+        "This Xbox account is linked to another player": "This Xbox account is linked to another player",
+        "Xbox doesn't answer, try later": "Xbox doesn't answer, try later",
+        "Xbox didn't confirm the sign-in, try again": "Xbox didn't confirm the sign-in, try again"
+    },
+    "ru": {
+        "Link Xbox": "Привязать Xbox",
+        "Unlink Xbox": "Отвязать Xbox",
+        "Unlink Xbox?": "Отвязать Xbox?",
+        "Profile on Xbox": "Профиль в Xbox",
+        "The Xbox account disappears from your profile, you can link it again at any time.": "Аккаунт Xbox пропадёт из вашего профиля, привязать его снова можно в любой момент.",
+        "Couldn't open Xbox, try again": "Не получилось открыть вход в Xbox, попробуйте ещё раз",
+        "Couldn't unlink Xbox, try again": "Не получилось отвязать Xbox, попробуйте ещё раз",
+        "Checking the sign-in to Xbox": "Проверяем вход в Xbox",
+        "The sign-in to Xbox is cancelled": "Вход в Xbox отменён",
+        "The sign-in to Xbox wasn't started in this tab": "Вход в Xbox начат не в этой вкладке",
+        "Press the button of the sign-in on the site once more.": "Нажмите кнопку входа на сайте ещё раз.",
+        "This Xbox account is linked to another player": "Этот аккаунт Xbox уже привязан к другому игроку",
+        "Xbox doesn't answer, try later": "Xbox не отвечает, попробуйте позже",
+        "Xbox didn't confirm the sign-in, try again": "Xbox не подтвердил вход, попробуйте ещё раз"
+    }
+}

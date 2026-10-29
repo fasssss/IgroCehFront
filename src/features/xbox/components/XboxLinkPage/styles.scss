@@ -1,0 +1,23 @@
+@use '../../../../shared/default.module.scss' as default;
+
+.xbox-link-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: default.$margin_big;
+    padding: default.$padding_large;
+    text-align: center;
+}
+
+.xbox-link-page__title {
+    margin: 0;
+}
+
+// MUI resets the margin of CommonButton
+.xbox-link-page__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: default.$margin_small;
+}
