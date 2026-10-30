@@ -185,6 +185,13 @@ export type GlobalEvent = {
     games: GlobalEventGame[]
 }
 
+// the last automatic check of the passing on a platform and from when the next one there is allowed
+export type GlobalEventPassingCheck = {
+    platform: AchievementPlatform,
+    checkedAt: string,
+    checkableAt: string
+}
+
 // the roll of the current user in a global event, games by their catalog ids
 export type GlobalEventParticipation = {
     // in the order they dropped, up to three
@@ -197,13 +204,10 @@ export type GlobalEventParticipation = {
     refusableAt: string | null,
     // the picked game is passed, the participation is over
     passedAt: string | null,
-    // the platform whose achievement passed the game, null for a claim and for the Steam passings made before Xbox
+    // the platform whose achievement passed the game, null for a claim
     passedPlatform: AchievementPlatform | null,
-    // the last check of the passing on a platform and from when the next one is allowed, null before the first check
-    steamCheckedAt: string | null,
-    steamCheckableAt: string | null,
-    xboxCheckedAt: string | null,
-    xboxCheckableAt: string | null,
+    // the last check of the passing on each platform the player checked on
+    passingChecks: GlobalEventPassingCheck[],
     // the last claim for the picked game
     claim: GlobalEventClaim | null
 }

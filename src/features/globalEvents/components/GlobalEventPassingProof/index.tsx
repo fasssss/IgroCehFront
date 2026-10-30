@@ -4,8 +4,6 @@ import { SvgIcon } from "@mui/material";
 import { CommonButton } from "root/shared/components/CommonButton";
 import { SvgSelector } from "root/shared/components/SvgSelector";
 import { useCurrentUser } from "root/features/authorization/authorizationApi";
-import { SteamSignInButton } from "root/features/steam/components/SteamSignInButton";
-import { XboxSignInButton } from "root/features/xbox/components/XboxSignInButton";
 import {
     GlobalEvent,
     GlobalEventGame,
@@ -14,15 +12,22 @@ import {
     useSubmitGlobalEventClaimMutation
 } from "../../globalEventsApi";
 import { CLAIM_PLATFORM_NAME, CLAIM_PLATFORMS, ClaimPlatform, ClaimStatus, PassingCheck } from "../../globalEventClaims";
-import { ACHIEVEMENT_PLATFORM_ICON, AchievementPlatform } from "../../achievementPlatforms";
+import { ACHIEVEMENT_PLATFORM_ICON, ACHIEVEMENT_PLATFORM_NAME, ACHIEVEMENT_PLATFORMS, AchievementPlatform, isLinkedOn } from "../../achievementPlatforms";
 import { GLOBAL_EVENT_CLAIM_PROFILE_MAX_LENGTH, GLOBAL_EVENT_PASSING_CHECK_DELAY_MINUTES } from "../../globalEventLimits";
 import { formatTimeLeft, useNow } from "../../globalEventTime";
+import { PlatformSignInButton } from "../PlatformSignInButton";
 import './styles.scss';
 
 const errorStatus = (error: unknown) =>
     typeof error === 'object' && error !== null && 'status' in error ? error.status : undefined;
 
-// the player proves the passing of the picked game: Steam and Xbox count a chosen achievement on their platform unlocked after the pick
+// each platform hides the achievements of a player in its own way, so it is opened in its own way
+const PROFILE_HIDDEN_TEXT: Record<AchievementPlatform, string> = {
+    [AchievementPlatform.Steam]: "The game details of your Steam profile are hidden: open them and check again",
+    [AchievementPlatform.Xbox]: "Your achievements in Xbox are hidden: open them to everyone in the privacy settings of Xbox and check again",
+};
+
+// the player proves the passing of the picked game: each platform with achievements of the game counts a chosen one unlocked after the pick
 // (each checked once in ten minutes), a claim with a profile on PSN, Xbox Live or Steam is checked by an administrator;
 // one claim at a time is under review
 const GlobalEventPassingProof = ({ globalEvent, game, participation }: GlobalEventPassingProofProps) => {
@@ -71,20 +76,14 @@ const GlobalEventPassingProof = ({ globalEvent, game, participation }: GlobalEve
                 <p className="global-event-passing__text">{t("The game has no achievements, its passing is proved by a claim only")}</p>
             }
             {
-                hasAchievementsOn(AchievementPlatform.Steam) &&
-                <PlatformPassingCheck
-                globalEventId={globalEvent.id}
-                platform={AchievementPlatform.Steam}
-                isLinked={!!user?.steamId}
-                checkableAt={participation.steamCheckableAt} />
-            }
-            {
-                hasAchievementsOn(AchievementPlatform.Xbox) &&
-                <PlatformPassingCheck
-                globalEventId={globalEvent.id}
-                platform={AchievementPlatform.Xbox}
-                isLinked={!!user?.xboxGamertag}
-                checkableAt={participation.xboxCheckableAt} />
+                ACHIEVEMENT_PLATFORMS.filter(hasAchievementsOn).map(item =>
+                    <PlatformPassingCheck
+                    key={item}
+                    globalEventId={globalEvent.id}
+                    platform={item}
+                    isLinked={!!user && isLinkedOn(user, item)}
+                    checkableAt={participation.passingChecks.find(passingCheck => passingCheck.platform === item)?.checkableAt ?? null} />
+                )
             }
             {
                 claim?.status === ClaimStatus.Rejected &&
@@ -147,7 +146,7 @@ const PlatformPassingCheck = ({ globalEventId, platform, isLinked, checkableAt }
     const checkableTime = checkableAt ? Date.parse(checkableAt) : null;
     const now = useNow(checkableTime !== null);
     const checkWait = checkableTime === null ? 0 : checkableTime - now;
-    const isXbox = platform === AchievementPlatform.Xbox;
+    const name = ACHIEVEMENT_PLATFORM_NAME[platform];
 
     const check = async () => {
         setCheckText(null);
@@ -155,20 +154,17 @@ const PlatformPassingCheck = ({ globalEventId, platform, isLinked, checkableAt }
             // a passed game turns the page into its result, so only the misses are told here
             const { passingCheck } = await checkPassing({ globalEventId, platform }).unwrap();
             setCheckText(
-                passingCheck === PassingCheck.NotPassed ? (isXbox
-                    ? t("Xbox doesn't see any of the achievements of the game yet. Unlock one of them and check again")
-                    : t("Steam doesn't see any of the achievements of the game yet. Unlock one of them and check again"))
+                passingCheck === PassingCheck.NotPassed
+                    ? t("{{platform}} doesn't see any of the achievements of the game yet. Unlock one of them and check again", { platform: name })
                 : passingCheck === PassingCheck.UnlockedBeforePick ? t("The achievement was unlocked before you picked the game, it doesn't count")
-                : passingCheck === PassingCheck.ProfileHidden ? (isXbox
-                    ? t("Your achievements in Xbox are hidden: open them to everyone in the privacy settings of Xbox and check again")
-                    : t("The game details of your Steam profile are hidden: open them and check again"))
+                : passingCheck === PassingCheck.ProfileHidden ? t(PROFILE_HIDDEN_TEXT[platform])
                 : null
             );
         } catch(error) {
             // the participation is fetched again after a failure, so a check made too early shows the wait below
             const status = errorStatus(error);
             setCheckText(status === 429 ? null
-                : status === 503 ? (isXbox ? t("Xbox doesn't answer, try later") : t("Steam doesn't answer, try later"))
+                : status === 503 ? t("{{platform}} doesn't answer, try later", { platform: name })
                 : t("Something went wrong, try again"));
         }
     };
@@ -176,10 +172,9 @@ const PlatformPassingCheck = ({ globalEventId, platform, isLinked, checkableAt }
     if(!isLinked) {
         return(
             <div className="global-event-passing__row">
-                {isXbox ? <XboxSignInButton /> : <SteamSignInButton />}
+                <PlatformSignInButton platform={platform} />
                 <span className="global-event-passing__text">
-                    {isXbox ? t("Link Xbox, and the achievements of the game prove its passing by themselves")
-                        : t("Link Steam, and the achievements of the game prove its passing by themselves")}
+                    {t("Link {{platform}}, and the achievements of the game prove its passing by themselves", { platform: name })}
                 </span>
             </div>
         );
@@ -191,7 +186,7 @@ const PlatformPassingCheck = ({ globalEventId, platform, isLinked, checkableAt }
             startIcon={<SvgIcon><SvgSelector iconName={ACHIEVEMENT_PLATFORM_ICON[platform]} /></SvgIcon>}
             disabled={checkResult.isLoading || checkWait > 0}
             onClick={check}>
-                {isXbox ? t("Check in Xbox") : t("Check in Steam")}
+                {t("Check in {{platform}}", { platform: name })}
             </CommonButton>
             <div className="global-event-passing__notes">
                 <span className="global-event-passing__text">
@@ -200,18 +195,11 @@ const PlatformPassingCheck = ({ globalEventId, platform, isLinked, checkableAt }
                 {
                     checkWait > 0 &&
                     <span className="global-event-passing__text">
-                        {
-                            isXbox ?
-                            t("Xbox is checked once in {{minutes}} minutes. The next check in {{left}}", {
-                                minutes: GLOBAL_EVENT_PASSING_CHECK_DELAY_MINUTES,
-                                left: formatTimeLeft(checkWait, t)
-                            })
-                            :
-                            t("Steam is checked once in {{minutes}} minutes. The next check in {{left}}", {
-                                minutes: GLOBAL_EVENT_PASSING_CHECK_DELAY_MINUTES,
-                                left: formatTimeLeft(checkWait, t)
-                            })
-                        }
+                        {t("{{platform}} is checked once in {{minutes}} minutes. The next check in {{left}}", {
+                            platform: name,
+                            minutes: GLOBAL_EVENT_PASSING_CHECK_DELAY_MINUTES,
+                            left: formatTimeLeft(checkWait, t)
+                        })}
                     </span>
                 }
             </div>

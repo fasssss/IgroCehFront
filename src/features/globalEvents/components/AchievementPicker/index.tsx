@@ -49,12 +49,14 @@ const AchievementPicker = ({ appId, gameName, value, onChange }: AchievementPick
                 }
             </div>
             {
-                platform === AchievementPlatform.Steam ?
+                platform === AchievementPlatform.Steam &&
                 <SteamAchievementPicker
                 appId={appId}
                 chosen={steamChosen}
                 onChange={chosen => onChange({ ...value, achievements: [...chosen, ...xboxChosen] })} />
-                :
+            }
+            {
+                platform === AchievementPlatform.Xbox &&
                 <XboxAchievementPicker
                 gameName={gameName}
                 titleId={xboxTitleId}

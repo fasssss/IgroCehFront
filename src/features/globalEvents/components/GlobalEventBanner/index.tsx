@@ -4,14 +4,13 @@ import { AutoAwesome, Edit } from "@mui/icons-material";
 import { CommonButton } from "root/shared/components/CommonButton";
 import { resolveImageUrl } from "root/shared/helpers/imageUrl";
 import { useCurrentUser } from "root/features/authorization/authorizationApi";
-import { SteamSignInButton } from "root/features/steam/components/SteamSignInButton";
-import { XboxSignInButton } from "root/features/xbox/components/XboxSignInButton";
 import { GlobalEvent } from "../../globalEventsApi";
 import { globalEventEditPath, globalEventPath } from "../../globalEventPath";
-import { AchievementPlatform, hasAchievementsOn } from "../../achievementPlatforms";
+import { platformsToLink } from "../../achievementPlatforms";
+import { PlatformSignInButton } from "../PlatformSignInButton";
 import './styles.scss';
 
-// the active global event on the main page: everyone can start it, Steam and Xbox aren't required, so each is only offered
+// the active global event on the main page: everyone can start it, the platforms aren't required, so each is only offered
 // to those who haven't linked it when the event has achievements there; the administrator of the site changes the event from here
 const GlobalEventBanner = ({ globalEvent }: GlobalEventBannerProps) => {
     const { t } = useTranslation();
@@ -38,8 +37,7 @@ const GlobalEventBanner = ({ globalEvent }: GlobalEventBannerProps) => {
                     <CommonButton color="success" onClick={() => navigate(globalEventPath(globalEvent.id))}>
                         {t("Start the event")}
                     </CommonButton>
-                    {user && !user.steamId && hasAchievementsOn(globalEvent, AchievementPlatform.Steam) && <SteamSignInButton />}
-                    {user && !user.xboxGamertag && hasAchievementsOn(globalEvent, AchievementPlatform.Xbox) && <XboxSignInButton />}
+                    {user && platformsToLink(globalEvent, user).map(platform => <PlatformSignInButton key={platform} platform={platform} />)}
                     {
                         user?.isAppAdmin &&
                         <span className="global-event-banner__admin">

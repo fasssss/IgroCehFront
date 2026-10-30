@@ -16,7 +16,7 @@ import {
 import { GLOBAL_EVENT_REFUSAL_DELAY_DAYS } from "../../globalEventLimits";
 import { formatTimeLeft, useNow } from "../../globalEventTime";
 import { ClaimStatus } from "../../globalEventClaims";
-import { AchievementPlatform, hasAchievementsOn } from "../../achievementPlatforms";
+import { ACHIEVEMENT_PLATFORM_NAME, AchievementPlatform, hasAchievementsOn } from "../../achievementPlatforms";
 import { GlobalEventGameCard } from "../GlobalEventGameCard";
 import { GlobalEventPassingProof } from "../GlobalEventPassingProof";
 import { GlobalEventRoll } from "../GlobalEventRoll";
@@ -168,9 +168,8 @@ const GlobalEventParticipation = ({ globalEvent }: GlobalEventParticipationProps
                         {t("Passed on {{date}}", { date: formatDate(participation.passedAt) })}
                         {" · "}
                         {
-                            participation.claim?.status === ClaimStatus.Approved ? t("by a claim")
-                            : participation.passedPlatform === AchievementPlatform.Xbox ? t("by Xbox")
-                            : t("by Steam")
+                            participation.passedPlatform === null ? t("by a claim")
+                            : t("by {{platform}}", { platform: ACHIEVEMENT_PLATFORM_NAME[participation.passedPlatform] })
                         }
                     </div>
                     : isFinished ?

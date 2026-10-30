@@ -7,16 +7,15 @@ import { CommonButton } from "root/shared/components/CommonButton";
 import { SvgSelector } from "root/shared/components/SvgSelector";
 import { resolveImageUrl } from "root/shared/helpers/imageUrl";
 import { useCurrentUser } from "root/features/authorization/authorizationApi";
-import { SteamSignInButton } from "root/features/steam/components/SteamSignInButton";
 import { SteamProfileWarning } from "root/features/steam/components/SteamProfileWarning";
-import { XboxSignInButton } from "root/features/xbox/components/XboxSignInButton";
 import { useGetGlobalEventClaimsQuery, useGetGlobalEventParticipationQuery, useGetGlobalEventQuery } from "../../globalEventsApi";
 import { globalEventClaimsPath, globalEventEditPath } from "../../globalEventPath";
 import { ClaimStatus } from "../../globalEventClaims";
-import { AchievementPlatform, hasAchievementsOn } from "../../achievementPlatforms";
+import { ACHIEVEMENT_PLATFORM_NAME, AchievementPlatform, hasAchievementsOn, platformsToLink } from "../../achievementPlatforms";
 import { badgeImageUrl } from "../../badges";
 import { GlobalEventGameCard } from "../GlobalEventGameCard";
 import { GlobalEventParticipation } from "../GlobalEventParticipation";
+import { PlatformSignInButton } from "../PlatformSignInButton";
 import './styles.scss';
 
 // a global event with the whole description and every game with the achievements that count as its passing,
@@ -53,8 +52,8 @@ const GlobalEventPage = () => {
     }
 
     // the platforms the player can link to have the passing checked by itself
-    const offersSteam = !user?.steamId && hasAchievementsOn(globalEvent, AchievementPlatform.Steam);
-    const offersXbox = !user?.xboxGamertag && hasAchievementsOn(globalEvent, AchievementPlatform.Xbox);
+    const offeredPlatforms = user ? platformsToLink(globalEvent, user) : [];
+    const offeredNames = offeredPlatforms.map(platform => ACHIEVEMENT_PLATFORM_NAME[platform]);
 
     return(
         <div className="global-event-page">
@@ -107,24 +106,24 @@ const GlobalEventPage = () => {
                 </div>
             </header>
             {
-                // Steam and Xbox aren't required, they only check the passing by themselves, so they aren't needed after the passing;
+                // the platforms aren't required, they only check the passing by themselves, so they aren't needed after the passing;
                 // each is offered only when the event has achievements there, the hidden game details of Steam matter only then
                 !globalEvent.finishedAt && user && !participationQuery.data?.participation?.passedAt &&
                 <>
                     {user.steamId && hasAchievementsOn(globalEvent, AchievementPlatform.Steam) && <SteamProfileWarning className="global-event-page__steam-warning" />}
                     {
-                        (offersSteam || offersXbox) &&
+                        offeredPlatforms.length > 0 &&
                         <div className="global-event-page__steam">
                             <span>
                                 {
-                                    offersSteam && offersXbox ? t("Link Steam or Xbox, and the passing of the games with achievements will be checked automatically")
-                                    : offersXbox ? t("Link Xbox, and the passing of the games with achievements in Xbox will be checked automatically")
-                                    : t("Link Steam, and the passing of the games with achievements in Steam will be checked automatically")
+                                    offeredNames.length === 1 ?
+                                    t("Link {{platform}}, and the passing of the games with achievements in {{platform}} will be checked automatically", { platform: offeredNames[0] })
+                                    :
+                                    t("Link {{platforms}}, and the passing of the games with achievements will be checked automatically", { platforms: offeredNames.join(` ${t("or")} `) })
                                 }
                             </span>
                             <span className="global-event-page__sign-ins">
-                                {offersSteam && <SteamSignInButton />}
-                                {offersXbox && <XboxSignInButton />}
+                                {offeredPlatforms.map(platform => <PlatformSignInButton key={platform} platform={platform} />)}
                             </span>
                         </div>
                     }
