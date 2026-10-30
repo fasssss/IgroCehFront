@@ -78,7 +78,8 @@ const globalEventsApi = igroCehApi.injectEndpoints({
             onQueryStarted: setParticipation,
         }),
         // Steam is asked about the picked game, 503 when it doesn't answer
-        checkGlobalEventPassing: build.mutation<CheckGlobalEventPassingResponse, GlobalEventRequest>({
+        // the achievements of the picked game on one platform, 429 when it was checked there less than ten minutes ago
+        checkGlobalEventPassing: build.mutation<CheckGlobalEventPassingResponse, CheckGlobalEventPassingRequest>({
             query: postTo('/api/checkGlobalEventPassing'),
             // the event counts the passed players
             invalidatesTags: ['GlobalEvent'],
@@ -158,7 +159,7 @@ export type XboxTitle = {
 
 export type GlobalEventGame = {
     game: Pick<GameObject, 'id' | 'name' | 'imageUrl' | 'steamUrl'>,
-    // the Steam app id, the same as the catalog id of the game
+    // the catalog id of the game, its Steam app id when the game is in Steam
     appId: number,
     // the game in Xbox the Xbox achievements belong to, null without them
     xboxTitleId: string | null,
@@ -184,7 +185,7 @@ export type GlobalEvent = {
     games: GlobalEventGame[]
 }
 
-// the roll of the current user in a global event, games by their Steam app ids
+// the roll of the current user in a global event, games by their catalog ids
 export type GlobalEventParticipation = {
     // in the order they dropped, up to three
     rolledAppIds: number[],
@@ -196,9 +197,13 @@ export type GlobalEventParticipation = {
     refusableAt: string | null,
     // the picked game is passed, the participation is over
     passedAt: string | null,
-    // the last check of the passing through Steam and from when the next one is allowed, null before the first check
+    // the platform whose achievement passed the game, null for a claim and for the Steam passings made before Xbox
+    passedPlatform: AchievementPlatform | null,
+    // the last check of the passing on a platform and from when the next one is allowed, null before the first check
     steamCheckedAt: string | null,
     steamCheckableAt: string | null,
+    xboxCheckedAt: string | null,
+    xboxCheckableAt: string | null,
     // the last claim for the picked game
     claim: GlobalEventClaim | null
 }
@@ -212,7 +217,7 @@ export type GlobalEventClaim = {
     id: string,
     // null in the participation of the player themselves
     player: UserShortObject | null,
-    // the Steam app id of the game the claim is about
+    // the catalog id of the game the claim is about
     appId: number,
     platform: ClaimPlatform,
     profile: string,
@@ -223,6 +228,10 @@ export type GlobalEventClaim = {
     decidedAt: string | null,
     // null while it is under review and for the player themselves
     decidedBy: UserShortObject | null
+}
+
+export type CheckGlobalEventPassingRequest = GlobalEventRequest & {
+    platform: AchievementPlatform
 }
 
 export type CheckGlobalEventPassingResponse = GlobalEventParticipationResponse & {

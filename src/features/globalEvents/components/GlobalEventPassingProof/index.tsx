@@ -5,6 +5,7 @@ import { CommonButton } from "root/shared/components/CommonButton";
 import { SvgSelector } from "root/shared/components/SvgSelector";
 import { useCurrentUser } from "root/features/authorization/authorizationApi";
 import { SteamSignInButton } from "root/features/steam/components/SteamSignInButton";
+import { XboxSignInButton } from "root/features/xbox/components/XboxSignInButton";
 import {
     GlobalEvent,
     GlobalEventGame,
@@ -13,7 +14,7 @@ import {
     useSubmitGlobalEventClaimMutation
 } from "../../globalEventsApi";
 import { CLAIM_PLATFORM_NAME, CLAIM_PLATFORMS, ClaimPlatform, ClaimStatus, PassingCheck } from "../../globalEventClaims";
-import { AchievementPlatform } from "../../achievementPlatforms";
+import { ACHIEVEMENT_PLATFORM_ICON, AchievementPlatform } from "../../achievementPlatforms";
 import { GLOBAL_EVENT_CLAIM_PROFILE_MAX_LENGTH, GLOBAL_EVENT_PASSING_CHECK_DELAY_MINUTES } from "../../globalEventLimits";
 import { formatTimeLeft, useNow } from "../../globalEventTime";
 import './styles.scss';
@@ -21,43 +22,21 @@ import './styles.scss';
 const errorStatus = (error: unknown) =>
     typeof error === 'object' && error !== null && 'status' in error ? error.status : undefined;
 
-// the player proves the passing of the picked game: Steam counts a chosen achievement unlocked after the pick (checked once in ten minutes),
-// a claim with a profile on PSN, Xbox Live or Steam is checked by an administrator; one claim at a time is under review
+// the player proves the passing of the picked game: Steam and Xbox count a chosen achievement on their platform unlocked after the pick
+// (each checked once in ten minutes), a claim with a profile on PSN, Xbox Live or Steam is checked by an administrator;
+// one claim at a time is under review
 const GlobalEventPassingProof = ({ globalEvent, game, participation }: GlobalEventPassingProofProps) => {
     const { t, i18n } = useTranslation();
     const user = useCurrentUser();
-    const [checkPassing, checkResult] = useCheckGlobalEventPassingMutation();
     const [submitClaim, submitResult] = useSubmitGlobalEventClaimMutation();
-    const [checkText, setCheckText] = useState<string | null>(null);
     const [isClaiming, setIsClaiming] = useState(false);
     const [platform, setPlatform] = useState<ClaimPlatform>(ClaimPlatform.Psn);
     const [profile, setProfile] = useState("");
     const [claimError, setClaimError] = useState<string | null>(null);
     const claim = participation.claim;
-    // Steam checks only its own achievements of the game
-    const hasSteamAchievements = game.achievements.some(achievement => achievement.platform === AchievementPlatform.Steam);
-    const steamCheckableAt = participation.steamCheckableAt ? Date.parse(participation.steamCheckableAt) : null;
-    const now = useNow(steamCheckableAt !== null);
-    const checkWait = steamCheckableAt === null ? 0 : steamCheckableAt - now;
+    // a platform checks only its own achievements of the game
+    const hasAchievementsOn = (item: AchievementPlatform) => game.achievements.some(achievement => achievement.platform === item);
     const formatDate = (date: string) => new Date(date).toLocaleDateString(i18n.language, { day: 'numeric', month: 'long' });
-
-    const check = async () => {
-        setCheckText(null);
-        try {
-            // a passed game turns the page into its result, so only the misses are told here
-            const { passingCheck } = await checkPassing({ globalEventId: globalEvent.id }).unwrap();
-            setCheckText(
-                passingCheck === PassingCheck.NotPassed ? t("Steam doesn't see any of the achievements of the game yet. Unlock one of them and check again")
-                : passingCheck === PassingCheck.UnlockedBeforePick ? t("The achievement was unlocked before you picked the game, it doesn't count")
-                : passingCheck === PassingCheck.ProfileHidden ? t("The game details of your Steam profile are hidden: open them and check again")
-                : null
-            );
-        } catch(error) {
-            // the participation is fetched again after a failure, so a check made too early shows the wait below
-            const status = errorStatus(error);
-            setCheckText(status === 429 ? null : status === 503 ? t("Steam doesn't answer, try later") : t("Something went wrong, try again"));
-        }
-    };
 
     const sendClaim = async () => {
         setClaimError(null);
@@ -88,38 +67,24 @@ const GlobalEventPassingProof = ({ globalEvent, game, participation }: GlobalEve
         <div className="global-event-passing">
             <h3 className="global-event-passing__title">{t("Prove the passing")}</h3>
             {
-                !game.achievements.length ?
+                !game.achievements.length &&
                 <p className="global-event-passing__text">{t("The game has no achievements, its passing is proved by a claim only")}</p>
-                : !hasSteamAchievements ?
-                null
-                : user?.steamId ?
-                <div className="global-event-passing__row">
-                    <CommonButton
-                    startIcon={<SvgIcon><SvgSelector iconName="steam-icon" /></SvgIcon>}
-                    disabled={checkResult.isLoading || checkWait > 0}
-                    onClick={check}>
-                        {t("Check in Steam")}
-                    </CommonButton>
-                    <div className="global-event-passing__notes">
-                        <span className="global-event-passing__text">
-                            {checkText ?? t("Any one of the achievements of the game unlocked after the pick counts")}
-                        </span>
-                        {
-                            checkWait > 0 &&
-                            <span className="global-event-passing__text">
-                                {t("Steam is checked once in {{minutes}} minutes. The next check in {{left}}", {
-                                    minutes: GLOBAL_EVENT_PASSING_CHECK_DELAY_MINUTES,
-                                    left: formatTimeLeft(checkWait, t)
-                                })}
-                            </span>
-                        }
-                    </div>
-                </div>
-                :
-                <div className="global-event-passing__row">
-                    <SteamSignInButton />
-                    <span className="global-event-passing__text">{t("Link Steam, and the achievements of the game prove its passing by themselves")}</span>
-                </div>
+            }
+            {
+                hasAchievementsOn(AchievementPlatform.Steam) &&
+                <PlatformPassingCheck
+                globalEventId={globalEvent.id}
+                platform={AchievementPlatform.Steam}
+                isLinked={!!user?.steamId}
+                checkableAt={participation.steamCheckableAt} />
+            }
+            {
+                hasAchievementsOn(AchievementPlatform.Xbox) &&
+                <PlatformPassingCheck
+                globalEventId={globalEvent.id}
+                platform={AchievementPlatform.Xbox}
+                isLinked={!!user?.xboxGamertag}
+                checkableAt={participation.xboxCheckableAt} />
             }
             {
                 claim?.status === ClaimStatus.Rejected &&
@@ -173,11 +138,101 @@ const GlobalEventPassingProof = ({ globalEvent, game, participation }: GlobalEve
     );
 };
 
+// the automatic check on one platform: the button with the answer of the last check and the wait until the next one,
+// or the sign-in that links the platform first
+const PlatformPassingCheck = ({ globalEventId, platform, isLinked, checkableAt }: PlatformPassingCheckProps) => {
+    const { t } = useTranslation();
+    const [checkPassing, checkResult] = useCheckGlobalEventPassingMutation();
+    const [checkText, setCheckText] = useState<string | null>(null);
+    const checkableTime = checkableAt ? Date.parse(checkableAt) : null;
+    const now = useNow(checkableTime !== null);
+    const checkWait = checkableTime === null ? 0 : checkableTime - now;
+    const isXbox = platform === AchievementPlatform.Xbox;
+
+    const check = async () => {
+        setCheckText(null);
+        try {
+            // a passed game turns the page into its result, so only the misses are told here
+            const { passingCheck } = await checkPassing({ globalEventId, platform }).unwrap();
+            setCheckText(
+                passingCheck === PassingCheck.NotPassed ? (isXbox
+                    ? t("Xbox doesn't see any of the achievements of the game yet. Unlock one of them and check again")
+                    : t("Steam doesn't see any of the achievements of the game yet. Unlock one of them and check again"))
+                : passingCheck === PassingCheck.UnlockedBeforePick ? t("The achievement was unlocked before you picked the game, it doesn't count")
+                : passingCheck === PassingCheck.ProfileHidden ? (isXbox
+                    ? t("Your achievements in Xbox are hidden: open them to everyone in the privacy settings of Xbox and check again")
+                    : t("The game details of your Steam profile are hidden: open them and check again"))
+                : null
+            );
+        } catch(error) {
+            // the participation is fetched again after a failure, so a check made too early shows the wait below
+            const status = errorStatus(error);
+            setCheckText(status === 429 ? null
+                : status === 503 ? (isXbox ? t("Xbox doesn't answer, try later") : t("Steam doesn't answer, try later"))
+                : t("Something went wrong, try again"));
+        }
+    };
+
+    if(!isLinked) {
+        return(
+            <div className="global-event-passing__row">
+                {isXbox ? <XboxSignInButton /> : <SteamSignInButton />}
+                <span className="global-event-passing__text">
+                    {isXbox ? t("Link Xbox, and the achievements of the game prove its passing by themselves")
+                        : t("Link Steam, and the achievements of the game prove its passing by themselves")}
+                </span>
+            </div>
+        );
+    }
+
+    return(
+        <div className="global-event-passing__row">
+            <CommonButton
+            startIcon={<SvgIcon><SvgSelector iconName={ACHIEVEMENT_PLATFORM_ICON[platform]} /></SvgIcon>}
+            disabled={checkResult.isLoading || checkWait > 0}
+            onClick={check}>
+                {isXbox ? t("Check in Xbox") : t("Check in Steam")}
+            </CommonButton>
+            <div className="global-event-passing__notes">
+                <span className="global-event-passing__text">
+                    {checkText ?? t("Any one of the achievements of the game unlocked after the pick counts")}
+                </span>
+                {
+                    checkWait > 0 &&
+                    <span className="global-event-passing__text">
+                        {
+                            isXbox ?
+                            t("Xbox is checked once in {{minutes}} minutes. The next check in {{left}}", {
+                                minutes: GLOBAL_EVENT_PASSING_CHECK_DELAY_MINUTES,
+                                left: formatTimeLeft(checkWait, t)
+                            })
+                            :
+                            t("Steam is checked once in {{minutes}} minutes. The next check in {{left}}", {
+                                minutes: GLOBAL_EVENT_PASSING_CHECK_DELAY_MINUTES,
+                                left: formatTimeLeft(checkWait, t)
+                            })
+                        }
+                    </span>
+                }
+            </div>
+        </div>
+    );
+};
+
 type GlobalEventPassingProofProps = {
     globalEvent: GlobalEvent,
     // the picked game
     game: GlobalEventGame,
     participation: GlobalEventParticipation
+}
+
+type PlatformPassingCheckProps = {
+    globalEventId: string,
+    platform: AchievementPlatform,
+    // the player has linked the account on the platform
+    isLinked: boolean,
+    // from then on the next check is allowed, null before the first check
+    checkableAt: string | null
 }
 
 export { GlobalEventPassingProof }

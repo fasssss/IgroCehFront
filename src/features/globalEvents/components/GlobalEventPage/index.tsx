@@ -9,9 +9,11 @@ import { resolveImageUrl } from "root/shared/helpers/imageUrl";
 import { useCurrentUser } from "root/features/authorization/authorizationApi";
 import { SteamSignInButton } from "root/features/steam/components/SteamSignInButton";
 import { SteamProfileWarning } from "root/features/steam/components/SteamProfileWarning";
+import { XboxSignInButton } from "root/features/xbox/components/XboxSignInButton";
 import { useGetGlobalEventClaimsQuery, useGetGlobalEventParticipationQuery, useGetGlobalEventQuery } from "../../globalEventsApi";
 import { globalEventClaimsPath, globalEventEditPath } from "../../globalEventPath";
 import { ClaimStatus } from "../../globalEventClaims";
+import { AchievementPlatform, hasAchievementsOn } from "../../achievementPlatforms";
 import { badgeImageUrl } from "../../badges";
 import { GlobalEventGameCard } from "../GlobalEventGameCard";
 import { GlobalEventParticipation } from "../GlobalEventParticipation";
@@ -49,6 +51,10 @@ const GlobalEventPage = () => {
             </div>
         );
     }
+
+    // the platforms the player can link to have the passing checked by itself
+    const offersSteam = !user?.steamId && hasAchievementsOn(globalEvent, AchievementPlatform.Steam);
+    const offersXbox = !user?.xboxGamertag && hasAchievementsOn(globalEvent, AchievementPlatform.Xbox);
 
     return(
         <div className="global-event-page">
@@ -101,17 +107,28 @@ const GlobalEventPage = () => {
                 </div>
             </header>
             {
-                // Steam isn't required, it only checks the passing by itself, so it isn't needed after the passing
+                // Steam and Xbox aren't required, they only check the passing by themselves, so they aren't needed after the passing;
+                // each is offered only when the event has achievements there, the hidden game details of Steam matter only then
                 !globalEvent.finishedAt && user && !participationQuery.data?.participation?.passedAt &&
-                (
-                    user.steamId ?
-                    <SteamProfileWarning className="global-event-page__steam-warning" />
-                    :
-                    <div className="global-event-page__steam">
-                        <span>{t("Link Steam, and the passing of the games with achievements will be checked automatically")}</span>
-                        <SteamSignInButton />
-                    </div>
-                )
+                <>
+                    {user.steamId && hasAchievementsOn(globalEvent, AchievementPlatform.Steam) && <SteamProfileWarning className="global-event-page__steam-warning" />}
+                    {
+                        (offersSteam || offersXbox) &&
+                        <div className="global-event-page__steam">
+                            <span>
+                                {
+                                    offersSteam && offersXbox ? t("Link Steam or Xbox, and the passing of the games with achievements will be checked automatically")
+                                    : offersXbox ? t("Link Xbox, and the passing of the games with achievements in Xbox will be checked automatically")
+                                    : t("Link Steam, and the passing of the games with achievements in Steam will be checked automatically")
+                                }
+                            </span>
+                            <span className="global-event-page__sign-ins">
+                                {offersSteam && <SteamSignInButton />}
+                                {offersXbox && <XboxSignInButton />}
+                            </span>
+                        </div>
+                    }
+                </>
             }
             <GlobalEventParticipation globalEvent={globalEvent} />
             <section className="global-event-page__games">

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { skipToken } from "@reduxjs/toolkit/query";
 import { CircularProgress, SvgIcon } from "@mui/material";
 import { SvgSelector } from "root/shared/components/SvgSelector";
 import { GlobalEventAchievement, useGetSteamAchievementsQuery } from "../../globalEventsApi";
@@ -8,6 +9,7 @@ import {
     ACHIEVEMENT_PLATFORM_NAME,
     ACHIEVEMENT_PLATFORMS,
     AchievementPlatform,
+    isSteamAppId,
     toEventAchievement
 } from "../../achievementPlatforms";
 import { AchievementChecklist } from "../AchievementChecklist";
@@ -15,10 +17,10 @@ import { XboxAchievementPicker, XboxTitleChoice } from "../XboxAchievementPicker
 import './styles.scss';
 
 // the achievements of a game that mean it is passed, in Steam and in Xbox on two tabs; any one of them counts,
-// none may be chosen, then the passing is confirmed only by a claim checked by hand
+// none may be chosen, then the passing is confirmed only by a claim checked by hand; a game outside Steam opens on Xbox
 const AchievementPicker = ({ appId, gameName, value, onChange }: AchievementPickerProps) => {
     const { t } = useTranslation();
-    const [platform, setPlatform] = useState<AchievementPlatform>(AchievementPlatform.Steam);
+    const [platform, setPlatform] = useState<AchievementPlatform>(isSteamAppId(appId) ? AchievementPlatform.Steam : AchievementPlatform.Xbox);
     // the game in Xbox stays found while the tabs switch, even with no achievement chosen yet
     const [xboxTitleId, setXboxTitleId] = useState(value.xboxTitle?.titleId ?? null);
     const chosenOf = (item: AchievementPlatform) => value.achievements.filter(achievement => achievement.platform === item);
@@ -64,10 +66,15 @@ const AchievementPicker = ({ appId, gameName, value, onChange }: AchievementPick
     );
 };
 
-// the catalog id of a game is its Steam app id
+// the catalog id of a game in Steam is its Steam app id, Steam isn't asked about a game outside it
 const SteamAchievementPicker = ({ appId, chosen, onChange }: SteamAchievementPickerProps) => {
     const { t } = useTranslation();
-    const steamAchievements = useGetSteamAchievementsQuery(appId);
+    const isInSteam = isSteamAppId(appId);
+    const steamAchievements = useGetSteamAchievementsQuery(isInSteam ? appId : skipToken);
+
+    if(!isInSteam) {
+        return <div className="achievement-picker__message">{t("This game isn't in Steam, its achievements may be in Xbox")}</div>;
+    }
 
     // the data of the previous game isn't shown while another one loads
     if(!steamAchievements.currentData) {
@@ -106,7 +113,7 @@ export type AchievementsChoice = {
 }
 
 type AchievementPickerProps = {
-    // the Steam app id, the same as the catalog id of the game
+    // the catalog id of the game, its Steam app id when the game is in Steam
     appId: number,
     // the name of the catalog game, the game in Xbox is looked for by it
     gameName: string,

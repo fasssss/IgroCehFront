@@ -16,6 +16,7 @@ import {
 import { GLOBAL_EVENT_REFUSAL_DELAY_DAYS } from "../../globalEventLimits";
 import { formatTimeLeft, useNow } from "../../globalEventTime";
 import { ClaimStatus } from "../../globalEventClaims";
+import { AchievementPlatform, hasAchievementsOn } from "../../achievementPlatforms";
 import { GlobalEventGameCard } from "../GlobalEventGameCard";
 import { GlobalEventPassingProof } from "../GlobalEventPassingProof";
 import { GlobalEventRoll } from "../GlobalEventRoll";
@@ -101,7 +102,10 @@ const GlobalEventParticipation = ({ globalEvent }: GlobalEventParticipationProps
                     <h2 className="global-event-participation__title">{t("Roll the games")}</h2>
                     <p className="global-event-participation__text">
                         {t("Three random games of the event drop, you pick one of them and pass it.")}
-                        {user?.steamId && ` ${t("The games where you have unlocked the achievement already don't drop.")}`}
+                        {
+                            user?.steamId && hasAchievementsOn(globalEvent, AchievementPlatform.Steam) &&
+                            ` ${t("The games where you have unlocked the achievement in Steam already don't drop.")}`
+                        }
                     </p>
                     <div className="global-event-participation__actions">
                         <CommonButton color="success" startIcon={<Casino />} disabled={isBusy} onClick={() => rollGames(roll)}>
@@ -163,7 +167,11 @@ const GlobalEventParticipation = ({ globalEvent }: GlobalEventParticipationProps
                         <CheckCircle />
                         {t("Passed on {{date}}", { date: formatDate(participation.passedAt) })}
                         {" · "}
-                        {participation.claim?.status === ClaimStatus.Approved ? t("by a claim") : t("by Steam")}
+                        {
+                            participation.claim?.status === ClaimStatus.Approved ? t("by a claim")
+                            : participation.passedPlatform === AchievementPlatform.Xbox ? t("by Xbox")
+                            : t("by Steam")
+                        }
                     </div>
                     : isFinished ?
                     <p className="global-event-participation__text">

@@ -144,6 +144,12 @@ $steam-text: #c7d5e0;
     background-color: default.$grey;
 }
 
+.global-event-page__sign-ins {
+    display: flex;
+    flex-wrap: wrap;
+    gap: default.$margin_small;
+}
+
 .global-event-page__steam-warning {
     width: 100%;
     max-width: $page-width;
