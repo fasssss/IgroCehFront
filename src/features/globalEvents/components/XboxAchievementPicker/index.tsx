@@ -5,7 +5,13 @@ import { ImageNotSupportedOutlined } from "@mui/icons-material";
 import { skipToken } from "@reduxjs/toolkit/query";
 import { CommonButton } from "root/shared/components/CommonButton";
 import { CommonField } from "root/shared/components/CommonField";
-import { GlobalEventAchievement, useGetXboxAchievementsQuery, useSearchXboxTitlesQuery } from "../../globalEventsApi";
+import {
+    GlobalEventAchievement,
+    XboxTitle,
+    useGetXboxAchievementsQuery,
+    useLazyGetXboxTitleIdQuery,
+    useSearchXboxTitlesQuery
+} from "../../globalEventsApi";
 import { AchievementPlatform, toEventAchievement } from "../../achievementPlatforms";
 import { AchievementChecklist } from "../AchievementChecklist";
 import './styles.scss';
@@ -18,21 +24,47 @@ const TITLE_ID = /^\d{1,10}$/;
 
 // the achievements of the game in Xbox: the catalog knows no Xbox title ids, so the game is found in the Microsoft Store
 // by the name of the catalog game, another name or a title id the administrator types; then its achievements are ticked
-// like the Steam ones, another game in Xbox drops the chosen ones
+// like the Steam ones, another game in Xbox drops the chosen ones; the search gives the title ids of few games,
+// the one of the chosen game is looked up then, so each lookup costs a request only for the game that is needed
 const XboxAchievementPicker = ({ gameName, titleId, chosen, onTitleIdChange, onChange }: XboxAchievementPickerProps) => {
     const { t } = useTranslation();
     const [query, setQuery] = useState(gameName);
     const [searchedQuery, setSearchedQuery] = useState(gameName.trim());
     const titles = useSearchXboxTitlesQuery(titleId || searchedQuery.length < MIN_QUERY_LENGTH ? skipToken : searchedQuery);
     const achievements = useGetXboxAchievementsQuery(titleId ?? skipToken);
+    const [getXboxTitleId, titleIdLookup] = useLazyGetXboxTitleIdQuery();
+    const [lookupError, setLookupError] = useState<string | null>(null);
 
     const chooseTitle = (id: string | null) => {
+        setLookupError(null);
         onTitleIdChange(id);
         onChange([], null);
     };
 
+    const pickTitle = async (title: XboxTitle) => {
+        if(title.titleId) {
+            chooseTitle(title.titleId);
+            return;
+        }
+
+        if(!title.productId) {
+            return;
+        }
+
+        setLookupError(null);
+        try {
+            const { titleId: found } = await getXboxTitleId(title.productId, true).unwrap();
+            chooseTitle(found);
+        } catch(error) {
+            setLookupError(errorStatus(error) === 404
+                ? t("{{name}} has no title id in Xbox, it may be a bundle or an add-on. Choose another one", { name: title.name })
+                : t("Xbox doesn't answer, the achievements can be chosen later"));
+        }
+    };
+
     const search = (event: FormEvent) => {
         event.preventDefault();
+        setLookupError(null);
         const value = query.trim();
         if(TITLE_ID.test(value)) {
             chooseTitle(value);
@@ -104,11 +136,16 @@ const XboxAchievementPicker = ({ gameName, titleId, chosen, onTitleIdChange, onC
                 </div>
                 : titles.currentData &&
                 <>
-                    <div className="xbox-achievement-picker__hint">{t("Choose the game in Xbox, its achievements open next")}</div>
+                    <div className="xbox-achievement-picker__hint">{lookupError ?? t("Choose the game in Xbox, its achievements open next")}</div>
                     <div className="xbox-achievement-picker__titles">
                         {
                             titles.currentData.titles.map(title =>
-                                <button key={title.titleId} type="button" className="xbox-achievement-picker__candidate" onClick={() => chooseTitle(title.titleId)}>
+                                <button
+                                key={title.productId ?? title.titleId}
+                                type="button"
+                                className="xbox-achievement-picker__candidate"
+                                disabled={titleIdLookup.isFetching}
+                                onClick={() => pickTitle(title)}>
                                     {
                                         title.imageUrl ?
                                         <img src={title.imageUrl} className="xbox-achievement-picker__cover" alt="" />
@@ -116,7 +153,10 @@ const XboxAchievementPicker = ({ gameName, titleId, chosen, onTitleIdChange, onC
                                         <span className="xbox-achievement-picker__cover xbox-achievement-picker__cover--empty"><ImageNotSupportedOutlined /></span>
                                     }
                                     <span className="xbox-achievement-picker__name">{title.name}</span>
-                                    <span className="xbox-achievement-picker__id">{t("title id {{titleId}}", { titleId: title.titleId })}</span>
+                                    {
+                                        title.titleId &&
+                                        <span className="xbox-achievement-picker__id">{t("title id {{titleId}}", { titleId: title.titleId })}</span>
+                                    }
                                 </button>
                             )
                         }

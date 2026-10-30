@@ -23,9 +23,15 @@ const globalEventsApi = igroCehApi.injectEndpoints({
             query: (appId) => ({ url: '/api/getSteamAchievements', params: { appId } }),
             keepUnusedDataFor: 600,
         }),
-        // only for the administrator: the games of the Microsoft Store with an Xbox title id, 503 when OpenXBL doesn't answer
+        // only for the administrator: the games of the Microsoft Store whose names start with the query, many without a title id yet;
+        // 503 when OpenXBL doesn't answer
         searchXboxTitles: build.query<SearchXboxTitlesResponse, string>({
             query: (query) => ({ url: '/api/searchXboxTitles', params: { query } }),
+            keepUnusedDataFor: 600,
+        }),
+        // only for the administrator: the title id of the chosen product of the store, 404 when it has none
+        getXboxTitleId: build.query<GetXboxTitleIdResponse, string>({
+            query: (productId) => ({ url: '/api/getXboxTitleId', params: { productId } }),
             keepUnusedDataFor: 600,
         }),
         // only for the administrator: 404 when the game in Xbox has no achievements or there is no such title id
@@ -151,7 +157,10 @@ export type PlatformAchievement = Omit<GlobalEventAchievement, 'platform'> & {
 
 // a game in Xbox, its achievements are kept by its title id
 export type XboxTitle = {
-    titleId: string,
+    // null for a game found by its name until it is chosen, then it is looked up by the product
+    titleId: string | null,
+    // the product of the Microsoft Store, null for a game known only by its title id
+    productId: string | null,
     name: string,
     // the box art of the store
     imageUrl: string | null
@@ -274,8 +283,15 @@ export type SearchXboxTitlesResponse = {
     titles: XboxTitle[]
 }
 
+export type GetXboxTitleIdResponse = {
+    titleId: string
+}
+
 export type GetXboxAchievementsResponse = {
-    title: Pick<XboxTitle, 'titleId' | 'name'>,
+    title: {
+        titleId: string,
+        name: string
+    },
     achievements: PlatformAchievement[]
 }
 
@@ -338,6 +354,7 @@ export const {
     useGetGlobalEventQuery,
     useGetSteamAchievementsQuery,
     useSearchXboxTitlesQuery,
+    useLazyGetXboxTitleIdQuery,
     useGetXboxAchievementsQuery,
     useCreateGlobalEventMutation,
     useUpdateGlobalEventMutation,

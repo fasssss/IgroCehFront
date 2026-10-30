@@ -69,6 +69,12 @@ $cover-width: 64px;
         border-color: #107c10;
         background-color: default.$light-grey;
     }
+
+    // the title id of the chosen game is being looked up
+    &:disabled {
+        opacity: 0.6;
+        cursor: progress;
+    }
 }
 
 .xbox-achievement-picker__cover {
@@ -91,6 +97,12 @@ $cover-width: 64px;
     align-self: end;
     font-weight: 700;
     overflow-wrap: anywhere;
+
+    // a game found by its name has no title id under it until it is chosen
+    &:last-child {
+        grid-row: span 2;
+        align-self: center;
+    }
 }
 
 .xbox-achievement-picker__id {
