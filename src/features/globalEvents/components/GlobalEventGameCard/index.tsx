@@ -46,7 +46,9 @@ const GlobalEventGameCard = ({ name, imageUrl, achievements, actions, children }
                                     <span className="global-event-game-card__achievement-text">
                                         <span className="global-event-game-card__achievement-name">
                                             <span className="global-event-game-card__platform" title={ACHIEVEMENT_PLATFORM_NAME[achievement.platform]}>
-                                                <SvgIcon className="global-event-game-card__platform-icon">
+                                                <SvgIcon
+                                                className="global-event-game-card__platform-icon"
+                                                titleAccess={ACHIEVEMENT_PLATFORM_NAME[achievement.platform]}>
                                                     <SvgSelector iconName={ACHIEVEMENT_PLATFORM_ICON[achievement.platform]} />
                                                 </SvgIcon>
                                             </span>

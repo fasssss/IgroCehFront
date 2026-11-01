@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CircularProgress } from "@mui/material";
 import { ImageNotSupportedOutlined } from "@mui/icons-material";
@@ -34,8 +34,15 @@ const XboxAchievementPicker = ({ gameName, titleId, chosen, onTitleIdChange, onC
     const achievements = useGetXboxAchievementsQuery(titleId ?? skipToken);
     const [getXboxTitleId, titleIdLookup] = useLazyGetXboxTitleIdQuery();
     const [lookupError, setLookupError] = useState<string | null>(null);
+    // every choice or search of the administrator counts up, a title id that comes after one of them or after the picker is gone
+    // (the tab switched, the editing cancelled) is dropped, so it can't bring back what was left
+    const actionCount = useRef(0);
+    useEffect(() => () => {
+        actionCount.current++;
+    }, []);
 
     const chooseTitle = (id: string | null) => {
+        actionCount.current++;
         setLookupError(null);
         onTitleIdChange(id);
         onChange([], null);
@@ -52,22 +59,31 @@ const XboxAchievementPicker = ({ gameName, titleId, chosen, onTitleIdChange, onC
         }
 
         setLookupError(null);
+        const action = ++actionCount.current;
         try {
             const { titleId: found } = await getXboxTitleId(title.productId, true).unwrap();
-            chooseTitle(found);
+            if(action === actionCount.current) {
+                chooseTitle(found);
+            }
         } catch(error) {
-            setLookupError(errorStatus(error) === 404
-                ? t("{{name}} has no title id in Xbox, it may be a bundle or an add-on. Choose another one", { name: title.name })
-                : t("Xbox doesn't answer, the achievements can be chosen later"));
+            if(action === actionCount.current) {
+                setLookupError(errorStatus(error) === 404
+                    ? t("{{name}} has no title id in Xbox, it may be a bundle or an add-on. Choose another one", { name: title.name })
+                    : t("Xbox doesn't answer, the achievements can be chosen later"));
+            }
         }
     };
 
     const search = (event: FormEvent) => {
         event.preventDefault();
+        actionCount.current++;
         setLookupError(null);
         const value = query.trim();
         if(TITLE_ID.test(value)) {
             chooseTitle(value);
+        } else if(value === searchedQuery && titles.isError) {
+            // the same query wouldn't be asked again by itself, so a failed search is retried by hand
+            titles.refetch();
         } else {
             setSearchedQuery(value);
         }

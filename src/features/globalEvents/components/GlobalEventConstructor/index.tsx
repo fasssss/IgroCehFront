@@ -336,7 +336,7 @@ const GlobalEventConstructor = ({ globalEvent, isImageFailed }: GlobalEventConst
                                                     appId={game.appId}
                                                     gameName={game.name}
                                                     value={editedGame}
-                                                    onChange={choice => setEditedGame({ ...editedGame, ...choice })} />
+                                                    onChange={choice => setEditedGame(prev => prev && { ...prev, ...choice })} />
                                                     <div className="global-event-constructor__edited-actions">
                                                         <CommonButton onClick={() => setEditedGame(null)}>{t("Cancel")}</CommonButton>
                                                         <CommonButton color="success" onClick={applyEditedGame}>
