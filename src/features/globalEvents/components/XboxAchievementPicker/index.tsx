@@ -6,7 +6,6 @@ import { skipToken } from "@reduxjs/toolkit/query";
 import { CommonButton } from "root/shared/components/CommonButton";
 import { CommonField } from "root/shared/components/CommonField";
 import {
-    GlobalEventAchievement,
     XboxTitle,
     useGetXboxAchievementsQuery,
     useLazyGetXboxTitleIdQuery,
@@ -14,6 +13,7 @@ import {
 } from "../../globalEventsApi";
 import { AchievementPlatform, toEventAchievement } from "../../achievementPlatforms";
 import { AchievementChecklist } from "../AchievementChecklist";
+import type { PlatformPickerProps } from "../AchievementPicker";
 import './styles.scss';
 
 const errorStatus = (error: unknown) =>
@@ -25,8 +25,9 @@ const TITLE_ID = /^\d{1,10}$/;
 // the achievements of the game in Xbox: the catalog knows no Xbox title ids, so the game is found in the Microsoft Store
 // by the name of the catalog game, another name or a title id the administrator types; then its achievements are ticked
 // like the Steam ones, another game in Xbox drops the chosen ones; the search gives the title ids of few games,
-// the one of the chosen game is looked up then, so each lookup costs a request only for the game that is needed
-const XboxAchievementPicker = ({ gameName, titleId, chosen, onTitleIdChange, onChange }: XboxAchievementPickerProps) => {
+// the one of the chosen game is looked up then, so each lookup costs a request only for the game that is needed;
+// the title id is the ref of the game on the platform
+const XboxAchievementPicker = ({ gameName, titleRef: titleId, chosen, onTitleRefChange, onChange }: PlatformPickerProps) => {
     const { t } = useTranslation();
     const [query, setQuery] = useState(gameName);
     const [searchedQuery, setSearchedQuery] = useState(gameName.trim());
@@ -44,7 +45,7 @@ const XboxAchievementPicker = ({ gameName, titleId, chosen, onTitleIdChange, onC
     const chooseTitle = (id: string | null) => {
         actionCount.current++;
         setLookupError(null);
-        onTitleIdChange(id);
+        onTitleRefChange(id);
         onChange([], null);
     };
 
@@ -125,7 +126,7 @@ const XboxAchievementPicker = ({ gameName, titleId, chosen, onTitleIdChange, onC
                 chosen={chosen.map(achievement => achievement.apiName)}
                 onChange={apiNames => onChange(
                     list.filter(achievement => apiNames.includes(achievement.apiName)).map(achievement => toEventAchievement(achievement, AchievementPlatform.Xbox)),
-                    apiNames.length ? { titleId: title.titleId, name: title.name } : null
+                    apiNames.length ? { titleRef: title.titleId, name: title.name } : null
                 )} />
             </div>
         );
@@ -182,23 +183,5 @@ const XboxAchievementPicker = ({ gameName, titleId, chosen, onTitleIdChange, onC
         </div>
     );
 };
-
-type XboxAchievementPickerProps = {
-    // the name of the catalog game, the first search goes with it
-    gameName: string,
-    // the game in Xbox whose achievements are shown, null while it is looked for
-    titleId: string | null,
-    // the chosen Xbox achievements
-    chosen: GlobalEventAchievement[],
-    onTitleIdChange: (titleId: string | null) => void,
-    // the title goes with the chosen achievements, it is null without them
-    onChange: (chosen: GlobalEventAchievement[], xboxTitle: XboxTitleChoice | null) => void
-}
-
-// the game in Xbox the chosen achievements belong to
-export type XboxTitleChoice = {
-    titleId: string,
-    name: string
-}
 
 export { XboxAchievementPicker }

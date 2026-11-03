@@ -28,14 +28,14 @@ import {
     GLOBAL_EVENT_NAME_MAX_LENGTH
 } from "../../globalEventLimits";
 import { globalEventEditPath } from "../../globalEventPath";
-import { AchievementPlatform } from "../../achievementPlatforms";
+import { ACHIEVEMENT_PLATFORMS } from "../../achievementPlatforms";
 import { AchievementPicker, AchievementsChoice } from "../AchievementPicker";
 import { BadgePicker } from "../BadgePicker";
 import { GlobalEventGameCard } from "../GlobalEventGameCard";
 import type { GlobalEventConstructorPageState } from "../GlobalEventConstructorPage";
 import './styles.scss';
 
-// a game the administrator has put into the event with the achievements in Steam and in Xbox that mean it is passed,
+// a game the administrator has put into the event with the achievements on the platforms that mean it is passed,
 // without them the passing is confirmed only by hand
 type ChosenGame = AchievementsChoice & {
     appId: number,
@@ -44,18 +44,24 @@ type ChosenGame = AchievementsChoice & {
     imageUrl: string | null
 }
 
-const NO_ACHIEVEMENTS: AchievementsChoice = { achievements: [], xboxTitle: null };
+const NO_ACHIEVEMENTS: AchievementsChoice = { achievements: [], titles: {} };
 
 const toChosenGames = (globalEvent?: GlobalEvent): ChosenGame[] => globalEvent?.games.map(eventGame => ({
     appId: eventGame.appId,
     name: eventGame.game.name,
     imageUrl: eventGame.game.imageUrl,
     achievements: eventGame.achievements,
-    xboxTitle: eventGame.xboxTitleId ? { titleId: eventGame.xboxTitleId, name: eventGame.xboxTitleName ?? eventGame.xboxTitleId } : null
+    titles: Object.fromEntries(eventGame.titles.map(title => [title.platform, { titleRef: title.titleRef, name: title.titleName }]))
 })) ?? [];
 
-const apiNamesOf = (game: ChosenGame, platform: AchievementPlatform) =>
-    game.achievements.filter(achievement => achievement.platform === platform).map(achievement => achievement.apiName);
+// the platforms with chosen achievements, each with its game when it has one of its own
+const platformsOf = (game: ChosenGame) => ACHIEVEMENT_PLATFORMS
+    .map(platform => ({
+        platform,
+        titleRef: game.titles[platform]?.titleRef ?? null,
+        achievementIds: game.achievements.filter(achievement => achievement.platform === platform).map(achievement => achievement.apiName)
+    }))
+    .filter(platform => platform.achievementIds.length > 0);
 
 const errorStatus = (error: unknown) =>
     typeof error === 'object' && error !== null && 'status' in error ? error.status : undefined;
@@ -143,12 +149,7 @@ const GlobalEventConstructor = ({ globalEvent, isImageFailed }: GlobalEventConst
             name,
             description,
             badgeId: badgeId ?? "",
-            games: games.map(game => ({
-                appId: game.appId,
-                achievementApiNames: apiNamesOf(game, AchievementPlatform.Steam),
-                xboxTitleId: game.xboxTitle?.titleId ?? null,
-                xboxAchievementIds: apiNamesOf(game, AchievementPlatform.Xbox)
-            }))
+            games: games.map(game => ({ appId: game.appId, platforms: platformsOf(game) }))
         };
         let savedId: string;
         try {

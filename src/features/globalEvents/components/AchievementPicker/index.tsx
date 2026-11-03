@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { ComponentType, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { skipToken } from "@reduxjs/toolkit/query";
 import { CircularProgress, SvgIcon } from "@mui/material";
 import { SvgSelector } from "root/shared/components/SvgSelector";
 import { GlobalEventAchievement, useGetSteamAchievementsQuery } from "../../globalEventsApi";
 import {
+    ACHIEVEMENT_PLATFORM_AVAILABLE,
     ACHIEVEMENT_PLATFORM_ICON,
     ACHIEVEMENT_PLATFORM_NAME,
     ACHIEVEMENT_PLATFORMS,
@@ -13,19 +14,31 @@ import {
     toEventAchievement
 } from "../../achievementPlatforms";
 import { AchievementChecklist } from "../AchievementChecklist";
-import { XboxAchievementPicker, XboxTitleChoice } from "../XboxAchievementPicker";
+import { XboxAchievementPicker } from "../XboxAchievementPicker";
 import './styles.scss';
 
-// the achievements of a game that mean it is passed, in Steam and in Xbox on two tabs; any one of them counts,
-// none may be chosen, then the passing is confirmed only by a claim checked by hand; a game outside Steam opens on Xbox
+// the achievements of a game that mean it is passed, a tab per platform; any one of them counts, none may be chosen,
+// then the passing is confirmed only by a claim checked by hand; the first tab is the first platform that can have the game
 const AchievementPicker = ({ appId, gameName, value, onChange }: AchievementPickerProps) => {
     const { t } = useTranslation();
-    const [platform, setPlatform] = useState<AchievementPlatform>(isSteamAppId(appId) ? AchievementPlatform.Steam : AchievementPlatform.Xbox);
-    // the game in Xbox stays found while the tabs switch, even with no achievement chosen yet
-    const [xboxTitleId, setXboxTitleId] = useState(value.xboxTitle?.titleId ?? null);
+    const [platform, setPlatform] = useState(() =>
+        ACHIEVEMENT_PLATFORMS.find(item => ACHIEVEMENT_PLATFORM_AVAILABLE[item](appId)) ?? ACHIEVEMENT_PLATFORMS[0]);
+    // the game found on a platform stays while the tabs switch, even with no achievement chosen yet
+    const [titleRefs, setTitleRefs] = useState<Partial<Record<AchievementPlatform, string | null>>>(() =>
+        Object.fromEntries(ACHIEVEMENT_PLATFORMS.map(item => [item, value.titles[item]?.titleRef ?? null])));
     const chosenOf = (item: AchievementPlatform) => value.achievements.filter(achievement => achievement.platform === item);
-    const steamChosen = chosenOf(AchievementPlatform.Steam);
-    const xboxChosen = chosenOf(AchievementPlatform.Xbox);
+    const Picker = ACHIEVEMENT_PICKERS[platform];
+
+    // the achievements stay in the order of the platforms, the game on the platform goes with its achievements
+    const changePlatform = (chosen: GlobalEventAchievement[], title: PlatformTitleChoice | null) => {
+        const titles = { ...value.titles };
+        if(title) {
+            titles[platform] = title;
+        } else {
+            delete titles[platform];
+        }
+        onChange({ achievements: ACHIEVEMENT_PLATFORMS.flatMap(item => item === platform ? chosen : chosenOf(item)), titles });
+    };
 
     return(
         <div className="achievement-picker">
@@ -48,28 +61,20 @@ const AchievementPicker = ({ appId, gameName, value, onChange }: AchievementPick
                     )
                 }
             </div>
-            {
-                platform === AchievementPlatform.Steam &&
-                <SteamAchievementPicker
-                appId={appId}
-                chosen={steamChosen}
-                onChange={chosen => onChange({ ...value, achievements: [...chosen, ...xboxChosen] })} />
-            }
-            {
-                platform === AchievementPlatform.Xbox &&
-                <XboxAchievementPicker
-                gameName={gameName}
-                titleId={xboxTitleId}
-                chosen={xboxChosen}
-                onTitleIdChange={setXboxTitleId}
-                onChange={(chosen, xboxTitle) => onChange({ achievements: [...steamChosen, ...chosen], xboxTitle })} />
-            }
+            <Picker
+            key={platform}
+            appId={appId}
+            gameName={gameName}
+            titleRef={titleRefs[platform] ?? null}
+            chosen={chosenOf(platform)}
+            onTitleRefChange={titleRef => setTitleRefs(prev => ({ ...prev, [platform]: titleRef }))}
+            onChange={changePlatform} />
         </div>
     );
 };
 
-// the catalog id of a game in Steam is its Steam app id, Steam isn't asked about a game outside it
-const SteamAchievementPicker = ({ appId, chosen, onChange }: SteamAchievementPickerProps) => {
+// the catalog id of a game in Steam is its Steam app id, so Steam needs no game of its own; Steam isn't asked about a game outside it
+const SteamAchievementPicker = ({ appId, chosen, onChange }: PlatformPickerProps) => {
     const { t } = useTranslation();
     const isInSteam = isSteamAppId(appId);
     const steamAchievements = useGetSteamAchievementsQuery(isInSteam ? appId : skipToken);
@@ -103,30 +108,47 @@ const SteamAchievementPicker = ({ appId, chosen, onChange }: SteamAchievementPic
         chosen={chosen.map(achievement => achievement.apiName)}
         onChange={apiNames => onChange(achievements
             .filter(achievement => apiNames.includes(achievement.apiName))
-            .map(achievement => toEventAchievement(achievement, AchievementPlatform.Steam)))} />
+            .map(achievement => toEventAchievement(achievement, AchievementPlatform.Steam)), null)} />
     );
 };
 
-// the chosen achievements of a game on both platforms, the Xbox ones with their game in Xbox
+// the picker of the achievements of a game on each platform
+const ACHIEVEMENT_PICKERS: Record<AchievementPlatform, ComponentType<PlatformPickerProps>> = {
+    [AchievementPlatform.Steam]: SteamAchievementPicker,
+    [AchievementPlatform.Xbox]: XboxAchievementPicker,
+};
+
+// the game on a platform where it has an id of its own (a title id in Xbox) the chosen achievements belong to
+export type PlatformTitleChoice = {
+    titleRef: string,
+    name: string
+}
+
+// the chosen achievements of a game on every platform, with the game on the platforms that have one of their own
 export type AchievementsChoice = {
     achievements: GlobalEventAchievement[],
-    // null without Xbox achievements
-    xboxTitle: XboxTitleChoice | null
+    // only the platforms with chosen achievements
+    titles: Partial<Record<AchievementPlatform, PlatformTitleChoice>>
 }
 
-type AchievementPickerProps = {
+// the achievements of a game on one platform
+export type PlatformPickerProps = {
     // the catalog id of the game, its Steam app id when the game is in Steam
     appId: number,
-    // the name of the catalog game, the game in Xbox is looked for by it
+    // the name of the catalog game, a platform without the catalog ids looks for the game by it
     gameName: string,
-    value: AchievementsChoice,
-    onChange: (value: AchievementsChoice) => void
+    // the game on the platform whose achievements are shown, null while it is looked for and on a platform without games of its own
+    titleRef: string | null,
+    // the chosen achievements of the platform
+    chosen: GlobalEventAchievement[],
+    onTitleRefChange: (titleRef: string | null) => void,
+    // the game goes with the chosen achievements, it is null without them and on a platform without games of its own
+    onChange: (chosen: GlobalEventAchievement[], title: PlatformTitleChoice | null) => void
 }
 
-type SteamAchievementPickerProps = {
-    appId: number,
-    chosen: GlobalEventAchievement[],
-    onChange: (chosen: GlobalEventAchievement[]) => void
+type AchievementPickerProps = Pick<PlatformPickerProps, 'appId' | 'gameName'> & {
+    value: AchievementsChoice,
+    onChange: (value: AchievementsChoice) => void
 }
 
 export { AchievementPicker }

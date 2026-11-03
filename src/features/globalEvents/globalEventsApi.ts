@@ -1,21 +1,23 @@
 import { igroCehApi } from "root/shared/igroCehApi";
 import type { GameObject, UserShortObject } from "root/features/events/eventsApi";
 import type { ClaimPlatform, ClaimStatus, PassingCheck } from "./globalEventClaims";
-import type { AchievementPlatform } from "./achievementPlatforms";
+import { type AchievementPlatform, withKnownCheckPlatforms, withKnownPlatforms } from "./achievementPlatforms";
 
 const postTo = (url: string) => <TBody>(body: TBody) => ({ url, method: 'POST', body });
 
-// events of the whole site made by its administrator, a game of such an event is passed by a Steam or an Xbox achievement;
+// events of the whole site made by its administrator, a game of such an event is passed by an achievement on one of the platforms;
 // every change invalidates all of them, there are few
 const globalEventsApi = igroCehApi.injectEndpoints({
     endpoints: (build) => ({
         // the banner of the main page, globalEvent is null when no event is active
         getActiveGlobalEvent: build.query<GlobalEventResponse, void>({
             query: () => '/api/getActiveGlobalEvent',
+            transformResponse: withKnownPlatforms,
             providesTags: ['GlobalEvent'],
         }),
         getGlobalEvent: build.query<GlobalEventResponse, string>({
             query: (globalEventId) => ({ url: '/api/getGlobalEvent', params: { globalEventId } }),
+            transformResponse: withKnownPlatforms,
             providesTags: (_result, _error, globalEventId) => [{ type: 'GlobalEvent', id: globalEventId }],
         }),
         // only for the administrator, 503 when Steam doesn't answer; the API keeps them for hours, so do we
@@ -39,14 +41,16 @@ const globalEventsApi = igroCehApi.injectEndpoints({
             query: (titleId) => ({ url: '/api/getXboxAchievements', params: { titleId } }),
             keepUnusedDataFor: 600,
         }),
-        // 409 while another event is active, 400 when Steam or the catalog doesn't know a game or an achievement, 503 when they don't answer
+        // 409 while another event is active, 400 when a platform or the catalog doesn't know a game or an achievement, 503 when they don't answer
         createGlobalEvent: build.mutation<GlobalEventResponse, CreateGlobalEventRequest>({
             query: postTo('/api/createGlobalEvent'),
+            transformResponse: withKnownPlatforms,
             invalidatesTags: ['GlobalEvent'],
         }),
         // the event comes in full, the games in their new order
         updateGlobalEvent: build.mutation<GlobalEventResponse, UpdateGlobalEventRequest>({
             query: postTo('/api/updateGlobalEvent'),
+            transformResponse: withKnownPlatforms,
             invalidatesTags: ['GlobalEvent'],
         }),
         // FormData with globalEventId and image, the image replaces the previous one
@@ -66,27 +70,32 @@ const globalEventsApi = igroCehApi.injectEndpoints({
         // the games the current user rolled in the event, participation is null before the roll
         getGlobalEventParticipation: build.query<GlobalEventParticipationResponse, string>({
             query: (globalEventId) => ({ url: '/api/getGlobalEventParticipation', params: { globalEventId } }),
+            transformResponse: withKnownCheckPlatforms,
         }),
         // three games drop at once; 422 when every game has an achievement the player unlocked already, 409 when the roll is done
         rollGlobalEventGames: build.mutation<GlobalEventParticipationResponse, GlobalEventRequest>({
             query: postTo('/api/rollGlobalEventGames'),
+            transformResponse: withKnownCheckPlatforms,
             // the event counts its participants
             invalidatesTags: ['GlobalEvent'],
             onQueryStarted: setParticipation,
         }),
         pickGlobalEventGame: build.mutation<GlobalEventParticipationResponse, PickGlobalEventGameRequest>({
             query: postTo('/api/pickGlobalEventGame'),
+            transformResponse: withKnownCheckPlatforms,
             onQueryStarted: setParticipation,
         }),
         // a week after the pick the game can be refused, three new games drop at once
         refuseGlobalEventGame: build.mutation<GlobalEventParticipationResponse, GlobalEventRequest>({
             query: postTo('/api/refuseGlobalEventGame'),
+            transformResponse: withKnownCheckPlatforms,
             onQueryStarted: setParticipation,
         }),
         // Steam is asked about the picked game, 503 when it doesn't answer
         // the achievements of the picked game on one platform, 429 when it was checked there less than ten minutes ago
         checkGlobalEventPassing: build.mutation<CheckGlobalEventPassingResponse, CheckGlobalEventPassingRequest>({
             query: postTo('/api/checkGlobalEventPassing'),
+            transformResponse: withKnownCheckPlatforms<CheckGlobalEventPassingResponse>,
             // the event counts the passed players
             invalidatesTags: ['GlobalEvent'],
             onQueryStarted: setParticipation,
@@ -94,6 +103,7 @@ const globalEventsApi = igroCehApi.injectEndpoints({
         // one claim at a time is under review
         submitGlobalEventClaim: build.mutation<GlobalEventParticipationResponse, SubmitGlobalEventClaimRequest>({
             query: postTo('/api/submitGlobalEventClaim'),
+            transformResponse: withKnownCheckPlatforms,
             invalidatesTags: ['GlobalEventClaims'],
             onQueryStarted: setParticipation,
         }),
@@ -138,7 +148,7 @@ async function setParticipation({ globalEventId }: GlobalEventRequest, { dispatc
 // an achievement that means a game of the event is passed, in both languages of the site
 export type GlobalEventAchievement = {
     platform: AchievementPlatform,
-    // the API name in Steam or the id in Xbox
+    // the id of the achievement on the platform: the API name in Steam, the id in Xbox
     apiName: string,
     name: string,
     nameRu: string,
@@ -147,7 +157,7 @@ export type GlobalEventAchievement = {
     iconUrl: string | null
 }
 
-// an achievement as Steam or Xbox gives it to the administrator, the platform is the one asked
+// an achievement as a platform gives it to the administrator, the platform is the one asked
 export type PlatformAchievement = Omit<GlobalEventAchievement, 'platform'> & {
     // the share of the players who unlocked it, rare ones usually mean the game is passed
     percent: number | null,
@@ -166,14 +176,20 @@ export type XboxTitle = {
     imageUrl: string | null
 }
 
+// the game on a platform where it has an id of its own (a title id in Xbox) its achievements belong to
+export type GlobalEventGameTitle = {
+    platform: AchievementPlatform,
+    titleRef: string,
+    titleName: string
+}
+
 export type GlobalEventGame = {
     game: Pick<GameObject, 'id' | 'name' | 'imageUrl' | 'steamUrl'>,
     // the catalog id of the game, its Steam app id when the game is in Steam
     appId: number,
-    // the game in Xbox the Xbox achievements belong to, null without them
-    xboxTitleId: string | null,
-    xboxTitleName: string | null,
-    // any one of them unlocked means the game is passed; the Steam ones first
+    // one per platform with achievements and an id of the game of its own
+    titles: GlobalEventGameTitle[],
+    // any one of them unlocked means the game is passed; by the platforms in the order of their values
     achievements: GlobalEventAchievement[]
 }
 
@@ -295,13 +311,18 @@ export type GetXboxAchievementsResponse = {
     achievements: PlatformAchievement[]
 }
 
+// the achievements of a game chosen on one platform
+export type NewGlobalEventPlatform = {
+    platform: AchievementPlatform,
+    // the game on a platform where it has an id of its own, null on the others (Steam)
+    titleRef: string | null,
+    achievementIds: string[]
+}
+
 export type NewGlobalEventGame = {
     appId: number,
-    // in Steam
-    achievementApiNames: string[],
-    // the game in Xbox, needed only with Xbox achievements
-    xboxTitleId: string | null,
-    xboxAchievementIds: string[]
+    // only the platforms with chosen achievements
+    platforms: NewGlobalEventPlatform[]
 }
 
 export type CreateGlobalEventRequest = {
