@@ -3,7 +3,6 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { CircularProgress } from "@mui/material";
 import { CommonButton } from "root/shared/components/CommonButton";
-import { isConflictError } from "root/shared/igroCehApi";
 import { useLinkXboxMutation } from "../../xboxApi";
 import { forgetXboxLink, readXboxLink } from "../../xboxPaths";
 import { XboxSignInButton } from "../XboxSignInButton";
@@ -53,7 +52,6 @@ const XboxLinkPage = () => {
                     {
                         !code ? t("The sign-in to Xbox is cancelled")
                         : !returnPath ? t("The sign-in to Xbox wasn't started in this tab")
-                        : isConflictError(error) ? t("This Xbox account is linked to another player")
                         : errorStatus(error) === 503 ? t("Xbox doesn't answer, try later")
                         : t("Xbox didn't confirm the sign-in, try again")
                     }

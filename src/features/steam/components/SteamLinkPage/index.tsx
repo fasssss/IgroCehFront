@@ -3,7 +3,6 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { CircularProgress } from "@mui/material";
 import { CommonButton } from "root/shared/components/CommonButton";
-import { isConflictError } from "root/shared/igroCehApi";
 import { useLinkSteamMutation } from "../../steamApi";
 import { toLocalPath } from "../../steamPaths";
 import { SteamProfileWarning } from "../SteamProfileWarning";
@@ -57,7 +56,6 @@ const SteamLinkPage = () => {
                 <h2 className="steam-link-page__title">
                     {
                         mode === 'cancel' ? t("The sign-in to Steam is cancelled")
-                        : isConflictError(error) ? t("This Steam account is linked to another player")
                         : errorStatus(error) === 503 ? t("Steam doesn't answer, try later")
                         : t("Steam didn't confirm the sign-in, try again")
                     }
