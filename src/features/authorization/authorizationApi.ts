@@ -51,7 +51,9 @@ export type UserObject = {
     // the Steam account linked through the sign-in to Steam
     steamId: string | null,
     // the gamertag of the Xbox account linked through the sign-in to Xbox
-    xboxGamertag: string | null
+    xboxGamertag: string | null,
+    // the online id of the PSN account linked through a code in its profile
+    psnOnlineId: string | null
 }
 
 export const {

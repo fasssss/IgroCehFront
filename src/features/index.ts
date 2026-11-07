@@ -12,3 +12,4 @@ export * from './globalEvents/components/GlobalEventPage';
 export * from './globalEvents/components/GlobalEventClaimsPage';
 export * from './steam/components/SteamLinkPage';
 export * from './xbox/components/XboxLinkPage';
+export * from './psn/components/PsnLinkPage';

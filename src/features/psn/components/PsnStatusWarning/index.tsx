@@ -17,7 +17,7 @@ const PsnStatusWarning = ({ className }: PsnStatusWarningProps) => {
     const warning =
         status.isNpssoRefused ? {
             title: t("PSN refuses the service account"),
-            text: t("The NPSSO has probably ended or isn't in the settings. Until it is renewed, linking PSN and checking trophies don't work."),
+            text: t("The NPSSO has probably ended or isn't in the settings. Until it is renewed, linking PSN and checking trophies don't work or will stop soon."),
             needsNewNpsso: true,
         }
         : !status.isSignInWorking ? {
@@ -27,7 +27,7 @@ const PsnStatusWarning = ({ className }: PsnStatusWarningProps) => {
         }
         : status.isNpssoEnding ? {
             title: t("The NPSSO of the service account of PSN is ending"),
-            text: t("By the date in the settings it works until about {{date}}. Renew it before the sign-in stops working. If it is renewed already, change the date in the settings.", { date: expiresAt }),
+            text: t("PSN says it works until {{date}}. Renew it before the sign-in stops working.", { date: expiresAt }),
             needsNewNpsso: true,
         }
         : null;

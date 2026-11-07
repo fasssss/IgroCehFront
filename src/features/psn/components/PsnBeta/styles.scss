@@ -1,0 +1,11 @@
+// takes the color of the text it stands next to, so it works on the blue button and on the dark page
+.psn-beta {
+    padding: 0 5px;
+    border: 1px solid currentColor;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    white-space: nowrap;
+    opacity: 0.85;
+}

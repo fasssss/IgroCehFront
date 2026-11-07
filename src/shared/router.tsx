@@ -13,7 +13,8 @@ import {
     GlobalEventPage,
     GlobalEventClaimsPage,
     SteamLinkPage,
-    XboxLinkPage
+    XboxLinkPage,
+    PsnLinkPage
 } from "../features";
 import Layout from "./components/Layout";
 
@@ -86,6 +87,11 @@ const router = createBrowserRouter([
                 // OpenXBL sends the user here after the sign-in that links their Xbox account
                 path: "xbox-link",
                 element: <XboxLinkPage />
+            },
+            {
+                // the player proves their PSN account with a code in its profile, PSN has no sign-in for other sites
+                path: "psn-link",
+                element: <PsnLinkPage />
             },
             {
                 // stage is chosen by event status, "/*" keeps old stage links (ordering-stage etc.) working

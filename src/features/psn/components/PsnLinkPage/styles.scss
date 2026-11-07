@@ -1,0 +1,103 @@
+@use '../../../../shared/default.module.scss' as default;
+
+$warning: #f0b232;
+$failed: #ef6a5a;
+$muted-text: rgba(255, 255, 255, 0.7);
+$page-width: 560px;
+
+.psn-link-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: default.$margin_big;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: $page-width;
+    margin: 0 auto;
+    padding: default.$padding_large default.$padding_big;
+    text-align: center;
+}
+
+.psn-link-page__title {
+    display: inline-flex;
+    align-items: center;
+    gap: default.$margin_small;
+    margin: 0;
+}
+
+.psn-link-page__muted {
+    color: $muted-text;
+    font-size: 14px;
+}
+
+.psn-link-page__field {
+    width: 100%;
+}
+
+.psn-link-page__account-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: center;
+    gap: default.$margin_small;
+}
+
+// a mistyped online id costs 15 minutes, so it is seen before the player goes to the console
+.psn-link-page__account {
+    font-size: 24px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.psn-link-page__steps {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    gap: default.$margin_small;
+    margin: 0;
+    padding-left: 24px;
+    text-align: left;
+}
+
+.psn-link-page__code {
+    margin-top: default.$margin_small;
+    padding: default.$padding_small default.$padding_big;
+    border-radius: default.$border-radius_small;
+    background-color: default.$dark-grey;
+    font-family: monospace;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-align: center;
+    user-select: all;
+}
+
+.psn-link-page__warning {
+    display: flex;
+    align-items: center;
+    gap: default.$margin_small;
+    box-sizing: border-box;
+    width: 100%;
+    padding: default.$padding_small default.$padding_big;
+    border: 1px solid $warning;
+    border-radius: default.$border-radius_small;
+    text-align: left;
+}
+
+.psn-link-page__warning-icon {
+    flex-shrink: 0;
+    color: $warning;
+}
+
+.psn-link-page__error {
+    color: $failed;
+}
+
+// MUI resets the margin of CommonButton
+.psn-link-page__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: default.$margin_small;
+}

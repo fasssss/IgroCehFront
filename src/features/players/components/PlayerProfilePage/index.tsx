@@ -17,6 +17,7 @@ import { PlayerReviews } from "root/features/reviews/components/PlayerReviews";
 import { useCurrentUser } from "root/features/authorization/authorizationApi";
 import { SteamAccount } from "root/features/steam/components/SteamAccount";
 import { XboxAccount } from "root/features/xbox/components/XboxAccount";
+import { PsnAccount } from "root/features/psn/components/PsnAccount";
 import { SteamProfileWarning } from "root/features/steam/components/SteamProfileWarning";
 import { PlayerBadges } from "../PlayerBadges";
 import './styles.scss';
@@ -99,6 +100,7 @@ const PlayerProfilePage = () => {
                         }
                         <SteamAccount userId={profile.id} steamId={profile.steamId} />
                         <XboxAccount userId={profile.id} gamertag={profile.xboxGamertag} />
+                        <PsnAccount userId={profile.id} onlineId={profile.psnOnlineId} />
                     </div>
                     {
                         profile.playingSince &&
