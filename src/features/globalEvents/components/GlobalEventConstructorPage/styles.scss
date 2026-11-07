@@ -8,3 +8,9 @@
     padding: default.$padding_large;
     font-size: large;
 }
+
+// the constructor below keeps its own padding
+.global-event-constructor-page__psn-warning {
+    width: calc(100% - 2 * default.$margin_big);
+    margin: default.$margin_big auto 0;
+}

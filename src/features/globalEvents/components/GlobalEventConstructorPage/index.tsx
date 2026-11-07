@@ -4,6 +4,7 @@ import { skipToken } from "@reduxjs/toolkit/query";
 import { CircularProgress } from "@mui/material";
 import { CommonButton } from "root/shared/components/CommonButton";
 import { useCurrentUser } from "root/features/authorization/authorizationApi";
+import { PsnStatusWarning } from "root/features/psn/components/PsnStatusWarning";
 import { useGetGlobalEventQuery } from "../../globalEventsApi";
 import { GlobalEventConstructor } from "../GlobalEventConstructor";
 import './styles.scss';
@@ -40,10 +41,13 @@ const GlobalEventConstructorPage = () => {
 
     // a saved event starts its form over
     return(
-        <GlobalEventConstructor
-        key={globalEventId ?? "new"}
-        globalEvent={globalEvent.data?.globalEvent ?? undefined}
-        isImageFailed={isImageFailed} />
+        <>
+            <PsnStatusWarning className="global-event-constructor-page__psn-warning" />
+            <GlobalEventConstructor
+            key={globalEventId ?? "new"}
+            globalEvent={globalEvent.data?.globalEvent ?? undefined}
+            isImageFailed={isImageFailed} />
+        </>
     );
 };
 

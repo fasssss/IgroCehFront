@@ -1,0 +1,32 @@
+@use '../../../../shared/default.module.scss' as default;
+
+$warning: #f0b232;
+$page-width: 900px;
+
+.psn-status-warning {
+    display: flex;
+    gap: default.$margin_big;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: $page-width;
+    padding: default.$padding_big;
+    border: 1px solid $warning;
+    border-radius: default.$border-radius_small;
+    background-color: default.$dark-grey;
+}
+
+.psn-status-warning__icon {
+    flex-shrink: 0;
+    color: $warning;
+}
+
+.psn-status-warning__text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.psn-status-warning__title {
+    font-weight: 700;
+}

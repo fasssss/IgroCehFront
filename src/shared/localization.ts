@@ -9,6 +9,7 @@ import reviewsLocale from '../features/reviews/reviewsLocale.json';
 import globalEventsLocale from '../features/globalEvents/globalEventsLocale.json';
 import steamLocale from '../features/steam/steamLocale.json';
 import xboxLocale from '../features/xbox/xboxLocale.json';
+import psnLocale from '../features/psn/psnLocale.json';
 import sharedLocale from './sharedLocale.json';
 
 function getDefaults() {
@@ -35,6 +36,7 @@ const resources = {
         ...globalEventsLocale.en,
         ...steamLocale.en,
         ...xboxLocale.en,
+        ...psnLocale.en,
         ...sharedLocale.en
     }
   },
@@ -48,6 +50,7 @@ const resources = {
         ...globalEventsLocale.ru,
         ...steamLocale.ru,
         ...xboxLocale.ru,
+        ...psnLocale.ru,
         ...sharedLocale.ru
     }
   }

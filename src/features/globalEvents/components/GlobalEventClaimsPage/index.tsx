@@ -7,6 +7,7 @@ import { CommonButton } from "root/shared/components/CommonButton";
 import { CommonModal } from "root/shared/components/CommonModal";
 import { useCurrentUser } from "root/features/authorization/authorizationApi";
 import type { UserShortObject } from "root/features/events/eventsApi";
+import { PsnStatusWarning } from "root/features/psn/components/PsnStatusWarning";
 import {
     GlobalEventClaim,
     useDecideGlobalEventClaimMutation,
@@ -140,6 +141,7 @@ const GlobalEventClaimsPage = () => {
                 <h1 className="global-event-claims__title">{t("Claims of the passing")}</h1>
                 <Link to={globalEventPath(globalEvent.id)} className="global-event-claims__event">{globalEvent.name}</Link>
             </header>
+            <PsnStatusWarning />
             {error && <div className="global-event-claims__error">{error}</div>}
             <section className="global-event-claims__section">
                 <h2 className="global-event-claims__section-title">{t("Under review: {{count}}", { count: pending.length })}</h2>

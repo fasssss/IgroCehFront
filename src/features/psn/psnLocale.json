@@ -1,0 +1,20 @@
+{
+    "en": {
+        "PSN refuses the service account": "PSN refuses the service account",
+        "The NPSSO has probably ended or isn't in the settings. Until it is renewed, linking PSN and checking trophies don't work.": "The NPSSO has probably ended or isn't in the settings. Until it is renewed, linking PSN and checking trophies don't work.",
+        "Couldn't check the service account of PSN": "Couldn't check the service account of PSN",
+        "PSN doesn't answer or the site ran over its limit of requests. Linking PSN and checking trophies may not work now.": "PSN doesn't answer or the site ran over its limit of requests. Linking PSN and checking trophies may not work now.",
+        "The NPSSO of the service account of PSN is ending": "The NPSSO of the service account of PSN is ending",
+        "By the date in the settings it works until about {{date}}. Renew it before the sign-in stops working. If it is renewed already, change the date in the settings.": "By the date in the settings it works until about {{date}}. Renew it before the sign-in stops working. If it is renewed already, change the date in the settings.",
+        "How to renew the NPSSO is written in the README of the API.": "How to renew the NPSSO is written in the README of the API."
+    },
+    "ru": {
+        "PSN refuses the service account": "PSN не пускает служебный аккаунт",
+        "The NPSSO has probably ended or isn't in the settings. Until it is renewed, linking PSN and checking trophies don't work.": "Похоже, NPSSO больше не действует или его нет в настройках. Пока его не обновить, привязка PSN и проверка трофеев не работают.",
+        "Couldn't check the service account of PSN": "Не получилось проверить служебный аккаунт PSN",
+        "PSN doesn't answer or the site ran over its limit of requests. Linking PSN and checking trophies may not work now.": "PSN не отвечает или сайт исчерпал лимит запросов. Привязка PSN и проверка трофеев сейчас могут не работать.",
+        "The NPSSO of the service account of PSN is ending": "Заканчивается NPSSO служебного аккаунта PSN",
+        "By the date in the settings it works until about {{date}}. Renew it before the sign-in stops working. If it is renewed already, change the date in the settings.": "По дате в настройках он действует примерно до {{date}}: обновите его, пока вход не перестал работать. Если NPSSO уже обновлён, поменяйте дату в настройках.",
+        "How to renew the NPSSO is written in the README of the API.": "Как обновить NPSSO, написано в README бэкенда."
+    }
+}
