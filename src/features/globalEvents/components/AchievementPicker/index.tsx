@@ -15,6 +15,7 @@ import {
 } from "../../achievementPlatforms";
 import { AchievementChecklist } from "../AchievementChecklist";
 import { XboxAchievementPicker } from "../XboxAchievementPicker";
+import { PsnTrophyPicker } from "../PsnTrophyPicker";
 import './styles.scss';
 
 // the achievements of a game that mean it is passed, a tab per platform; any one of them counts, none may be chosen,
@@ -80,7 +81,7 @@ const SteamAchievementPicker = ({ appId, chosen, onChange }: PlatformPickerProps
     const steamAchievements = useGetSteamAchievementsQuery(isInSteam ? appId : skipToken);
 
     if(!isInSteam) {
-        return <div className="achievement-picker__message">{t("This game isn't in Steam, its achievements may be in Xbox")}</div>;
+        return <div className="achievement-picker__message">{t("This game isn't in Steam, its achievements may be on another platform")}</div>;
     }
 
     // the data of the previous game isn't shown while another one loads
@@ -99,7 +100,7 @@ const SteamAchievementPicker = ({ appId, chosen, onChange }: PlatformPickerProps
 
     const achievements = steamAchievements.currentData.achievements;
     if(!achievements.length) {
-        return <div className="achievement-picker__message">{t("This game has no achievements in Steam, they may be in Xbox")}</div>;
+        return <div className="achievement-picker__message">{t("This game has no achievements in Steam, they may be on another platform")}</div>;
     }
 
     return(
@@ -116,9 +117,10 @@ const SteamAchievementPicker = ({ appId, chosen, onChange }: PlatformPickerProps
 const ACHIEVEMENT_PICKERS: Record<AchievementPlatform, ComponentType<PlatformPickerProps>> = {
     [AchievementPlatform.Steam]: SteamAchievementPicker,
     [AchievementPlatform.Xbox]: XboxAchievementPicker,
+    [AchievementPlatform.Psn]: PsnTrophyPicker,
 };
 
-// the game on a platform where it has an id of its own (a title id in Xbox) the chosen achievements belong to
+// the game on a platform where it has an id of its own (a title id in Xbox, a trophy list in PSN) the chosen achievements belong to
 export type PlatformTitleChoice = {
     titleRef: string,
     name: string

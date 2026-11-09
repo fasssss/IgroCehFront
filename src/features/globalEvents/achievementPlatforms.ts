@@ -11,6 +11,7 @@ import type {
 export const AchievementPlatform = {
     Steam: 1,
     Xbox: 2,
+    Psn: 3,
 } as const;
 
 export type AchievementPlatform = typeof AchievementPlatform[keyof typeof AchievementPlatform];
@@ -26,11 +27,13 @@ export const isAchievementPlatform = (platform: number): platform is Achievement
 export const ACHIEVEMENT_PLATFORM_NAME: Record<AchievementPlatform, string> = {
     [AchievementPlatform.Steam]: 'Steam',
     [AchievementPlatform.Xbox]: 'Xbox',
+    [AchievementPlatform.Psn]: 'PlayStation',
 };
 
 export const ACHIEVEMENT_PLATFORM_ICON: Record<AchievementPlatform, string> = {
     [AchievementPlatform.Steam]: 'steam-icon',
     [AchievementPlatform.Xbox]: 'xbox-icon',
+    [AchievementPlatform.Psn]: 'psn-icon',
 };
 
 // mirrors Application.Consts.CatalogIds on backend: the catalog id of a game in Steam is its Steam app id,
@@ -43,12 +46,14 @@ export const isSteamAppId = (appId: number) => appId > 0 && appId < FIRST_OUTSID
 export const ACHIEVEMENT_PLATFORM_AVAILABLE: Record<AchievementPlatform, (appId: number) => boolean> = {
     [AchievementPlatform.Steam]: isSteamAppId,
     [AchievementPlatform.Xbox]: () => true,
+    [AchievementPlatform.Psn]: () => true,
 };
 
 // the account of the player on the platform, null while it isn't linked
 const ACHIEVEMENT_PLATFORM_ACCOUNT: Record<AchievementPlatform, (user: UserObject) => string | null> = {
     [AchievementPlatform.Steam]: user => user.steamId,
     [AchievementPlatform.Xbox]: user => user.xboxGamertag,
+    [AchievementPlatform.Psn]: user => user.psnOnlineId,
 };
 
 export const isLinkedOn = (user: UserObject, platform: AchievementPlatform) => !!ACHIEVEMENT_PLATFORM_ACCOUNT[platform](user);

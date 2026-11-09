@@ -41,6 +41,12 @@ const globalEventsApi = igroCehApi.injectEndpoints({
             query: (titleId) => ({ url: '/api/getXboxAchievements', params: { titleId } }),
             keepUnusedDataFor: 600,
         }),
+        // only for the administrator: the trophies of a game in PSN by the id of its trophy list, the answer has the ref with the service;
+        // 404 when there is no such list or it has no trophies, 503 when PSN doesn't answer or the site ran over its limit of requests
+        getPsnTrophies: build.query<GetPsnTrophiesResponse, string>({
+            query: (titleRef) => ({ url: '/api/getPsnTrophies', params: { titleRef } }),
+            keepUnusedDataFor: 600,
+        }),
         // 409 while another event is active, 400 when a platform or the catalog doesn't know a game or an achievement, 503 when they don't answer
         createGlobalEvent: build.mutation<GlobalEventResponse, CreateGlobalEventRequest>({
             query: postTo('/api/createGlobalEvent'),
@@ -148,7 +154,7 @@ async function setParticipation({ globalEventId }: GlobalEventRequest, { dispatc
 // an achievement that means a game of the event is passed, in both languages of the site
 export type GlobalEventAchievement = {
     platform: AchievementPlatform,
-    // the id of the achievement on the platform: the API name in Steam, the id in Xbox
+    // the id of the achievement on the platform: the API name in Steam, the id in Xbox and in PSN
     apiName: string,
     name: string,
     nameRu: string,
@@ -176,7 +182,7 @@ export type XboxTitle = {
     imageUrl: string | null
 }
 
-// the game on a platform where it has an id of its own (a title id in Xbox) its achievements belong to
+// the game on a platform where it has an id of its own (a title id in Xbox, the trophy list with its service in PSN) its achievements belong to
 export type GlobalEventGameTitle = {
     platform: AchievementPlatform,
     titleRef: string,
@@ -303,6 +309,13 @@ export type GetXboxTitleIdResponse = {
     titleId: string
 }
 
+export type GetPsnTrophiesResponse = {
+    // the id of the trophy list with the service that keeps it, e.g. NPWR20188_00/trophy2
+    titleRef: string,
+    titleName: string,
+    achievements: PlatformAchievement[]
+}
+
 export type GetXboxAchievementsResponse = {
     title: {
         titleId: string,
@@ -377,6 +390,7 @@ export const {
     useSearchXboxTitlesQuery,
     useLazyGetXboxTitleIdQuery,
     useGetXboxAchievementsQuery,
+    useGetPsnTrophiesQuery,
     useCreateGlobalEventMutation,
     useUpdateGlobalEventMutation,
     useSetGlobalEventImageMutation,

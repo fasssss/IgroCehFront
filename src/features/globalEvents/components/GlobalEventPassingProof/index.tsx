@@ -25,6 +25,14 @@ const errorStatus = (error: unknown) =>
 const PROFILE_HIDDEN_TEXT: Record<AchievementPlatform, string> = {
     [AchievementPlatform.Steam]: "The game details of your Steam profile are hidden: open them and check again",
     [AchievementPlatform.Xbox]: "Your achievements in Xbox are hidden: open them to everyone in the privacy settings of Xbox and check again",
+    [AchievementPlatform.Psn]: "Your trophies in PlayStation are hidden: open them to everyone in the privacy settings of PlayStation and check again",
+};
+
+// the API answers 503 for a platform that is down and for a limit of requests; PSN shares one limit for the whole site, so it may be just busy
+const UNAVAILABLE_TEXT: Record<AchievementPlatform, string> = {
+    [AchievementPlatform.Steam]: "{{platform}} doesn't answer, try later",
+    [AchievementPlatform.Xbox]: "{{platform}} doesn't answer, try later",
+    [AchievementPlatform.Psn]: "PSN doesn't answer or is busy, try later",
 };
 
 // the player proves the passing of the picked game: each platform with achievements of the game counts a chosen one unlocked after the pick
@@ -164,7 +172,7 @@ const PlatformPassingCheck = ({ globalEventId, platform, isLinked, checkableAt }
             // the participation is fetched again after a failure, so a check made too early shows the wait below
             const status = errorStatus(error);
             setCheckText(status === 429 ? null
-                : status === 503 ? t("{{platform}} doesn't answer, try later", { platform: name })
+                : status === 503 ? t(UNAVAILABLE_TEXT[platform], { platform: name })
                 : t("Something went wrong, try again"));
         }
     };

@@ -138,8 +138,8 @@ const GlobalEventConstructor = ({ globalEvent, isImageFailed }: GlobalEventConst
         isConflictError(error) && globalEvent && conflictText(error).includes("badge") ? t("Players have got the badge already, it can't change")
         : isConflictError(error) && globalEvent ? t("Players have rolled the games already, the games and the achievements can't change")
         : isConflictError(error) ? t("Another global event is active, finish it first")
-        : errorStatus(error) === 400 ? t("Steam, Xbox or the catalog doesn't know a game or an achievement, check the games")
-        : errorStatus(error) === 503 ? t("Steam, Xbox or the catalog doesn't answer, try later")
+        : errorStatus(error) === 400 ? t("A platform or the catalog doesn't know a game or an achievement, check the games")
+        : errorStatus(error) === 503 ? t("A platform or the catalog doesn't answer, try later")
         : t("Couldn't save the event, try again");
 
     // the image goes with its own request after the event is saved

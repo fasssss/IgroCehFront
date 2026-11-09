@@ -1,0 +1,49 @@
+@use '../../../../shared/default.module.scss' as default;
+
+$muted-text: rgba(255, 255, 255, 0.7);
+$failed: #ef6a5a;
+
+.psn-trophy-picker {
+    display: flex;
+    flex-direction: column;
+    gap: default.$margin_small;
+}
+
+.psn-trophy-picker__message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: default.$margin_small;
+    padding: default.$padding_big;
+    color: $muted-text;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.psn-trophy-picker__hint {
+    color: $muted-text;
+}
+
+.psn-trophy-picker__error {
+    color: $failed;
+}
+
+// MUI resets the margin of CommonButton
+.psn-trophy-picker__search,
+.psn-trophy-picker__title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: default.$margin_small;
+}
+
+.psn-trophy-picker__query {
+    flex: 1 1 240px;
+    min-width: 0;
+}
+
+.psn-trophy-picker__title {
+    justify-content: space-between;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
