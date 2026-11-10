@@ -16,8 +16,8 @@ RUN npm run build -- --mode ${BUILD_MODE}
 FROM nginx:1.27-alpine
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY ["./igroceh.xyz+5.pem", "/etc/nginx/certs/igroceh.pem"]
-COPY ["./igroceh.xyz+5-key.pem", "/etc/nginx/certs/igroceh-key.pem"]
+COPY ["./gamews-quest.pem", "/etc/nginx/certs/gamews-quest.pem"]
+COPY ["./gamews-quest-key.pem", "/etc/nginx/certs/gamews-quest-key.pem"]
 COPY --from=build /app/dist /usr/share/nginx/html
 
 EXPOSE 5173
