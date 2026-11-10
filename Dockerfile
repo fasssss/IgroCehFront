@@ -12,8 +12,16 @@ COPY . .
 ARG BUILD_MODE=production
 RUN npm run build -- --mode ${BUILD_MODE}
 
-# Serve stage: static files over https, unknown paths fall back to index.html for client side routing
-FROM nginx:1.27-alpine
+# Server stage: plain http on 80 behind the nginx of the server, which holds the certificate
+FROM nginx:1.27-alpine AS production
+
+COPY nginx.prod.config /etc/nginx/conf.d/default.conf
+COPY --from=build /app/dist /usr/share/nginx/html
+
+EXPOSE 80
+
+# Local stage: static files over https, unknown paths fall back to index.html for client side routing
+FROM nginx:1.27-alpine AS final
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY ["./gamews-quest.pem", "/etc/nginx/certs/gamews-quest.pem"]
