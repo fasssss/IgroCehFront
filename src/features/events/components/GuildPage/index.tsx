@@ -4,23 +4,33 @@ import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp
 import { useEffect, useState } from "react";
 import { CircularProgress, Fab, FormControlLabel, Switch, TextField } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { skipToken } from "@reduxjs/toolkit/query";
 import { CommonButton } from "root/shared/components/CommonButton";
 import { CommonModal } from "root/shared/components/CommonModal";
 import { useGetGuildByIdQuery } from "root/features/guilds/guildsApi";
 import { usePostNewEventMutation,
+    useGetEventSeasonsQuery,
     useLazyGetEventsByGuildIdQuery } from "../../eventsApi";
 import { EventTile } from "../EventTile";
+import { formatSeasonDate } from "../../seasons";
 import './styles.scss';
 
 const GuildPage = () => {
     const { guildId = "" } = useParams();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const navigate = useNavigate();
     const getGuildById = useGetGuildByIdQuery({ guildId });
     const [postNewEvent, postNewEventResult] = usePostNewEventMutation();
     const [getEventsList, eventsList] = useLazyGetEventsByGuildIdQuery();
     const [isCreateNewOpened, setIsCreateNewOpened] = useState(false);
     const [eventToCreate, setEventToCreate] = useState({ eventName: "", allowsNewcomers: true });
+    // asked on every opening of the creation, the seasons move on with the months
+    const eventSeasons = useGetEventSeasonsQuery(isCreateNewOpened ? undefined : skipToken);
+    // until the creator touches the switch it shows the season the server offers
+    const [isNextSeasonChosen, setIsNextSeasonChosen] = useState<boolean | null>(null);
+    const isNextSeason = isNextSeasonChosen ?? eventSeasons.data?.isNextByDefault ?? false;
+    const season = eventSeasons.data && (isNextSeason ? eventSeasons.data.next : eventSeasons.data.current);
+    const seasonDates = season && { start: formatSeasonDate(season.start, i18n.language), end: formatSeasonDate(season.end, i18n.language) };
     const [isScrollUpButtonShown, setIsScrollUpButtonShown] = useState(false);
     const [isScrolledDown, setIsScrolledDown] = useState(false);
 
@@ -67,9 +77,15 @@ const GuildPage = () => {
         }
     }, [isScrolledDown]);
 
+    // without the seasons the switch isn't shown, and the server takes the season it offers
     const createEvent = async () => {
-        const { eventId } = await postNewEvent({ guildId, ...eventToCreate }).unwrap();
+        const { eventId } = await postNewEvent({ guildId, ...eventToCreate, isNextSeason: season ? isNextSeason : undefined }).unwrap();
         navigate(`/guild/${guildId}/event/${eventId}`);
+    };
+
+    const closeCreation = () => {
+        setIsCreateNewOpened(false);
+        setIsNextSeasonChosen(null);
     };
 
     return (
@@ -119,7 +135,7 @@ const GuildPage = () => {
             {
                 isCreateNewOpened &&
                 <CommonModal name={ t("Create new event") }
-                    onClose={() => setIsCreateNewOpened(false)} 
+                    onClose={closeCreation}
                     onConfirm={createEvent}
                 >
                     {
@@ -128,8 +144,33 @@ const GuildPage = () => {
                             <TextField value={eventToCreate.eventName} 
                             onChange={(e) => setEventToCreate({ ...eventToCreate, eventName: e.target.value })} 
                             fullWidth variant="outlined" 
-                            label={ t("Event name") } 
+                            label={ t("Event name") }
                             />
+                            {
+                                seasonDates ?
+                                <>
+                                    <FormControlLabel
+                                    control={
+                                        <Switch
+                                        checked={isNextSeason}
+                                        onChange={(e) => setIsNextSeasonChosen(e.target.checked)} />
+                                    }
+                                    label={t("Plan for the next season")} />
+                                    <div className="guild-page__create-event-hint">
+                                        {
+                                            isNextSeason ?
+                                            t("The season of the event is {{start}} – {{end}}. The registration lasts until it starts.", seasonDates)
+                                            :
+                                            t("The season of the event is {{start}} – {{end}}. Points for passing are counted from its start.", seasonDates)
+                                        }
+                                    </div>
+                                </>
+                                :
+                                eventSeasons.isFetching &&
+                                <div className="guild-page__create-event-spinner">
+                                    <CircularProgress size={24} color="primary" />
+                                </div>
+                            }
                             <FormControlLabel
                             control={
                                 <Switch

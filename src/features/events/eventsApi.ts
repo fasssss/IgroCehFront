@@ -48,6 +48,12 @@ const eventsApi = igroCehApi.injectEndpoints({
         postNewEvent: build.mutation<PostNewEventResponse, PostNewEventRequest>({
             query: postTo('/api/postNewEvent'),
         }),
+        // the seasons a new event can go to, counted by the server; the cache is dropped at once, so every opening of the creation asks again
+        getEventSeasons: build.query<EventSeasons, void>({
+            query: () => '/api/getEventSeasons',
+            keepUnusedDataFor: 1,
+            transformResponse: (response: GetEventSeasonsResponse) => response.seasons,
+        }),
         joinEvent: build.mutation<JoinEventResponse, JoinEventRequest>({
             query: postTo('/api/joinEvent'),
             invalidatesTags: invalidateEvent,
@@ -174,6 +180,8 @@ export type EventObject = {
     statusId: EventStatus,
     // participants fill a pool of games for newcomers who join after the start
     allowsNewcomers: boolean,
+    // an event planned for the next season stays in the registration until it starts
+    seasonStartsAt: string,
     eventRecords: EventRecord[],
     // set by the event room when an admin deletes the opened event
     isDeleted?: boolean
@@ -216,7 +224,26 @@ export type RemoveFromEventResponse = {
 export type PostNewEventRequest = {
     guildId: string,
     eventName: string,
-    allowsNewcomers: boolean
+    allowsNewcomers: boolean,
+    // false puts the event into the current season; without it the server takes the season it offers by default
+    isNextSeason?: boolean
+}
+
+export type EventSeason = {
+    start: string,
+    // the start of the following season
+    end: string
+}
+
+export type EventSeasons = {
+    current: EventSeason,
+    next: EventSeason,
+    // the last month of a season offers the next one
+    isNextByDefault: boolean
+}
+
+export type GetEventSeasonsResponse = {
+    seasons: EventSeasons
 }
 
 export type PostNewEventResponse = {
@@ -320,6 +347,7 @@ export type DeleteEventRequest = {
 
 export const {
     usePostNewEventMutation,
+    useGetEventSeasonsQuery,
     useLazyGetEventsByGuildIdQuery,
     useJoinEventMutation,
     useRemoveFromEventMutation,

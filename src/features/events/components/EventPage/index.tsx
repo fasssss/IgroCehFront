@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom"
 import { ArrowForwardIos, Logout, SportsEsportsOutlined } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
@@ -17,10 +17,13 @@ import { useGetNewcomerPoolQuery } from "../../newcomerPoolApi";
 import { newcomerPoolPath } from "../../newcomerPoolPath";
 import type { NewcomerPoolPageState } from "../NewcomerPoolPage";
 import type { EventStageProps } from "../EventStageRouter";
+import { formatSeasonDate } from "../../seasons";
 import './styles.scss';
 
 // mirrors MinPlayersCount on backend: with fewer players there is nobody to guess a game for
 const MIN_PLAYERS_COUNT = 2;
+// the longest delay setTimeout keeps, about 24.8 days; a page opened earlier sees the season start after a reload
+const MAX_TIMEOUT_DELAY = 2 ** 31 - 1;
 
 // players registration stage
 const EventPage = ({ event, currentUser }: EventStageProps) => {
@@ -30,7 +33,11 @@ const EventPage = ({ event, currentUser }: EventStageProps) => {
     const [joinEvent] = useJoinEventMutation();
     const [removeFromEvent] = useRemoveFromEventMutation();
     const [moveEventToNextStage] = useMoveEventToNextStageMutation()
-    const { t } = useTranslation()
+    const { t, i18n } = useTranslation()
+    // an event planned for the next season gathers players until its season starts, the backend checks it too;
+    // the comparisons are negated so a missing date doesn't hold the move
+    const seasonStartsAt = Date.parse(event.seasonStartsAt);
+    const [hasSeasonStarted, setHasSeasonStarted] = useState(() => !(Date.now() < seasonStartsAt));
     const isCreator = event.eventCreatorId === currentUser.id;
     const isParticipant = event.eventRecords.some(record => record.participant.id === currentUser.id);
     const hasEnoughPlayers = event.eventRecords.length >= MIN_PLAYERS_COUNT;
@@ -47,6 +54,18 @@ const EventPage = ({ event, currentUser }: EventStageProps) => {
     // proposal is shown only on opening, so a kicked participant doesn't get it
     const [isJoinProposalShown, setIsJoinProposalShown] = useState(!isParticipant);
     const [isNextStageConfirmShown, setIsNextStageConfirmShown] = useState(false);
+
+    // the page left open across the start of the season unlocks the move by itself
+    useEffect(() => {
+        const delay = seasonStartsAt - Date.now();
+        setHasSeasonStarted(!(delay > 0));
+        if(!(delay > 0) || delay > MAX_TIMEOUT_DELAY) {
+            return;
+        }
+
+        const timer = setTimeout(() => setHasSeasonStarted(true), delay);
+        return () => clearTimeout(timer);
+    }, [seasonStartsAt]);
 
     const leaveEvent = async () => {
         await removeFromEvent({ userId: currentUser.id, eventId: event.id }).unwrap();
@@ -71,6 +90,12 @@ const EventPage = ({ event, currentUser }: EventStageProps) => {
                 </div>
                 <div className="event-page__header-buttons">
                     {
+                        !hasSeasonStarted &&
+                        <div className="event-page__hint">
+                            {t("The season starts on {{date}}, the registration lasts until then", { date: formatSeasonDate(event.seasonStartsAt, i18n.language) })}
+                        </div>
+                    }
+                    {
                         isCreator && nextStageHint &&
                         <div className="event-page__hint">{nextStageHint}</div>
                     }
@@ -89,7 +114,7 @@ const EventPage = ({ event, currentUser }: EventStageProps) => {
                         <CommonButton
                         onClick={() => setIsNextStageConfirmShown(true)}
                         color="success"
-                        disabled={!hasEnoughPlayers || !hasEnoughPoolGames}
+                        disabled={!hasSeasonStarted || !hasEnoughPlayers || !hasEnoughPoolGames}
                         endIcon={<ArrowForwardIos />}>
                             {t("Travel to Auction!")}
                         </CommonButton>
