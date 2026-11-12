@@ -1,0 +1,119 @@
+@use '../../../../shared/styles' as ds;
+
+.fest-passing {
+    display: flex;
+    flex-direction: column;
+    gap: ds.space(12);
+    min-width: 0;
+}
+
+.fest-passing__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: ds.space(16) 40px;
+}
+
+.fest-passing__claim {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+    min-width: 0;
+}
+
+// the field of the layout: 495px on white 5%, the platform of the claim before the link and the hint after it
+.fest-passing__field {
+    display: flex;
+    align-items: center;
+    gap: ds.space(12);
+    width: 495px;
+    max-width: 100%;
+    height: 60px;
+    box-sizing: border-box;
+    padding: 0 20px;
+    background-color: ds.white(5);
+
+    &:focus-within {
+        outline: 1px solid ds.$accent-brand;
+    }
+}
+
+.fest-passing__platform,
+.fest-passing__profile {
+    @include ds.small;
+    border: none;
+    background: none;
+    color: ds.$text-primary;
+    outline: none;
+}
+
+.fest-passing__platform {
+    flex-shrink: 0;
+    color: ds.white(60);
+    cursor: pointer;
+
+    option {
+        background-color: ds.$surface-raised;
+        color: ds.$text-primary;
+    }
+}
+
+.fest-passing__profile {
+    flex: 1;
+    min-width: 0;
+
+    &::placeholder {
+        color: ds.white(30);
+    }
+}
+
+.fest-passing__hint {
+    font-family: ds.$font-family;
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1;
+    flex-shrink: 0;
+    color: ds.white(60);
+    cursor: help;
+
+    &:focus-visible {
+        outline: 2px solid ds.$accent-brand;
+        outline-offset: 2px;
+    }
+}
+
+.fest-passing__separator {
+    font-family: ds.$font-family;
+    font-size: 20px;
+    font-weight: 300;
+    line-height: 1;
+    opacity: .3;
+}
+
+.fest-passing__checks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: ds.space(12);
+}
+
+.fest-passing__messages,
+.fest-passing__message {
+    @include ds.caption;
+    margin: 0;
+    color: ds.white(60);
+}
+
+.fest-passing__messages {
+    display: flex;
+    flex-direction: column;
+    gap: ds.space(4);
+    padding: 0;
+    list-style: none;
+}
+
+@media (max-width: 600px) {
+    .fest-passing__separator {
+        display: none;
+    }
+}

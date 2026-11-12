@@ -75,7 +75,6 @@
         "profile.tabs.ladder": "Ladder",
         "profile.tabs.guilds": "Communities",
         "profile.tabs.games": "My games",
-        "profile.ladderSoon": "The current games and the history of the Igrofest and the Regular roster will be here.",
         "profile.gamesSoon": "The passed and the guessed games, their scores and the favorite games will be here.",
         "profile.noGuilds": "No communities in common yet",
         "history.active": "Active",
@@ -88,7 +87,18 @@
         "history.points_other": "points",
         "history.notPassedYet": "Not passed yet",
         "history.forPlayer": "For",
-        "history.fromPlayer": "From"
+        "history.fromPlayer": "From",
+        "ladder.currentMine": "My current ladder games",
+        "ladder.current": "Current ladder games",
+        "ladder.history": "Ladder games history",
+        "ladder.fest": "Igrofest",
+        "ladder.regular": "Regular roster",
+        "ladder.festOf": "Igrofest: «{{name}}»",
+        "ladder.freeSlot": "Free slot",
+        "ladder.takeGame": "Take a game",
+        "ladder.regularSoon": "The Regular roster",
+        "ladder.noPassed": "No passed ladder games yet",
+        "ladder.passed": "Passed"
     },
     "ru": {
         "Playing since {{date}}": "Играет с {{date}}",
@@ -185,7 +195,6 @@
         "profile.tabs.ladder": "Ладдер",
         "profile.tabs.guilds": "Сообщества",
         "profile.tabs.games": "Мои игры",
-        "profile.ladderSoon": "Здесь будут текущие игры и история Игрофеста и Регулярного ростера.",
         "profile.gamesSoon": "Здесь будут пройденные и загаданные игры, их оценки и любимые игры.",
         "profile.noGuilds": "Общих сообществ пока нет",
         "history.active": "Активен",
@@ -202,6 +211,17 @@
         "history.points_other": "балла",
         "history.notPassedYet": "Пока не пройдено",
         "history.forPlayer": "Для игрока",
-        "history.fromPlayer": "От игрока"
+        "history.fromPlayer": "От игрока",
+        "ladder.currentMine": "Мои текущие игры ладдера",
+        "ladder.current": "Текущие игры ладдера",
+        "ladder.history": "История игр ладдера",
+        "ladder.fest": "Игрофест",
+        "ladder.regular": "Регулярка",
+        "ladder.festOf": "Игрофест: «{{name}}»",
+        "ladder.freeSlot": "Свободный слот",
+        "ladder.takeGame": "Взять игру",
+        "ladder.regularSoon": "Регулярный ростер",
+        "ladder.noPassed": "Пройденных игр ладдера пока нет",
+        "ladder.passed": "Пройдено"
     }
 }

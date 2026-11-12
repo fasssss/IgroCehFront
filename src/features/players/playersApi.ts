@@ -1,6 +1,7 @@
 import { igroCehApi } from "root/shared/igroCehApi";
 import type { EventStatus } from "root/shared/constants";
 import type { GameObject, UserShortObject } from "root/features/events/eventsApi";
+import type { AchievementPlatform } from "root/features/globalEvents/achievementPlatforms";
 
 // profile is built from the guilds shared with the current user, other players get 404
 const playersApi = igroCehApi.injectEndpoints({
@@ -27,6 +28,10 @@ const playersApi = igroCehApi.injectEndpoints({
                 currentCache.hasMore = response.hasMore;
             },
             forceRefetch: ({ currentArg, previousArg }) => currentArg?.startFrom !== previousArg?.startFrom,
+        }),
+        // the Igrofest games of the player for the ladder tab, seen by the same players as the profile
+        getPlayerLadder: build.query<GetPlayerLadderResponse, string>({
+            query: (userId) => ({ url: '/api/getPlayerLadder', params: { userId } }),
         }),
         // genres and release periods to pick preferences from
         getPreferenceTags: build.query<GetPreferenceTagsResponse, void>({
@@ -159,6 +164,26 @@ export type GetPlayerHistoryResponse = {
     hasMore: boolean
 }
 
+// a game of the Igrofest (a global event) the player picked
+export type PlayerFestGame = {
+    game: Pick<GameObject, 'id' | 'name' | 'imageUrl' | 'steamUrl'>,
+    globalEventId: string,
+    globalEventName: string,
+    pickedAt: string | null,
+    passedAt: string | null,
+    // the platform of the automatic check, null for a passing confirmed by an administrator
+    passedPlatform: AchievementPlatform | null
+}
+
+export type GetPlayerLadderResponse = {
+    fest: {
+        // the picked and not yet passed game of the active global event
+        current: PlayerFestGame | null,
+        // the latest first
+        passed: PlayerFestGame[]
+    }
+}
+
 // the name is shown in the language of the site, see usePreferenceTagName
 export type PreferenceTag = {
     id: number,
@@ -184,6 +209,7 @@ export type SetPreferencesRequest = PlayerPreferences & {
 export const {
     useGetPlayerProfileQuery,
     useGetPlayerHistoryQuery,
+    useGetPlayerLadderQuery,
     useGetPreferenceTagsQuery,
     useGetPlayerPreferencesQuery,
     useSetPreferencesMutation

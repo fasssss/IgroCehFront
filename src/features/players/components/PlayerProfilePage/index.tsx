@@ -16,6 +16,8 @@ import { ProfileHero } from "../ProfileHero";
 import { PlayerGuilds } from "../PlayerGuilds";
 import { PlayerHistory } from "../PlayerHistory";
 import { ProfileSoon } from "../ProfileSoon";
+import { PlayerLadder } from "../PlayerLadder";
+import { useCurrentUser } from "root/features/authorization/authorizationApi";
 import './styles.scss';
 
 // the layouts have no active icon of the guilds, the tab keeps its usual one
@@ -39,6 +41,7 @@ const PlayerProfilePage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const tab = toProfileTab(searchParams.get('tab'));
     const { t } = useTranslation();
+    const isOwn = useCurrentUser()?.id === userId;
     const profileQuery = useGetPlayerProfileQuery({ userId }, { refetchOnMountOrArgChange: true });
     // data of another player isn't shown while the new one is loading
     const profile = profileQuery.data?.playerProfile.id === userId ? profileQuery.data.playerProfile : undefined;
@@ -65,7 +68,7 @@ const PlayerProfilePage = () => {
     const panels: Record<ProfileTab, ReactNode> = {
         // another player starts with the first page of their history
         history: <PlayerHistory key={userId} userId={userId} />,
-        ladder: <ProfileSoon title={t('profile.tabs.ladder')} text={t('profile.ladderSoon')} />,
+        ladder: <PlayerLadder key={userId} userId={userId} isOwn={isOwn} />,
         guilds:
             <div className="player-profile__guilds">
                 {

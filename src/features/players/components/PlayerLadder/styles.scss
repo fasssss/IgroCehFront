@@ -1,0 +1,246 @@
+@use '../../../../shared/styles' as ds;
+
+// the numbered headings of the parts of the tab ("1 / Мои текущие игры ладдера")
+.player-ladder__heading {
+    @include ds.small;
+    line-height: 1;
+    margin: 0;
+    padding: 26px ds.$page-gutter;
+    color: ds.white(50);
+    text-transform: uppercase;
+}
+
+.player-ladder__heading-slash {
+    font-weight: 300;
+    margin: 0 ds.space(4);
+}
+
+.player-ladder__body {
+    padding: 60px ds.$page-gutter 80px;
+    border-bottom: 1px solid ds.white(20);
+}
+
+.player-ladder__group + .player-ladder__group {
+    margin-top: 80px;
+}
+
+// the title of a group with the dashed line after it
+.player-ladder__group-title {
+    @include ds.small;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 ds.space(24);
+    color: ds.white(50);
+    text-transform: uppercase;
+}
+
+.player-ladder__group-line {
+    flex: 1;
+    border-top: 1px dashed ds.white(10);
+}
+
+.player-ladder__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: ds.space(24);
+    padding: ds.space(32) 0;
+    border-bottom: 1px dashed ds.white(10);
+}
+
+.player-ladder__row--soon {
+    opacity: .6;
+}
+
+.player-ladder__game {
+    display: flex;
+    align-items: center;
+    gap: ds.space(24);
+    min-width: 0;
+}
+
+.player-ladder__cover {
+    width: 104px;
+    height: 104px;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    object-fit: cover;
+}
+
+// the cover of a game is framed in white, the free slot isn't
+.player-ladder__cover--game {
+    border: 1px solid ds.$text-primary;
+}
+
+.player-ladder__cover--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: ds.$surface-raised;
+    color: ds.white(40);
+}
+
+.player-ladder__game-text {
+    display: flex;
+    flex-direction: column;
+    gap: ds.space(12);
+    min-width: 0;
+}
+
+.player-ladder__game-name {
+    font-family: ds.$font-family;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: ds.space(8);
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+}
+
+.player-ladder__game-event,
+.player-ladder__game-date {
+    @include ds.label;
+    line-height: 1;
+    color: ds.white(30);
+}
+
+.player-ladder__game-event {
+    text-decoration: none;
+
+    &:hover {
+        color: ds.$text-primary;
+        text-decoration: underline;
+    }
+}
+
+.player-ladder__free {
+    font-family: ds.$font-family;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: ds.space(12);
+    color: ds.white(60);
+    text-transform: uppercase;
+}
+
+.player-ladder__take {
+    width: 314px;
+    max-width: 100%;
+}
+
+.player-ladder__loader {
+    display: flex;
+    justify-content: center;
+    padding: ds.space(32);
+}
+
+// ten covers in a row as in the layout, fewer on a narrower screen
+.player-ladder__history {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(146px, 1fr));
+    gap: ds.space(24) 22px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.player-ladder__passed {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: ds.space(24);
+    min-width: 0;
+}
+
+.player-ladder__passed-number {
+    font-family: ds.$font-family;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1;
+    color: ds.white(30);
+}
+
+// the passed covers are dim as in the layout and light up on hover
+.player-ladder__card {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    color: ds.$text-primary;
+    text-decoration: none;
+    opacity: .3;
+    transition: opacity .2s;
+
+    &:hover,
+    &:focus-visible {
+        opacity: 1;
+    }
+
+    &:focus-visible {
+        outline: 2px solid ds.$accent-brand;
+        outline-offset: 2px;
+    }
+}
+
+.player-ladder__card-cover {
+    width: 100%;
+    aspect-ratio: 146 / 200;
+    box-sizing: border-box;
+    border: 1px solid ds.$surface-raised;
+    object-fit: cover;
+}
+
+.player-ladder__card-name {
+    @include ds.small;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 72px;
+    box-sizing: border-box;
+    margin-top: -1px;
+    padding: ds.space(12);
+    border: 1px solid ds.$surface-raised;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.player-ladder__passed-status {
+    @include ds.small;
+    color: ds.$status-success;
+}
+
+.player-ladder__empty {
+    @include ds.body;
+    margin: 0;
+    color: ds.white(40);
+}
+
+@media (max-width: 1600px) {
+    .player-ladder__heading {
+        padding: 26px ds.space(48);
+    }
+
+    .player-ladder__body {
+        padding: ds.space(48);
+    }
+}
+
+@media (max-width: 600px) {
+    .player-ladder__heading {
+        padding: ds.space(24) ds.space(16);
+    }
+
+    .player-ladder__body {
+        padding: ds.space(32) ds.space(16);
+    }
+
+    .player-ladder__history {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
