@@ -2,7 +2,7 @@ import { PropsWithChildren } from "react";
 import { useTranslation } from "react-i18next";
 import './styles.scss';
 
-// a section of the side column of the profile hero (layout 20648:773): the title and, for the owner, the switch of the editor;
+// a section of the profile, e.g. of the side column of the hero (layout 20648:773): the title and, for the owner, the switch of the editor;
 // the content goes under them, `profile-section__tags` and `profile-section__empty` give it the look of the layout
 const ProfileSection = ({ title, isEditing = false, onEditToggle, className, children }: PropsWithChildren<ProfileSectionProps>) => {
     const { t } = useTranslation();

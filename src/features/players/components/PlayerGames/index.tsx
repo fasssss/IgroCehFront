@@ -9,17 +9,21 @@ import { reviewPath } from "root/features/reviews/reviewPath";
 import { ReviewScore } from "root/features/reviews/components/ReviewScore";
 import { PlayerGame, PlayerGamesKind, PlayerGamesSort, useGetPlayerGamesQuery } from "../../playersApi";
 import { playerProfilePath } from "../../playerProfilePath";
+import { FavoriteGames } from "../FavoriteGames";
 import './styles.scss';
 
 // the tab "Мои игры" of the profile (layout 20648:1641): the games the player passed with their reviews and scores,
-// and the games they guessed for others
+// the games they guessed for others and their favorite games under them
 const PlayerGames = ({ userId }: PlayerGamesProps) => {
     const { t } = useTranslation();
     return(
-        <div className="player-games">
-            <GamesList userId={userId} kind={PlayerGamesKind.Passed} title={t('games.passed')} />
-            <GamesList userId={userId} kind={PlayerGamesKind.Guessed} title={t('games.guessed')} />
-        </div>
+        <>
+            <div className="player-games">
+                <GamesList userId={userId} kind={PlayerGamesKind.Passed} title={t('games.passed')} />
+                <GamesList userId={userId} kind={PlayerGamesKind.Guessed} title={t('games.guessed')} />
+            </div>
+            <FavoriteGames userId={userId} />
+        </>
     );
 }
 

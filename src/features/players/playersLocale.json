@@ -110,7 +110,15 @@
         "games.review": "Review",
         "games.showMore": "Show more",
         "games.noPassed": "No passed games yet",
-        "games.noGuessed": "No guessed games yet"
+        "games.noGuessed": "No guessed games yet",
+        "favorites.title": "Favorite games",
+        "favorites.empty": "Add up to {{count}} games you love",
+        "favorites.full": "The list is full, remove a game to add another",
+        "favorites.adding": "Adding the game…",
+        "favorites.alreadyAdded": "This game is already in the list",
+        "favorites.addFailed": "Couldn't add the game, try again",
+        "favorites.searchUnavailable": "Search is unavailable, try later",
+        "favorites.remove": "Remove {{name}}"
     },
     "ru": {
         "Playing since {{date}}": "Играет с {{date}}",
@@ -246,6 +254,14 @@
         "games.review": "Отзыв",
         "games.showMore": "Показать ещё",
         "games.noPassed": "Пройденных игр пока нет",
-        "games.noGuessed": "Загаданных игр пока нет"
+        "games.noGuessed": "Загаданных игр пока нет",
+        "favorites.title": "Любимые игры",
+        "favorites.empty": "Добавьте до {{count}} любимых игр",
+        "favorites.full": "Список полон, уберите игру, чтобы добавить другую",
+        "favorites.adding": "Добавляем игру…",
+        "favorites.alreadyAdded": "Эта игра уже в списке",
+        "favorites.addFailed": "Не удалось добавить игру, попробуйте ещё раз",
+        "favorites.searchUnavailable": "Поиск недоступен, попробуйте позже",
+        "favorites.remove": "Убрать {{name}}"
     }
 }
