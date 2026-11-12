@@ -8,6 +8,7 @@ import { Provider } from 'react-redux';
 import { store } from './shared/store';
 import './shared/localization';
 import './index.css';
+import './shared/styles/root.scss';
 
 createRoot(document.getElementById('root')!).render(
     <Provider store={store}>

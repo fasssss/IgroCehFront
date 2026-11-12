@@ -1,0 +1,51 @@
+// text styles "ИГРОЦЕХ/…" of the design system, size / line height · weight
+
+$font-family: 'Akrobat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+@mixin text($size, $line-height, $weight) {
+    font-family: $font-family;
+    font-size: $size;
+    line-height: $line-height;
+    font-weight: $weight;
+    letter-spacing: 0;
+}
+
+// 80 / 88 · Bold
+@mixin display {
+    @include text(80px, 88px, 700);
+}
+
+// 48 / 56 · Bold
+@mixin h1 {
+    @include text(48px, 56px, 700);
+}
+
+// 36 / 44 · Bold
+@mixin h2 {
+    @include text(36px, 44px, 700);
+}
+
+// 24 / 32 · Bold
+@mixin h3 {
+    @include text(24px, 32px, 700);
+}
+
+// 20 / 28 · Regular
+@mixin body {
+    @include text(20px, 28px, 400);
+}
+
+// 20 / 24 · Bold
+@mixin label {
+    @include text(20px, 24px, 700);
+}
+
+// 16 / 20 · Bold
+@mixin small {
+    @include text(16px, 20px, 700);
+}
+
+// 14 / 20 · Regular
+@mixin caption {
+    @include text(14px, 20px, 400);
+}

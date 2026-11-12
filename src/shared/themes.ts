@@ -1,5 +1,6 @@
 import { createTheme } from "@mui/material/styles";
 import styles from 'root/shared/default.module.scss';
+import tokens from 'root/shared/styles/tokens.module.scss';
 
 //can be customized like on this Docs page https://mui.com/material-ui/customization/palette/
 export const themes = createTheme({
@@ -13,6 +14,10 @@ export const themes = createTheme({
     },
     warning: {
       main: styles.yellow
+    },
+    // the base of the new design system; the old pages keep their own panels on it
+    background: {
+      default: tokens.backgroundBase
     }
   },
   typography: {

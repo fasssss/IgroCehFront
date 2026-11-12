@@ -1,0 +1,4 @@
+// the design system for the components: @use '<relative path>/shared/styles' as ds;
+@forward 'tokens';
+@forward 'typography';
+@forward 'base';

@@ -1,0 +1,166 @@
+@use '../../styles' as ds;
+
+.footer {
+    @include ds.reset-legacy-images;
+    background-color: ds.$background-base;
+    overflow: hidden;
+}
+
+// the line of dots with the "pacman" is wider than any screen and stays centered
+.footer__dots {
+    position: relative;
+    height: 42px;
+}
+
+.footer__dots-image {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    display: block;
+    transform: translateX(-50%);
+}
+
+.footer__content {
+    display: flex;
+    align-items: stretch;
+    min-height: 502px;
+    box-sizing: border-box;
+    padding: 0 ds.$page-gutter;
+}
+
+.footer__about {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: ds.space(48);
+    width: 266px;
+    padding-right: ds.space(64);
+    border-right: 1px solid ds.white(10);
+}
+
+.footer__logo {
+    display: flex;
+    align-items: center;
+    gap: ds.space(4);
+    color: ds.$text-primary;
+    text-decoration: none;
+}
+
+.footer__logo-text {
+    font-family: ds.$font-family;
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.footer__logo-accent {
+    color: ds.$accent-brand;
+}
+
+.footer__about-text {
+    display: flex;
+    flex-direction: column;
+    gap: ds.space(16);
+}
+
+.footer__copyright {
+    font-family: ds.$font-family;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.footer__copyright-line {
+    font-weight: 300;
+    color: ds.white(60);
+}
+
+.footer__description {
+    margin: 0;
+    font-family: ds.$font-family;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.2;
+    color: ds.white(60);
+}
+
+// both columns of links start at the same line, the menu is centered in the footer
+.footer__menu {
+    display: flex;
+    align-items: flex-start;
+    align-self: center;
+    gap: 80px;
+    padding-left: ds.space(64);
+}
+
+.footer__links {
+    display: flex;
+    flex-direction: column;
+    gap: ds.space(24);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.footer__link {
+    font-family: ds.$font-family;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    gap: ds.space(8);
+    color: ds.$text-primary;
+    text-decoration: none;
+    text-transform: uppercase;
+    white-space: nowrap;
+
+    &:hover {
+        color: ds.$accent-brand;
+    }
+
+    &:focus-visible {
+        outline: 2px solid ds.$accent-brand;
+        outline-offset: 4px;
+    }
+}
+
+.footer__link--secondary {
+    color: ds.white(50);
+}
+
+.footer__link-icon {
+    display: block;
+    flex-shrink: 0;
+}
+
+@media (max-width: 1200px) {
+    .footer__content {
+        padding: 0 ds.space(48);
+    }
+}
+
+@media (max-width: 900px) {
+    .footer__content {
+        flex-direction: column;
+        gap: ds.space(48);
+        min-height: 0;
+        padding: ds.space(48) ds.space(16);
+    }
+
+    .footer__about {
+        width: auto;
+        padding: 0 0 ds.space(48);
+        border-right: none;
+        border-bottom: 1px solid ds.white(10);
+    }
+
+    .footer__menu {
+        flex-direction: column;
+        align-self: flex-start;
+        gap: ds.space(24);
+        padding-left: 0;
+    }
+}

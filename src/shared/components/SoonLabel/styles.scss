@@ -1,0 +1,11 @@
+@use '../../styles' as ds;
+
+.soon-label {
+    @include ds.caption;
+    padding: 0 ds.space(8);
+    border: 1px solid ds.white(20);
+    border-radius: ds.radius(64);
+    color: ds.white(50);
+    text-transform: lowercase;
+    white-space: nowrap;
+}

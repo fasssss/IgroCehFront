@@ -1,0 +1,27 @@
+@use '../../styles' as ds;
+
+.status-pill {
+    @include ds.small;
+    display: inline-flex;
+    align-items: center;
+    padding: ds.space(4) ds.space(12);
+    border-radius: ds.radius(64);
+    color: ds.$background-base;
+    white-space: nowrap;
+}
+
+.status-pill--success {
+    background-color: ds.$status-success;
+}
+
+.status-pill--info {
+    background-color: ds.$status-info;
+}
+
+.status-pill--error {
+    background-color: ds.$status-error;
+}
+
+.status-pill--warning {
+    background-color: ds.$status-warning;
+}

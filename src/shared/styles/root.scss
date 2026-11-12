@@ -1,0 +1,20 @@
+@use 'sass:map';
+@use 'tokens';
+
+// imported once in main.tsx: the custom properties behind the tokens and the base background of every page
+:root {
+    @each $name, $value in tokens.$palette {
+        --#{$name}: #{$value};
+    }
+
+    @each $percent in tokens.$white-alphas {
+        --white-#{$percent}: rgba(255, 255, 255, #{$percent * 0.01});
+    }
+
+    --background-base-90: #{rgba(map.get(tokens.$palette, 'background-base'), 0.9)};
+}
+
+body {
+    background-color: var(--background-base);
+    color: var(--text-primary);
+}

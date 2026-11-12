@@ -1,150 +1,33 @@
-import { NavLink, Navigate, Outlet, useNavigate } from 'react-router-dom';
-import { useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { SvgIcon } from '@mui/material'
-import { Logout, Person, RateReviewOutlined } from '@mui/icons-material';
-import { SvgSelector } from 'root/shared/components/SvgSelector';
-import { useGetUserObjectQuery, useLogoutMutation } from 'root/features/authorization/authorizationApi';
-import { playerProfilePath } from 'root/features/players/playerProfilePath';
-import { REVIEWS_PATH } from 'root/features/reviews/reviewPath';
+import { Navigate, Outlet, useMatches } from 'react-router-dom';
+import { useGetUserObjectQuery } from 'root/features/authorization/authorizationApi';
 import { isUnauthorizedError } from 'root/shared/igroCehApi';
-import i18n from 'root/shared/localization';
+import { Header } from 'root/shared/components/Header';
+import { Footer } from 'root/shared/components/Footer';
 import './styles.scss';
 
+// a route with handle { flush: true } starts right under the header, the old pages keep their top padding
+export type LayoutHandle = {
+    flush?: boolean
+}
+
 function Layout() {
-  const [isLanguageSelectorOpened, setIsLanguageSelectorOpened] = useState(false);
-  const [isUserMenuOpened, setIsUserMenuOpened] = useState(false);
-  const userMenu = useRef<HTMLDivElement>(null);
-  const getUserObject = useGetUserObjectQuery();
-  const [logout] = useLogoutMutation();
-  const userInfo = getUserObject.data;
-  const navigate = useNavigate()
-  const { t } = useTranslation();
+    const getUserObject = useGetUserObjectQuery();
+    const matches = useMatches();
+    const isFlush = matches.some(match => (match.handle as LayoutHandle | undefined)?.flush);
 
-  useEffect(() => {
-    const handleClick = (e: MouseEvent) => {
-      setIsLanguageSelectorOpened(document.getElementsByClassName('layout__language-flag')[0] == e.target);
-      if(!userMenu.current?.contains(e.target as Node)) {
-        setIsUserMenuOpened(false);
-      }
-    };
-
-    document.addEventListener("click", handleClick);
-    return () => {
-      document.removeEventListener("click", handleClick);
-    };
-  }, []);
-
-  // language names are written in their own language, so everyone can find theirs
-  const getCountryBadge = (countryCode: string) => {
-    if(countryCode === 'en')
-    {
-      return(
-        <div className='layout__language-flag'>English &nbsp;<SvgSelector iconName='american-flag'/></div>
-      );
+    if(isUnauthorizedError(getUserObject.error)) {
+        return <Navigate to="/login" replace />;
     }
 
-    if(countryCode === 'ru')
-      {
-        return(
-          <div className='layout__language-flag'>Русский &nbsp;<SvgSelector iconName='russian-flag'/></div>
-        );
-      }
-  }
-
-  const openProfile = () => {
-    setIsUserMenuOpened(false);
-    if(userInfo) {
-      navigate(playerProfilePath(userInfo.id));
-    }
-  }
-
-  const handleLogout = () => {
-    setIsUserMenuOpened(false);
-    logout();
-  }
-
-  if(isUnauthorizedError(getUserObject.error)) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return (
-    <>
-      <div className="layout">
-        <div id='layout__decoration-1'/>
-        <div id='layout__decoration-2'/>
-        <div id='layout__decoration-3'/>
-        <div id='layout__decoration-4'/>
-        <div id='layout__decoration-5'/>
-        <div id='layout__decoration-6'/>
-        <div className='layout__logo' onClick={() => navigate('/')}>
-          <h2>Igro Ceh</h2>
+    return (
+        <div className="layout">
+            <Header />
+            <main className={`layout__content ${isFlush ? 'layout__content--flush' : ''}`}>
+                <Outlet />
+            </main>
+            <Footer />
         </div>
-        <nav className='layout__nav'>
-          <NavLink to={REVIEWS_PATH} className='layout__nav-link' title={t('Reviews')}>
-            <RateReviewOutlined />
-            <span className='layout__nav-text'>{ t('Reviews') }</span>
-          </NavLink>
-        </nav>
-        <div className='layout__user-badge'>
-          <div className='layout__language'>
-            <div onClick={() => setIsLanguageSelectorOpened(!isLanguageSelectorOpened)} className='layout__language-button'>
-              {
-                getCountryBadge(i18n.language)
-              }
-            </div>
-
-            {
-              <div className='layout__language-selector' style={!isLanguageSelectorOpened ? { display: 'none', opacity: 0}: {}}>
-                {
-                  ["en", "ru"].map((value) => {
-                    return(
-                      <div key={value}
-                        onClick={() => {
-                          i18n.changeLanguage(value);
-                          setIsLanguageSelectorOpened(false)
-                        }}
-                        className='layout__language-option'
-                      >
-                        { getCountryBadge(value) }
-                      </div>
-                    );
-                  })
-                }
-              </div>
-            }
-          </div>
-          <div ref={userMenu} onMouseLeave={() => setIsUserMenuOpened(false)} className='layout__user'>
-            <div onClick={() => setIsUserMenuOpened(!isUserMenuOpened)} className='layout__user-button'>
-              {
-                userInfo?.avatarUrl ?
-                <img src={userInfo.avatarUrl} className='layout__user-avatar'></img>
-                :
-                <div className='layout__default-avatar'>
-                  <SvgIcon><SvgSelector iconName='discord-icon' /></SvgIcon>
-                </div>
-              }
-              <span className='layout__user-name'>{userInfo?.userName}</span>
-            </div>
-            <div className='layout__user-menu' style={!isUserMenuOpened ? { display: 'none', opacity: 0 } : {}}>
-              <div className='layout__user-menu-bridge' />
-              <div onClick={openProfile} className='layout__user-menu-option'>
-                <Person fontSize='small' />
-                { t('Profile') }
-              </div>
-              <div onClick={handleLogout} className='layout__user-menu-option'>
-                <Logout fontSize='small' />
-                { t('Log out') }
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className='layout__content-container'>
-        <Outlet />
-      </div>
-    </>
-  );
+    );
 }
 
 export default Layout;

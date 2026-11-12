@@ -1,0 +1,37 @@
+@use '../../styles' as ds;
+
+.tag-pill {
+    font-family: ds.$font-family;
+    font-size: 16px;
+    font-weight: 900;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    padding: ds.space(8) ds.space(12);
+    border-radius: ds.radius(64);
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.tag-pill--solid {
+    color: ds.$background-base;
+}
+
+$tones: (
+    'neutral': ds.white(40),
+    'success': ds.$status-success,
+    'error': ds.$status-error,
+    'info': ds.$status-info,
+    'warning': ds.$status-warning,
+);
+
+@each $tone, $color in $tones {
+    .tag-pill--solid.tag-pill--#{$tone} {
+        background-color: $color;
+    }
+
+    .tag-pill--tint.tag-pill--#{$tone} {
+        background-color: ds.tint($color, 10%);
+        color: $color;
+    }
+}
