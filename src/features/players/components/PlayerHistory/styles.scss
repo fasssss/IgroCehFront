@@ -1,178 +1,396 @@
-@use '../../../../shared/default.module.scss' as default;
+@use '../../../../shared/styles' as ds;
 
-$muted-text: rgba(255, 255, 255, 0.7);
+// the colors of the layout 20648:852 that the design system doesn't have: the seasons and the states of an event
+$season-colors: (
+    'winter': #d3eaff,
+    'spring': #d8ffd2,
+    'summer': #ffeec9,
+    'autumn': #ffd9d0,
+);
+$finished: #e28181;
+$pending: #eed297;
+// the covers of the history are rounded as in the layout
+$cover-radius: 8px;
 
-// the history may get only a half of the profile, its items are laid out by its own width
-.player-history {
-    container-type: inline-size;
+// 240px high as in the layout: 56px above and below the 128px of the content
+.player-history__item {
+    position: relative;
+    overflow: hidden;
+    padding: 56px ds.$page-gutter;
+    border-bottom: 1px solid ds.white(20);
 }
 
-// one row: the event, the received game and the guessed game
-.player-history__item {
+// the blurred cover under the row, shown on hover (the row "Осень 2026" of the layout)
+.player-history__backdrop {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity .3s ease;
+    pointer-events: none;
+
+    .player-history__item:hover &,
+    .player-history__item:focus-within & {
+        opacity: 1;
+    }
+}
+
+.player-history__backdrop-image {
+    position: absolute;
+    inset: -30px;
+    background-position: center;
+    background-size: cover;
+    filter: blur(14.5px);
+}
+
+.player-history__backdrop-shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, ds.$background-base 14.338%, ds.tint(ds.$background-base, 70%));
+}
+
+// three columns: the event, the game the player guessed, the game they got; their results under the dashed line
+.player-history__grid {
+    position: relative;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: default.$margin_large;
-    margin-bottom: default.$margin_big;
-    padding: default.$padding_large;
-    border-radius: default.$border-radius_small;
-    background-color: default.$dark-grey;
+    grid-template-areas:
+        "event guessed received"
+        "line line line"
+        "meta guessed-result received-result";
+    row-gap: 20px;
+    column-gap: ds.space(24);
+    align-items: center;
 }
 
 .player-history__event {
-    align-self: center;
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-}
-
-.player-history__event-title {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: default.$margin_small default.$margin_big;
-}
-
-.player-history__event-name {
-    font-size: 28px;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.player-history__event-name:hover {
-    text-decoration: underline;
-}
-
-.player-history__event-details {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: default.$margin_small default.$margin_big;
-    color: $muted-text;
-}
-
-.player-history__guild {
-    display: flex;
-    align-items: center;
-    gap: default.$margin_small;
-}
-
-.player-history__guild-icon {
-    width: 24px;
-    height: 24px;
-    border-radius: 4px;
-    object-fit: contain;
-}
-
-.player-history__record-title {
-    margin-bottom: default.$margin_small;
-    color: $muted-text;
-}
-
-.player-history__record-body {
-    display: flex;
-    gap: default.$margin_big;
-}
-
-.player-history__game-image {
-    flex-shrink: 0;
-    width: 80px;
-    aspect-ratio: 2 / 3;
-    object-fit: cover;
-    border-radius: default.$border-radius_small;
-}
-
-.player-history__game-image--empty {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: default.$grey;
-    color: $muted-text;
-}
-
-.player-history__record-info {
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    gap: default.$margin_small;
+    grid-area: event;
+    margin: 0;
     min-width: 0;
 }
 
+.player-history__event-name {
+    @include ds.h1;
+    line-height: 56px;
+    color: ds.$text-primary;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+
+    &:hover {
+        text-decoration: underline;
+        text-decoration-thickness: 2px;
+        text-underline-offset: 6px;
+    }
+
+    &:focus-visible {
+        outline: 2px solid ds.$accent-brand;
+        outline-offset: 4px;
+    }
+}
+
+@each $season, $color in $season-colors {
+    .player-history__event-name--#{$season} {
+        color: $color;
+    }
+}
+
+.player-history__game {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 20px;
+    min-width: 0;
+    min-height: 56px;
+}
+
+.player-history__game--guessed {
+    grid-area: guessed;
+}
+
+.player-history__game--received {
+    grid-area: received;
+}
+
+.player-history__game-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: ds.space(12);
+    min-width: 0;
+    text-align: right;
+}
+
 .player-history__game-name {
-    font-size: 20px;
-    font-weight: 600;
+    font-family: ds.$font-family;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1;
+    text-transform: uppercase;
     overflow-wrap: anywhere;
 }
 
 .player-history__partner {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: $muted-text;
-    cursor: pointer;
-}
-
-.player-history__partner:hover .player-history__partner-name {
-    text-decoration: underline;
-}
-
-.player-history__partner-avatar {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    object-fit: contain;
+    @include ds.small;
+    line-height: 1;
+    color: ds.white(30);
+    white-space: nowrap;
 }
 
 .player-history__partner-name {
-    color: white;
+    color: ds.white(60);
+    text-decoration: none;
+
+    &:hover {
+        color: ds.$text-primary;
+        text-decoration: underline;
+    }
+}
+
+.player-history__cover {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    border-radius: $cover-radius;
+    object-fit: cover;
+}
+
+.player-history__cover--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: ds.$surface-raised;
+    color: ds.white(40);
+}
+
+.player-history__line {
+    grid-area: line;
+    border-top: 1px dashed ds.white(20);
+}
+
+.player-history__meta {
+    grid-area: meta;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: ds.space(16);
+    min-width: 0;
+}
+
+.player-history__status {
+    font-family: ds.$font-family;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    white-space: nowrap;
+}
+
+.player-history__status-pill {
+    font-family: ds.$font-family;
+    font-size: 16px;
+    font-weight: 900;
+    line-height: 1;
+    padding: 6px ds.space(8);
+    border-radius: ds.radius(64);
+    color: ds.$background-base;
+}
+
+.player-history__status--active {
+    color: ds.$status-success;
+
+    .player-history__status-pill {
+        background-color: ds.$status-success;
+    }
+}
+
+.player-history__status--finished {
+    color: $finished;
+
+    .player-history__status-pill {
+        background-color: $finished;
+    }
+}
+
+.player-history__status--upcoming {
+    color: ds.$status-info;
+
+    .player-history__status-pill {
+        background-color: ds.$status-info;
+    }
+}
+
+.player-history__meta-line {
+    width: 24px;
+    border-top: 1px solid ds.white(20);
+}
+
+.player-history__guild {
+    font-family: ds.$font-family;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    gap: ds.space(8);
+    min-width: 0;
+    color: ds.white(60);
+    white-space: nowrap;
+}
+
+.player-history__guild-icon {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.player-history__guild-icon--empty {
+    background-color: ds.$surface-raised;
+}
+
+.player-history__outcome {
+    display: flex;
+    justify-content: flex-end;
+    min-width: 0;
+}
+
+.player-history__outcome--guessed {
+    grid-area: guessed-result;
+}
+
+.player-history__outcome--received {
+    grid-area: received-result;
 }
 
 .player-history__result {
-    padding: 2px default.$padding_small;
-    border-radius: default.$border-radius_small;
+    font-family: ds.$font-family;
+    font-size: 24px;
     font-weight: 700;
-    color: default.$black;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    gap: ds.space(8);
+    color: ds.white(60);
+    text-align: right;
+    text-transform: uppercase;
+}
+
+.player-history__result--muted {
+    font-size: 16px;
+    color: ds.white(40);
+    text-transform: none;
 }
 
 .player-history__result--success {
-    background-color: default.$green;
+    color: ds.$status-success;
 }
 
-.player-history__result--progress {
-    background-color: default.$yellow;
+.player-history__result--pending {
+    color: $pending;
 }
 
 .player-history__result--failed {
-    background-color: #ef6a5a;
+    color: $finished;
 }
 
-.player-history__no-game,
+// the number of points in a green circle, Akrobat Black instead of TikTok Sans of the layout
+.player-history__reward {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: ds.$status-success;
+    color: ds.$background-base;
+    font-size: 18px;
+    font-weight: 900;
+}
+
 .player-history__empty {
-    color: $muted-text;
-}
-
-// a narrow history puts the event above its two games
-@container (max-width: 760px) {
-    .player-history__item {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        row-gap: default.$margin_big;
-    }
-
-    .player-history__event {
-        grid-column: 1 / -1;
-        gap: default.$margin_small;
-    }
-}
-
-// on a phone the games go one under another as well
-@container (max-width: 480px) {
-    .player-history__item {
-        grid-template-columns: minmax(0, 1fr);
-        padding: default.$padding_big;
-    }
+    @include ds.body;
+    padding: ds.space(64) ds.$page-gutter;
+    color: ds.white(40);
+    text-align: center;
 }
 
 .player-history__loader {
     display: flex;
     justify-content: center;
-    min-height: 64px;
+    padding: ds.space(32);
+}
+
+@media (max-width: 1600px) {
+    .player-history__item {
+        padding: ds.space(48);
+    }
+
+    .player-history__empty {
+        padding: ds.space(64) ds.space(48);
+    }
+}
+
+// the event on its own line, the two games side by side under it with their results
+@media (max-width: 1100px) {
+    .player-history__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-areas:
+            "event event"
+            "meta meta"
+            "line line"
+            "guessed received"
+            "guessed-result received-result";
+    }
+
+    .player-history__game {
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+    }
+
+    .player-history__game-text {
+        align-items: flex-start;
+        text-align: left;
+    }
+
+    .player-history__outcome {
+        justify-content: flex-start;
+    }
+
+    .player-history__result {
+        text-align: left;
+    }
+}
+
+@media (max-width: 600px) {
+    .player-history__item {
+        padding: ds.space(32) ds.space(16);
+    }
+
+    .player-history__grid {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas:
+            "event"
+            "meta"
+            "line"
+            "guessed"
+            "guessed-result"
+            "received"
+            "received-result";
+    }
+
+    .player-history__event-name {
+        font-size: 36px;
+        line-height: 44px;
+    }
+
+    .player-history__game-name,
+    .player-history__result {
+        font-size: 20px;
+    }
+
+    .player-history__partner {
+        white-space: normal;
+    }
 }

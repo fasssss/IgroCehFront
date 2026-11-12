@@ -1,72 +1,101 @@
-@use '../../../../shared/default.module.scss' as default;
+@use '../../../../shared/styles' as ds;
 
-$muted-text: rgba(255, 255, 255, 0.7);
-
-.player-guilds__row {
+.player-guilds {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: default.$margin_big;
-    padding: default.$padding_small;
-    border-radius: default.$border-radius_small;
-    cursor: pointer;
+    flex-direction: column;
+    gap: ds.space(24);
 }
 
-.player-guilds__row:hover {
-    background-color: default.$grey;
+// the rows share their borders like the tiles of the hero
+.player-guilds__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid ds.white(20);
+}
+
+.player-guilds__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 220px 220px;
+    align-items: center;
+    gap: ds.space(24);
+    padding: ds.space(24) ds.space(32);
+    border: 1px solid ds.white(20);
+    border-top: none;
+    color: ds.$text-primary;
+    text-decoration: none;
+    transition: background-color .15s;
+
+    &:hover {
+        background-color: ds.white(5);
+    }
+
+    &:focus-visible {
+        outline: 2px solid ds.$accent-brand;
+        outline-offset: -2px;
+    }
 }
 
 .player-guilds__name {
+    @include ds.h3;
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: default.$margin_small;
-    font-weight: 600;
+    gap: ds.space(16);
+    min-width: 0;
+    overflow-wrap: anywhere;
 }
 
 .player-guilds__icon {
-    width: 24px;
-    height: 24px;
-    border-radius: 4px;
-    object-fit: contain;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.player-guilds__icon--empty {
+    background-color: ds.$surface-raised;
 }
 
 .player-guilds__left {
-    padding: 0 default.$padding_small;
-    border-radius: 999px;
-    background-color: default.$light-grey;
-    color: $muted-text;
-    font-size: 13px;
-    font-weight: 400;
+    @include ds.small;
+    color: ds.$status-warning;
 }
 
-.player-guilds__score {
+.player-guilds__stat {
     display: flex;
-    gap: default.$margin_big;
+    flex-direction: column;
+    gap: ds.space(12);
+}
+
+.player-guilds__value {
+    font-family: ds.$font-family;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+    color: ds.white(80);
     white-space: nowrap;
 }
 
-.player-guilds__place {
-    color: $muted-text;
-}
-
-// looks like text, lined up with the guild names
-.player-guilds__show-all {
-    margin-top: 4px;
-    padding: 4px default.$padding_small;
-    border: none;
-    background: none;
-    color: $muted-text;
-    font: inherit;
-    cursor: pointer;
-}
-
-.player-guilds__show-all:hover {
-    color: white;
-    text-decoration: underline;
+.player-guilds__caption {
+    @include ds.small;
+    line-height: 1;
+    color: ds.white(40);
 }
 
 .player-guilds__others {
-    margin-top: 4px;
-    padding: 4px default.$padding_small;
-    color: $muted-text;
+    @include ds.small;
+    color: ds.white(40);
+}
+
+@media (max-width: 900px) {
+    .player-guilds__row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        padding: ds.space(16);
+    }
+
+    .player-guilds__name {
+        grid-column: 1 / -1;
+    }
 }

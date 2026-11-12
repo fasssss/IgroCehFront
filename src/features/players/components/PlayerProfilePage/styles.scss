@@ -1,44 +1,46 @@
 @use '../../../../shared/styles' as ds;
 
-// until the tabs of the next step the old sections stay under the hero, on the base background
-.player-profile__body {
-    display: flex;
-    flex-direction: column;
-    gap: ds.space(32);
-    padding: ds.space(48) ds.$page-gutter ds.space(64);
+// the tabs of the layout 20648:823: centered, 40px apart, the brand line of 3px under the active one
+.player-profile__tabs.ds-tabs {
+    --ds-tabs-height: 64px;
+    --ds-tabs-line: 3px;
+    justify-content: center;
+    gap: 40px;
+    padding: 0 ds.space(16);
+    border-bottom: 1px solid ds.white(20);
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    .ds-tabs__tab {
+        padding: 0;
+        color: ds.white(50);
+        text-transform: uppercase;
+
+        &:hover:not(:disabled) {
+            background: none;
+            color: ds.$text-primary;
+        }
+    }
+
+    .ds-tabs__tab--active {
+        color: ds.$text-primary;
+    }
+
+    img {
+        display: block;
+        object-fit: contain;
+    }
 }
 
-.player-profile__panel {
-    padding: ds.space(24);
-    border: 1px solid ds.white(10);
-    background-color: ds.$surface-raised;
+.player-profile__guilds {
+    padding: 60px ds.$page-gutter;
 }
 
-.player-profile__panel-title {
-    @include ds.h3;
-    margin: 0 0 ds.space(16);
-}
-
-// the history takes the left half, reviews the right one; on narrow screens reviews go under the history
-.player-profile__columns {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: ds.space(32);
-    align-items: start;
-}
-
-.player-profile__column-title {
-    @include ds.h3;
-    display: flex;
-    align-items: center;
-    gap: ds.space(8);
-    margin: 0 0 ds.space(16);
-}
-
-.player-profile__history-hint {
-    color: ds.white(50);
-    font-size: 22px;
-    cursor: help;
+.player-profile__empty {
+    @include ds.body;
+    padding: ds.space(64) 0;
+    color: ds.white(40);
+    text-align: center;
 }
 
 .player-profile__message {
@@ -51,17 +53,19 @@
 }
 
 @media (max-width: 1600px) {
-    .player-profile__body {
+    .player-profile__guilds {
         padding: ds.space(48);
     }
 }
 
-@media (max-width: 900px) {
-    .player-profile__body {
-        padding: ds.space(32) ds.space(16);
+@media (max-width: 600px) {
+    // the tabs scroll sideways on a phone, starting from the first one
+    .player-profile__tabs.ds-tabs {
+        justify-content: flex-start;
+        gap: ds.space(24);
     }
 
-    .player-profile__columns {
-        grid-template-columns: minmax(0, 1fr);
+    .player-profile__guilds {
+        padding: ds.space(32) ds.space(16);
     }
 }

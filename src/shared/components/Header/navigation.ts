@@ -1,5 +1,6 @@
 import { globalEventPath } from "root/features/globalEvents/globalEventPath";
 import { playerProfilePath } from "root/features/players/playerProfilePath";
+import { profileTabPath } from "root/features/players/profileTabs";
 
 // the menu of the header: the title of a group opens its items, a page opens the group of its section (isActive);
 // an item without `to` is a part of the site that is not made yet and is shown as "soon"
@@ -23,13 +24,11 @@ type NavigationContext = {
     activeGlobalEventId?: string
 }
 
-export const LADDER_TAB = 'ladder';
-
 export const buildNavigation = ({ pathname, tab, userId, activeGlobalEventId }: NavigationContext): NavGroup[] => {
     const isCommunities = pathname === '/' || pathname.startsWith('/guild/');
     const isFest = pathname.startsWith('/global-event/');
-    const myLadderPath = userId ? `${playerProfilePath(userId)}?tab=${LADDER_TAB}` : undefined;
-    const isMyLadder = !!userId && pathname === playerProfilePath(userId) && tab === LADDER_TAB;
+    const myLadderPath = userId ? profileTabPath(userId, 'ladder') : undefined;
+    const isMyLadder = !!userId && pathname === playerProfilePath(userId) && tab === 'ladder';
     const festPath = activeGlobalEventId ? globalEventPath(activeGlobalEventId) : undefined;
 
     return [

@@ -1,43 +1,45 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import type { PlayerGuildObject } from "../../playersApi";
 import './styles.scss';
 
-const VISIBLE_GUILDS_COUNT = 3;
-
-// guilds come sorted by score, only the best ones are shown until the list is expanded, a guild leads to its page;
-// guilds of the player without the current user are only counted, their score is still in the totals
+// the tab "Сообщества" of the profile (no layout, in the style of the tiles of the hero): the guilds shared with
+// the player sorted by score, each leading to its page; the guilds without the current user are only counted
 const PlayerGuilds = ({ guilds, otherGuildsCount }: PlayerGuildsProps) => {
     const { t } = useTranslation();
-    const navigate = useNavigate();
-    const [isExpanded, setIsExpanded] = useState(false);
-    const shownGuilds = isExpanded ? guilds : guilds.slice(0, VISIBLE_GUILDS_COUNT);
 
     return(
         <div className="player-guilds">
             {
-                shownGuilds.map(guild =>
-                    <div key={guild.id} className="player-guilds__row" onClick={() => navigate(`/guild/${guild.id}`)}>
-                        <div className="player-guilds__name">
-                            {guild.iconUrl && <img src={guild.iconUrl} className="player-guilds__icon" />}
-                            {guild.name}
-                            {guild.hasLeft && <span className="player-guilds__left">{t('Left the guild')}</span>}
-                        </div>
-                        <div className="player-guilds__score">
-                            <span>{t('{{count}} points', { count: guild.score })}</span>
-                            <span className="player-guilds__place">
-                                #{guild.place} {t('of {{count}} players', { count: guild.playersCount })}
-                            </span>
-                        </div>
-                    </div>
-                )
-            }
-            {
-                !isExpanded && guilds.length > VISIBLE_GUILDS_COUNT &&
-                <button className="player-guilds__show-all" onClick={() => setIsExpanded(true)}>
-                    {t('Show all')}
-                </button>
+                guilds.length > 0 &&
+                <ul className="player-guilds__list">
+                    {
+                        guilds.map(guild =>
+                            <li key={guild.id}>
+                                <Link to={`/guild/${guild.id}`} className="player-guilds__row">
+                                    <span className="player-guilds__name">
+                                        {
+                                            guild.iconUrl ?
+                                            <img src={guild.iconUrl} className="player-guilds__icon" alt="" width={48} height={48} />
+                                            :
+                                            <span className="player-guilds__icon player-guilds__icon--empty" />
+                                        }
+                                        {guild.name}
+                                        {guild.hasLeft && <span className="player-guilds__left">{t('Left the guild')}</span>}
+                                    </span>
+                                    <span className="player-guilds__stat">
+                                        <span className="player-guilds__value">{t('profile.points', { count: guild.score })}</span>
+                                        <span className="player-guilds__caption">{t('profile.pointsCaption')}</span>
+                                    </span>
+                                    <span className="player-guilds__stat">
+                                        <span className="player-guilds__value">#{guild.place}</span>
+                                        <span className="player-guilds__caption">{t('of {{count}} players', { count: guild.playersCount })}</span>
+                                    </span>
+                                </Link>
+                            </li>
+                        )
+                    }
+                </ul>
             }
             {
                 otherGuildsCount > 0 &&
