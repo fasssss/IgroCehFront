@@ -4,6 +4,7 @@ import { TagPill } from "root/shared/components/TagPill";
 import { useGetPlayerPreferencesQuery } from "../../playersApi";
 import { usePreferenceTagName } from "../../preferenceTagName";
 import { PlayerPreferences } from "../PlayerPreferences";
+import { ProfileSection } from "../ProfileSection";
 import './styles.scss';
 
 // "My genres" of the profile hero (layout 20648:802): the preferred tags in green, the avoided ones in red;
@@ -22,24 +23,20 @@ const ProfileGenres = ({ userId, isOwn, className }: ProfileGenresProps) => {
     }
 
     return(
-        <section className={`profile-genres ${className ?? ''}`}>
-            <div className="profile-genres__header">
-                <h2 className="profile-genres__title">{isOwn ? t('profile.myGenres') : t('profile.genres')}</h2>
-                {
-                    isOwn &&
-                    <button type="button" className="profile-genres__edit" aria-expanded={isEditing} onClick={() => setIsEditing(!isEditing)}>
-                        {isEditing ? t('profile.done') : t('profile.edit')}
-                    </button>
-                }
-            </div>
+        <ProfileSection
+            title={isOwn ? t('profile.myGenres') : t('profile.genres')}
+            isEditing={isEditing}
+            onEditToggle={isOwn ? () => setIsEditing(!isEditing) : undefined}
+            className={`profile-genres ${className ?? ''}`}
+        >
             {
                 isEditing ?
                 <PlayerPreferences userId={userId} className="profile-genres__editor" />
                 :
                 isEmpty ?
-                <div className="profile-genres__empty">{t('Not specified')}</div>
+                <div className="profile-section__empty">{t('Not specified')}</div>
                 :
-                <ul className="profile-genres__tags">
+                <ul className="profile-section__tags">
                     {
                         lists.preferred.map(tag =>
                             <li key={tag.id}>
@@ -59,7 +56,7 @@ const ProfileGenres = ({ userId, isOwn, className }: ProfileGenresProps) => {
                     }
                 </ul>
             }
-        </section>
+        </ProfileSection>
     );
 };
 

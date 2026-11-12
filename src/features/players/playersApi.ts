@@ -3,6 +3,9 @@ import type { EventStatus } from "root/shared/constants";
 import type { GameObject, UserShortObject } from "root/features/events/eventsApi";
 import type { AchievementPlatform } from "root/features/globalEvents/achievementPlatforms";
 
+// the last of the queued saves of the liked aspects, see setLikedAspects
+let likedAspectsSaves: Promise<void> = Promise.resolve();
+
 // profile is built from the guilds shared with the current user, other players get 404
 const playersApi = igroCehApi.injectEndpoints({
     endpoints: (build) => ({
@@ -72,6 +75,42 @@ const playersApi = igroCehApi.injectEndpoints({
                     await queryFulfilled;
                 } catch {
                     patch.undo();
+                }
+            },
+        }),
+        // the aspects of games a player picks what they like from
+        getGameAspects: build.query<GetGameAspectsResponse, void>({
+            query: () => ({ url: '/api/getGameAspects' }),
+        }),
+        // the whole list of the current user is saved on every change, the screen shows the change before the answer;
+        // the saves go one after another, since two at once race on the server and the earlier list may win
+        setLikedAspects: build.mutation<void, SetLikedAspectsRequest>({
+            queryFn: async ({ likedAspects }, _api, _extraOptions, baseQuery) => {
+                const previous = likedAspectsSaves;
+                let finish = () => {};
+                likedAspectsSaves = new Promise<void>(resolve => { finish = resolve; });
+                await previous;
+                try {
+                    const result = await baseQuery({
+                        url: '/api/setLikedAspects',
+                        method: 'POST',
+                        body: { aspectIds: likedAspects.map(aspect => aspect.id) }
+                    });
+                    return result.error ? { error: result.error } : { data: undefined };
+                } finally {
+                    finish();
+                }
+            },
+            async onQueryStarted({ userId, likedAspects }, { dispatch, queryFulfilled }) {
+                dispatch(playersApi.util.updateQueryData('getPlayerPreferences', userId, (draft) => {
+                    draft.likedAspects = likedAspects;
+                }));
+                try {
+                    await queryFulfilled;
+                } catch {
+                    // the later changes are on the screen too, so it takes the saved list once the queued saves end
+                    await likedAspectsSaves;
+                    dispatch(playersApi.endpoints.getPlayerPreferences.initiate(userId, { subscribe: false, forceRefetch: true }));
                 }
             },
         }),
@@ -240,14 +279,32 @@ export type GetPreferenceTagsResponse = {
     tags: PreferenceTag[]
 }
 
-// the tags in the order the player added them
-export type PlayerPreferences = {
-    preferred: PreferenceTag[],
-    avoided: PreferenceTag[]
+// an aspect of games such as the story or the music, the name is shown in the language of the site
+export type GameAspect = {
+    id: number,
+    name: string,
+    nameRu: string
 }
 
-export type SetPreferencesRequest = PlayerPreferences & {
+export type GetGameAspectsResponse = {
+    aspects: GameAspect[]
+}
+
+// the tags and the aspects in the order the player added them
+export type PlayerPreferences = {
+    preferred: PreferenceTag[],
+    avoided: PreferenceTag[],
+    // "What I like in games"
+    likedAspects: GameAspect[]
+}
+
+export type SetPreferencesRequest = Pick<PlayerPreferences, 'preferred' | 'avoided'> & {
     // the lists of the current user, the id points to the cached ones
+    userId: string
+}
+
+export type SetLikedAspectsRequest = Pick<PlayerPreferences, 'likedAspects'> & {
+    // the current user, the id points to the cached preferences
     userId: string
 }
 
@@ -258,5 +315,7 @@ export const {
     useGetPlayerGamesQuery,
     useGetPreferenceTagsQuery,
     useGetPlayerPreferencesQuery,
-    useSetPreferencesMutation
+    useSetPreferencesMutation,
+    useGetGameAspectsQuery,
+    useSetLikedAspectsMutation
 } = playersApi;

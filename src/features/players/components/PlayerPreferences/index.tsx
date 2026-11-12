@@ -30,7 +30,7 @@ const PlayerPreferences = ({ userId, className }: PlayerPreferencesProps) => {
             value={lists[kind]}
             options={(tags.data?.tags ?? []).filter(tag => !other.some(otherTag => otherTag.id === tag.id))}
             isLoading={tags.isLoading}
-            onChange={isOwn ? (value) => setPreferences({ userId, ...lists, [kind]: value }) : undefined} />
+            onChange={isOwn ? (value) => setPreferences({ userId, preferred: lists.preferred, avoided: lists.avoided, [kind]: value }) : undefined} />
         );
     };
 

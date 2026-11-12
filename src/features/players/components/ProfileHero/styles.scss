@@ -137,32 +137,10 @@ $main-width: 976px;
 }
 
 // the sections of the side column are divided by lines
-.profile-hero__section {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-
-    & + & {
-        margin-top: ds.space(32);
-        padding-top: ds.space(32);
-        border-top: 1px solid ds.white(10);
-    }
-}
-
-.profile-hero__section-title {
-    @include ds.small;
-    line-height: 1;
-    margin: 0;
-    color: ds.white(40);
-}
-
-.profile-hero__tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: ds.space(8);
-    margin: 0;
-    padding: 0;
-    list-style: none;
+.profile-hero__section + .profile-hero__section {
+    margin-top: ds.space(32);
+    padding-top: ds.space(32);
+    border-top: 1px solid ds.white(10);
 }
 
 @media (max-width: 1600px) {

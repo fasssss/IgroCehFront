@@ -13,6 +13,8 @@ import { PlayerProfileObject } from "../../playersApi";
 import { platformColor } from "../../platformColors";
 import { PlayerBadges } from "../PlayerBadges";
 import { RewardsBar } from "../RewardsBar";
+import { ProfileSection } from "../ProfileSection";
+import { ProfileAspects } from "../ProfileAspects";
 import { ProfileGenres } from "../ProfileGenres";
 import './styles.scss';
 
@@ -26,7 +28,7 @@ const StatTile = ({ value, caption }: StatTileProps) => {
 }
 
 // the top of the player profile (layouts 20648:706 and 20674:3877): the name with the badges and the accounts,
-// the points for the finished games, the statistics of every shared guild, the platforms and the genres
+// the points for the finished games, the statistics of every shared guild, the platforms, the liked aspects and the genres
 const ProfileHero = ({ profile }: ProfileHeroProps) => {
     const { t } = useTranslation();
     const currentUser = useCurrentUser();
@@ -76,9 +78,8 @@ const ProfileHero = ({ profile }: ProfileHeroProps) => {
             <aside className="profile-hero__side">
                 {
                     profile.favoritePlatforms.length > 0 &&
-                    <section className="profile-hero__section">
-                        <h2 className="profile-hero__section-title">{isOwn ? t('profile.myPlatforms') : t('profile.platforms')}</h2>
-                        <ul className="profile-hero__tags">
+                    <ProfileSection title={isOwn ? t('profile.myPlatforms') : t('profile.platforms')} className="profile-hero__section">
+                        <ul className="profile-section__tags">
                             {
                                 profile.favoritePlatforms.map(({ platform, count }) =>
                                     <li key={platform}>
@@ -89,8 +90,9 @@ const ProfileHero = ({ profile }: ProfileHeroProps) => {
                                 )
                             }
                         </ul>
-                    </section>
+                    </ProfileSection>
                 }
+                <ProfileAspects userId={profile.id} isOwn={isOwn} className="profile-hero__section" />
                 <ProfileGenres userId={profile.id} isOwn={isOwn} className="profile-hero__section" />
             </aside>
         </section>
