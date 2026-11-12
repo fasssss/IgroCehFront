@@ -1,16 +1,15 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { SvgIcon } from "@mui/material";
-import { Close } from "@mui/icons-material";
-import { SvgSelector } from "root/shared/components/SvgSelector";
 import { CommonModal } from "root/shared/components/CommonModal";
+import { AccountButton } from "root/shared/components/AccountButton";
 import { useCurrentUser } from "root/features/authorization/authorizationApi";
+import iconXbox from "root/assets/design/icon-xbox.svg";
 import { useUnlinkXboxMutation } from "../../xboxApi";
 import { xboxProfileUrl } from "../../xboxPaths";
-import { XboxSignInButton } from "../XboxSignInButton";
+import { useXboxSignIn } from "../../useXboxSignIn";
 import './styles.scss';
 
-// the Xbox account of a player in their profile: everyone sees the gamertag with the link to the profile on Xbox,
+// the Xbox account of a player in their profile: everyone sees the link to the profile on Xbox (the gamertag is in its hint),
 // the owner links and unlinks it
 const XboxAccount = ({ userId, gamertag }: XboxAccountProps) => {
     const { t } = useTranslation();
@@ -19,6 +18,7 @@ const XboxAccount = ({ userId, gamertag }: XboxAccountProps) => {
     // the own account comes with the current user, so it changes right after linking or unlinking
     const linkedGamertag = isOwn ? currentUser.xboxGamertag : gamertag;
     const [unlinkXbox, unlinking] = useUnlinkXboxMutation();
+    const signIn = useXboxSignIn();
     const [isConfirming, setIsConfirming] = useState(false);
 
     const unlink = async () => {
@@ -27,29 +27,24 @@ const XboxAccount = ({ userId, gamertag }: XboxAccountProps) => {
     };
 
     if(!linkedGamertag) {
-        return isOwn ? <XboxSignInButton /> : null;
+        return isOwn ?
+            <AccountButton icon={iconXbox} label="Xbox" title={t("Link Xbox")}
+                disabled={signIn.isLeaving}
+                onLink={signIn.signIn}
+                error={signIn.isFailed ? t("Couldn't open Xbox, try again") : undefined}
+            />
+            : null;
     }
 
     return(
-        <span className="xbox-account">
-            <span className="xbox-account__chip">
-                <a href={xboxProfileUrl(linkedGamertag)} target="_blank" rel="noreferrer" className="xbox-account__profile" title={t("Profile on Xbox")}>
-                    <SvgIcon className="xbox-account__logo"><SvgSelector iconName="xbox-icon" /></SvgIcon>
-                    <span className="xbox-account__gamertag">{linkedGamertag}</span>
-                </a>
-                {
-                    isOwn &&
-                    <button
-                    className="xbox-account__unlink"
-                    title={t("Unlink Xbox")}
-                    aria-label={t("Unlink Xbox")}
-                    disabled={unlinking.isLoading}
-                    onClick={() => setIsConfirming(true)}>
-                        <Close fontSize="small" />
-                    </button>
-                }
-            </span>
-            {unlinking.isError && <span className="xbox-account__error">{t("Couldn't unlink Xbox, try again")}</span>}
+        <>
+            <AccountButton icon={iconXbox} label="Xbox" title={`${t("Profile on Xbox")}: ${linkedGamertag}`}
+                href={xboxProfileUrl(linkedGamertag)}
+                onUnlink={isOwn ? () => setIsConfirming(true) : undefined}
+                unlinkLabel={t("Unlink Xbox")}
+                disabled={unlinking.isLoading}
+                error={unlinking.isError ? t("Couldn't unlink Xbox, try again") : undefined}
+            />
             {
                 isConfirming &&
                 <CommonModal
@@ -63,7 +58,7 @@ const XboxAccount = ({ userId, gamertag }: XboxAccountProps) => {
                     </div>
                 </CommonModal>
             }
-        </span>
+        </>
     );
 };
 

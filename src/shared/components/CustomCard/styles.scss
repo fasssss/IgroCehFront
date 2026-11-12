@@ -18,6 +18,9 @@
     border-radius: 50rem;
     transform: translateZ(10px);
     margin-bottom: default.$margin_small;
+    object-fit: contain;
+    max-width: 300px;
+    max-height: 300px;
 }
 
 .custom-card__name {

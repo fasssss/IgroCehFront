@@ -46,3 +46,11 @@
     flex-direction: column;
     justify-content: space-evenly;
 }
+
+.leader-board__header img,
+.leader-board__score-item-user img {
+    object-fit: contain;
+    max-width: 300px;
+    max-height: 300px;
+    border-radius: default.$border-radius_small;
+}

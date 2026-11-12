@@ -1,193 +1,42 @@
-@use '../../../../shared/default.module.scss' as default;
+@use '../../../../shared/styles' as ds;
 
-$muted-text: rgba(255, 255, 255, 0.7);
-$avatar-size: 128px;
-// header lines up with the content of the body panel (its margin + padding)
-$content-inset: default.$margin_small + default.$padding_large;
-// the same distance from the avatar to the name and from the name to the platforms
-$header-gap: default.$margin_big;
-
-.player-profile__header {
-    display: flex;
-    // the preferences go under the name when they don't fit next to it
-    flex-wrap: wrap;
-    column-gap: $header-gap * 2;
-    row-gap: $header-gap;
-    padding: 0 $content-inset default.$padding_big $content-inset;
-}
-
-// a line of its own under the avatar and the name
-.player-profile__steam-warning {
-    flex-basis: 100%;
-}
-
-// the two lists take the rest of the header next to the name
-.player-profile__preferences {
-    flex: 1 1 520px;
-    align-self: flex-start;
-}
-
-.player-profile__avatar {
-    width: $avatar-size;
-    height: $avatar-size;
-    border-radius: default.$border-radius_small;
-}
-
-.player-profile__avatar--default {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: default.$discord-bluerple;
-}
-
-// the name is centered on the avatar, the date sits at its bottom;
-// on a narrow screen the name row wraps into several lines and the block grows past the avatar
-.player-profile__identity {
-    display: grid;
-    grid-template-rows: 1fr auto 1fr;
-    min-height: $avatar-size;
-}
-
-// the platforms and Steam go under the name when they don't fit next to it
-.player-profile__name-row {
-    grid-row: 2;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    column-gap: $header-gap;
-    row-gap: default.$margin_small;
-}
-
-.player-profile__name {
-    margin: 0;
-    font-size: 40px;
-}
-
-.player-profile__since {
-    grid-row: 3;
-    align-self: end;
-    color: $muted-text;
-}
-
-.player-profile__guild-switcher {
-    display: flex;
-    flex-wrap: wrap;
-    gap: default.$margin_small;
-    padding: 0 $content-inset default.$padding_big $content-inset;
-}
-
-.player-profile__guild-option {
-    display: flex;
-    align-items: center;
-    gap: default.$margin_small;
-    padding: 6px default.$padding_big;
-    border: none;
-    border-radius: 999px;
-    background-color: default.$dark-grey;
-    color: white;
-    font: inherit;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.player-profile__guild-option:hover {
-    background-color: default.$light-grey;
-}
-
-.player-profile__guild-option--selected,
-.player-profile__guild-option--selected:hover {
-    background-color: default.$discord-bluerple;
-}
-
-.player-profile__guild-icon {
-    width: 24px;
-    height: 24px;
-    border-radius: 4px;
-}
-
+// until the tabs of the next step the old sections stay under the hero, on the base background
 .player-profile__body {
-    min-height: calc(100% - 200px);
-    margin: 0 default.$margin_small;
-    padding: default.$padding_big default.$padding_large;
-    border-radius: default.$border-radius_small default.$border-radius_small 0 0;
-    background-color: default.$grey;
-    transition: opacity .2s;
+    display: flex;
+    flex-direction: column;
+    gap: ds.space(32);
+    padding: ds.space(48) ds.$page-gutter ds.space(64);
 }
 
-// previous guild stays visible while another one is loading
-.player-profile__body--updating {
-    opacity: 0.6;
-}
-
-.player-profile__stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-    gap: default.$margin_big;
-}
-
-.player-profile__stat,
 .player-profile__panel {
-    padding: default.$padding_big;
-    border-radius: default.$border-radius_small;
-    background-color: default.$dark-grey;
-}
-
-.player-profile__stat-label {
-    color: $muted-text;
-}
-
-.player-profile__stat-value {
-    font-size: 40px;
-    font-weight: 700;
-    line-height: 1.2;
-}
-
-.player-profile__stat-unit {
-    font-size: 20px;
-    font-weight: 600;
-}
-
-.player-profile__stat-note {
-    color: $muted-text;
-    font-size: 14px;
-}
-
-// a single panel takes the whole row
-.player-profile__panels {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: default.$margin_big;
-    margin: default.$margin_big 0;
+    padding: ds.space(24);
+    border: 1px solid ds.white(10);
+    background-color: ds.$surface-raised;
 }
 
 .player-profile__panel-title {
-    margin: 0 0 default.$margin_big 0;
-    font-size: 22px;
+    @include ds.h3;
+    margin: 0 0 ds.space(16);
 }
 
 // the history takes the left half, reviews the right one; on narrow screens reviews go under the history
 .player-profile__columns {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: default.$margin_big;
+    gap: ds.space(32);
     align-items: start;
 }
 
-@media (max-width: 900px) {
-    .player-profile__columns {
-        grid-template-columns: minmax(0, 1fr);
-    }
-}
-
 .player-profile__column-title {
+    @include ds.h3;
     display: flex;
     align-items: center;
-    gap: default.$margin_small;
-    margin: default.$margin_large 0 default.$margin_big 0;
+    gap: ds.space(8);
+    margin: 0 0 ds.space(16);
 }
 
 .player-profile__history-hint {
-    color: rgba(255, 255, 255, 0.5);
+    color: ds.white(50);
     font-size: 22px;
     cursor: help;
 }
@@ -196,7 +45,23 @@ $header-gap: default.$margin_big;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: default.$margin_big;
-    padding: default.$padding_large;
+    gap: ds.space(16);
+    padding: ds.space(32);
     text-align: center;
+}
+
+@media (max-width: 1600px) {
+    .player-profile__body {
+        padding: ds.space(48);
+    }
+}
+
+@media (max-width: 900px) {
+    .player-profile__body {
+        padding: ds.space(32) ds.space(16);
+    }
+
+    .player-profile__columns {
+        grid-template-columns: minmax(0, 1fr);
+    }
 }

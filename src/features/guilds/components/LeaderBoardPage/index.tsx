@@ -33,7 +33,7 @@ const LeaderBoardPage = () => {
                                     <h2>#{index + 1}.</h2>
                                 </div>
                                 <div className="leader-board__score-item-user"
-                                    onClick={() => navigate(playerProfilePath(scoreData.userId, guildId))}
+                                    onClick={() => navigate(playerProfilePath(scoreData.userId))}
                                 >
                                     <img src={scoreData.avatarUrl ?? undefined} />
                                     <h3>{scoreData.userName}</h3>

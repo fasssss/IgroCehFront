@@ -9,7 +9,6 @@ $subnav-breakpoint: 1600px;
 $phone: 600px;
 
 .header {
-    @include ds.reset-legacy-images;
     position: sticky;
     top: 0;
     z-index: 1000;

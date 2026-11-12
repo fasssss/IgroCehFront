@@ -54,6 +54,7 @@ $icon-size: 48px;
     width: $icon-size;
     height: $icon-size;
     border-radius: 4px;
+    object-fit: contain;
 }
 
 .achievement-checklist__icon--empty {

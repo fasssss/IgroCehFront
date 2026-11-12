@@ -1,14 +1,16 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import type { PlayerGuildObject } from "../../playersApi";
 import './styles.scss';
 
 const VISIBLE_GUILDS_COUNT = 3;
 
-// guilds come sorted by score, only the best ones are shown until the list is expanded;
+// guilds come sorted by score, only the best ones are shown until the list is expanded, a guild leads to its page;
 // guilds of the player without the current user are only counted, their score is still in the totals
-const PlayerGuilds = ({ guilds, otherGuildsCount, onSelect }: PlayerGuildsProps) => {
+const PlayerGuilds = ({ guilds, otherGuildsCount }: PlayerGuildsProps) => {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const [isExpanded, setIsExpanded] = useState(false);
     const shownGuilds = isExpanded ? guilds : guilds.slice(0, VISIBLE_GUILDS_COUNT);
 
@@ -16,7 +18,7 @@ const PlayerGuilds = ({ guilds, otherGuildsCount, onSelect }: PlayerGuildsProps)
         <div className="player-guilds">
             {
                 shownGuilds.map(guild =>
-                    <div key={guild.id} className="player-guilds__row" onClick={() => onSelect(guild.id)}>
+                    <div key={guild.id} className="player-guilds__row" onClick={() => navigate(`/guild/${guild.id}`)}>
                         <div className="player-guilds__name">
                             {guild.iconUrl && <img src={guild.iconUrl} className="player-guilds__icon" />}
                             {guild.name}
@@ -49,8 +51,7 @@ const PlayerGuilds = ({ guilds, otherGuildsCount, onSelect }: PlayerGuildsProps)
 
 type PlayerGuildsProps = {
     guilds: PlayerGuildObject[],
-    otherGuildsCount: number,
-    onSelect: (guildId: string) => void
+    otherGuildsCount: number
 }
 
 export { PlayerGuilds }

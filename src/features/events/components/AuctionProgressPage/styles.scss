@@ -104,10 +104,20 @@
     font-weight: 700;
 }
 
+// the cover of the game had no size of its own and kept the former global img rule (max 300px)
+.auction-progress__item-game img {
+    object-fit: contain;
+    max-width: 300px;
+    max-height: 300px;
+    border-radius: default.$border-radius_small;
+}
+
 .auction-progress__item-to img,
 .auction-progress__item-from img{
     width: 128px;
     margin: auto;
+    object-fit: contain;
+    border-radius: default.$border-radius_small;
 }
 
 .auction-progress__item-result {

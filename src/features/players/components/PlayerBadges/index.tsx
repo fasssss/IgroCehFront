@@ -8,14 +8,15 @@ import { globalEventPath } from "root/features/globalEvents/globalEventPath";
 import { PlayerBadge } from "../../playersApi";
 import './styles.scss';
 
-// the badges of the passed global events, each one separately with its event and date, leading to the event
+// the badges of the passed global events next to the name in the profile, each one with its event and date in the hint,
+// leading to the event; a player without badges shows nothing there
 const PlayerBadges = ({ badges }: PlayerBadgesProps) => {
     const { t, i18n } = useTranslation();
     // the badges whose image didn't load, they still count
     const [brokenIds, setBrokenIds] = useState<string[]>([]);
 
     if(!badges.length) {
-        return <div className="player-badges__empty">{t('No achievements yet')}</div>;
+        return null;
     }
 
     return(

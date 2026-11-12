@@ -48,4 +48,7 @@
 
 .event-page__guild-image {
     border-radius: default.$border-radius_big;
+    object-fit: contain;
+    max-width: 300px;
+    max-height: 300px;
 }

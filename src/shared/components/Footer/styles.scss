@@ -1,7 +1,6 @@
 @use '../../styles' as ds;
 
 .footer {
-    @include ds.reset-legacy-images;
     background-color: ds.$background-base;
     overflow: hidden;
 }

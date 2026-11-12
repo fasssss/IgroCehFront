@@ -60,3 +60,10 @@
     margin-top: 0;
     margin-bottom: 8px;
 }
+
+.game-picker__existing-game img {
+    object-fit: contain;
+    max-width: 300px;
+    max-height: 300px;
+    border-radius: default.$border-radius_small;
+}

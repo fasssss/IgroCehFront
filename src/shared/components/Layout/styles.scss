@@ -6,10 +6,12 @@
     min-height: 100vh;
 }
 
-// the page fills the screen under the header; it is a grid, so the old pages keep their height: 100%
+// the page fills the screen under the header; it is a grid, so the old pages keep their height: 100%;
+// the column may be narrower than the content of the page, as a block would be, so a phone gets no sideways scroll
 .layout__content {
     display: grid;
     grid-template-rows: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     flex: 1 0 auto;
     min-height: calc(100vh - 96px);
     padding-top: ds.space(32);

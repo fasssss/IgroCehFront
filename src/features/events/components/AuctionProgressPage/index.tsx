@@ -80,7 +80,7 @@ const AuctionProgressPage = ({ event, currentUser }: EventStageProps) => {
                 <div key={record.id} className="auction-progress__item-container">
                     <div className="auction-progress__info-part">
                         <div className="auction-progress__item-from"
-                            onClick={() => navigate(playerProfilePath(record.participant.id, guildId))}
+                            onClick={() => navigate(playerProfilePath(record.participant.id))}
                         >
                             {record.participant.userName}
                             <img src={record.participant.avatarUrl ?? undefined} />
@@ -92,7 +92,7 @@ const AuctionProgressPage = ({ event, currentUser }: EventStageProps) => {
                         </div>
                         <div className="players-progress__direction-arrow"/>
                         <div className="auction-progress__item-to"
-                            onClick={() => record.toUser && navigate(playerProfilePath(record.toUser.id, guildId))}
+                            onClick={() => record.toUser && navigate(playerProfilePath(record.toUser.id))}
                         >
                             {record.toUser?.userName}
                             <img src={record.toUser?.avatarUrl ?? undefined} />

@@ -22,11 +22,11 @@ const VisibilityIcon = ({ visibility }: { visibility: ReviewVisibility }) => {
     return <Icon fontSize="small" className="player-reviews__visibility" titleAccess={t(REVIEW_VISIBILITY_NAME[visibility])} />;
 };
 
-const PlayerReviews = ({ userId, guildId }: PlayerReviewsProps) => {
+const PlayerReviews = ({ userId }: PlayerReviewsProps) => {
     const { t } = useTranslation();
     // the author sees who else sees every review
     const isOwnProfile = useCurrentUser()?.id === userId;
-    const reviews = useGetPlayerReviewsQuery({ userId, guildId }, { refetchOnMountOrArgChange: true });
+    const reviews = useGetPlayerReviewsQuery({ userId }, { refetchOnMountOrArgChange: true });
 
     if(!reviews.data) {
         return null;
@@ -76,9 +76,7 @@ const PlayerReviews = ({ userId, guildId }: PlayerReviewsProps) => {
 }
 
 type PlayerReviewsProps = {
-    userId: string,
-    // reviews of all shared guilds when empty
-    guildId?: string
+    userId: string
 }
 
 export { PlayerReviews }

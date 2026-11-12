@@ -45,9 +45,8 @@ $badge-size: 112px;
 .badge-picker__image {
     width: $badge-size;
     height: $badge-size;
-    // global img rule in DragNDropImage styles caps every image at 300px
-    max-width: none;
     object-fit: contain;
+    border-radius: default.$border-radius_small;
 }
 
 .badge-picker__name {

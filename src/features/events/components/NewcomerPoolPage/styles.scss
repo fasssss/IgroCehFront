@@ -68,8 +68,6 @@ $cover-width: 140px;
 
 .newcomer-pool__cover {
     width: 100%;
-    // global img rule in DragNDropImage styles caps every image at 300px
-    max-width: none;
     aspect-ratio: 2 / 3;
     object-fit: cover;
     border-radius: default.$border-radius_small;

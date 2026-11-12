@@ -10,12 +10,12 @@ import { playerProfilePath } from "../../playerProfilePath";
 import './styles.scss';
 
 // events of the player, newest first, next page is loaded when the end of the list is reached;
-// the parent remounts it for another player or guild, so paging starts over
-const PlayerHistory = ({ userId, guildId }: PlayerHistoryProps) => {
+// the parent remounts it for another player, so paging starts over
+const PlayerHistory = ({ userId }: PlayerHistoryProps) => {
     const { t, i18n } = useTranslation();
     const navigate = useNavigate();
     const [startFrom, setStartFrom] = useState(0);
-    const history = useGetPlayerHistoryQuery({ userId, guildId, startFrom }, { refetchOnMountOrArgChange: true });
+    const history = useGetPlayerHistoryQuery({ userId, startFrom }, { refetchOnMountOrArgChange: true });
     const listEnd = useRef<HTMLDivElement>(null);
     const items = history.data?.historyItems ?? [];
     const canLoadMore = !!history.data?.hasMore && !history.isFetching && !history.isError;
@@ -66,7 +66,7 @@ const PlayerHistory = ({ userId, guildId }: PlayerHistoryProps) => {
                             {
                                 partner &&
                                 <div className="player-history__partner"
-                                    onClick={() => navigate(playerProfilePath(partner.id, guildId))}
+                                    onClick={() => navigate(playerProfilePath(partner.id))}
                                 >
                                     {partnerCaption}
                                     <img src={partner.avatarUrl ?? undefined} className="player-history__partner-avatar" />
@@ -100,13 +100,10 @@ const PlayerHistory = ({ userId, guildId }: PlayerHistoryProps) => {
                                 <Chip sx={{ fontSize: "medium" }} label={t(EVENT_STATUS_NAME[item.statusId])} color={EVENT_STATUS_COLOR[item.statusId]} />
                             </div>
                             <div className="player-history__event-details">
-                                {
-                                    !guildId &&
-                                    <span className="player-history__guild">
-                                        {item.guildIconUrl && <img src={item.guildIconUrl} className="player-history__guild-icon" />}
-                                        {item.guildName}
-                                    </span>
-                                }
+                                <span className="player-history__guild">
+                                    {item.guildIconUrl && <img src={item.guildIconUrl} className="player-history__guild-icon" />}
+                                    {item.guildName}
+                                </span>
                                 <span>{formatDate(item.startDate, false)} – {formatDate(item.endDate, true)}</span>
                             </div>
                         </div>
@@ -135,8 +132,7 @@ const PlayerHistory = ({ userId, guildId }: PlayerHistoryProps) => {
 }
 
 type PlayerHistoryProps = {
-    userId: string,
-    guildId?: string
+    userId: string
 }
 
 export { PlayerHistory }

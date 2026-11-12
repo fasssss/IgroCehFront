@@ -80,7 +80,7 @@ const PublishedReview = ({ page, canReply, isAuthor }: PublishedReviewProps) => 
                             :
                             section.reply &&
                             <div className="published-review__reply">
-                                <ReviewPerson player={page.guesser} guildId={page.guildId} />
+                                <ReviewPerson player={page.guesser} />
                                 <div className="published-review__reply-text">{section.reply}</div>
                             </div>
                         }

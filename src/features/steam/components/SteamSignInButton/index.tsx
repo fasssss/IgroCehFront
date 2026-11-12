@@ -1,31 +1,14 @@
-import { PropsWithChildren, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { PropsWithChildren } from "react";
 import { useTranslation } from "react-i18next";
 import { SvgIcon } from "@mui/material";
 import { SvgSelector } from "root/shared/components/SvgSelector";
-import { useLazyGetSteamSignInLinkQuery } from "../../steamApi";
+import { useSteamSignIn } from "../../useSteamSignIn";
 import './styles.scss';
 
-// the button of the sign-in to Steam, drawn like the one of Steam itself: the browser leaves the site for Steam,
-// Steam sends it back to returnPath, the current page by default
+// the button of the sign-in to Steam, drawn like the one of Steam itself
 const SteamSignInButton = ({ returnPath, children }: PropsWithChildren<SteamSignInButtonProps>) => {
     const { t } = useTranslation();
-    const location = useLocation();
-    const [getSteamSignInLink] = useLazyGetSteamSignInLinkQuery();
-    const [isLeaving, setIsLeaving] = useState(false);
-    const [isFailed, setIsFailed] = useState(false);
-
-    const signIn = async () => {
-        setIsLeaving(true);
-        setIsFailed(false);
-        try {
-            const { steamSignInLink } = await getSteamSignInLink(returnPath ?? location.pathname + location.search).unwrap();
-            window.location.assign(steamSignInLink);
-        } catch {
-            setIsLeaving(false);
-            setIsFailed(true);
-        }
-    };
+    const { signIn, isLeaving, isFailed } = useSteamSignIn(returnPath);
 
     return(
         <span className="steam-sign-in">

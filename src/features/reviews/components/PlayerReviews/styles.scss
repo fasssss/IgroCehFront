@@ -39,8 +39,6 @@ $muted-text: rgba(255, 255, 255, 0.7);
 .player-reviews__cover {
     flex-shrink: 0;
     width: 64px;
-    // global img rule in DragNDropImage styles caps every image at 300px
-    max-width: none;
     aspect-ratio: 2 / 3;
     object-fit: cover;
     border-radius: default.$border-radius_small;
@@ -98,6 +96,7 @@ $muted-text: rgba(255, 255, 255, 0.7);
     width: 20px;
     height: 20px;
     border-radius: 4px;
+    object-fit: contain;
 }
 
 .player-reviews__status {

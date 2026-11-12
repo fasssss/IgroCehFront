@@ -1,0 +1,212 @@
+@use '../../../../shared/styles' as ds;
+@use '../../../../shared/default.module.scss' as default;
+
+// the side column of the 1920px layout starts at 1236px with 60px of its own inset: 684 - 60 - 130
+$side-width: 494px;
+$main-width: 976px;
+
+.profile-hero {
+    display: flex;
+    justify-content: space-between;
+    gap: ds.space(64);
+    padding: 104px ds.$page-gutter;
+    border-bottom: 2px solid ds.white(60);
+    background-color: ds.$background-base;
+    background-image:
+        linear-gradient(to right, ds.$background-base 14.338%, ds.$background-base-90),
+        url('../../../../assets/design/profile-hero-bg.png');
+    background-position: center;
+    background-size: cover;
+}
+
+.profile-hero__main {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: ds.space(48);
+    flex: 0 1 $main-width;
+    min-width: 0;
+}
+
+.profile-hero__identity {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: ds.space(24);
+}
+
+.profile-hero__name-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: ds.space(24);
+    min-width: 0;
+}
+
+.profile-hero__avatar {
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profile-hero__avatar--default {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    // a Discord avatar the user didn't set
+    background-color: default.$discord-bluerple;
+}
+
+.profile-hero__name {
+    margin: 0;
+    font-family: ds.$font-family;
+    font-size: 60px;
+    font-weight: 700;
+    line-height: 1;
+    overflow-wrap: anywhere;
+}
+
+.profile-hero__accounts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: ds.space(12);
+}
+
+.profile-hero__steam-warning {
+    margin-top: -#{ds.space(16)};
+}
+
+.profile-hero__summary {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+// the tiles share their borders: the container draws the top and the left line, every tile its right and bottom one
+.profile-hero__stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border-top: 1px solid ds.white(20);
+    border-left: 1px solid ds.white(20);
+}
+
+.profile-hero__stat {
+    display: flex;
+    flex-direction: column;
+    gap: ds.space(16);
+    padding: ds.space(32) ds.space(24) ds.space(32) ds.space(32);
+    border-right: 1px solid ds.white(20);
+    border-bottom: 1px solid ds.white(20);
+    min-width: 0;
+}
+
+.profile-hero__stat-value {
+    font-family: ds.$font-family;
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1;
+    color: ds.white(80);
+    white-space: nowrap;
+}
+
+.profile-hero__stat-caption {
+    @include ds.small;
+    line-height: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: ds.space(8);
+    color: ds.white(40);
+
+    // the mark stays in the line of the caption and doesn't make the tile taller
+    .soon-label {
+        font-size: 12px;
+        line-height: 14px;
+    }
+}
+
+.profile-hero__side {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 0 0 $side-width;
+    min-width: 0;
+}
+
+// the sections of the side column are divided by lines
+.profile-hero__section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    & + & {
+        margin-top: ds.space(32);
+        padding-top: ds.space(32);
+        border-top: 1px solid ds.white(10);
+    }
+}
+
+.profile-hero__section-title {
+    @include ds.small;
+    line-height: 1;
+    margin: 0;
+    color: ds.white(40);
+}
+
+.profile-hero__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: ds.space(8);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+@media (max-width: 1600px) {
+    .profile-hero {
+        padding: ds.space(64) ds.space(48);
+    }
+}
+
+// the side column goes under the main one
+@media (max-width: 1440px) {
+    .profile-hero {
+        flex-direction: column;
+    }
+
+    .profile-hero__main {
+        flex-basis: auto;
+    }
+
+    .profile-hero__side {
+        flex-basis: auto;
+        max-width: $main-width;
+    }
+}
+
+@media (max-width: 900px) {
+    .profile-hero {
+        padding: ds.space(48) ds.space(16);
+    }
+
+    .profile-hero__stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .profile-hero__name {
+        font-size: 40px;
+    }
+
+    .profile-hero__stat {
+        padding: ds.space(24) ds.space(16);
+    }
+
+    .profile-hero__stat-value {
+        font-size: 28px;
+    }
+}

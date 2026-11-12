@@ -60,6 +60,7 @@ $muted-text: rgba(255, 255, 255, 0.7);
     width: 24px;
     height: 24px;
     border-radius: 4px;
+    object-fit: contain;
 }
 
 .player-history__record-title {
@@ -118,6 +119,7 @@ $muted-text: rgba(255, 255, 255, 0.7);
     width: 24px;
     height: 24px;
     border-radius: 50%;
+    object-fit: contain;
 }
 
 .player-history__partner-name {

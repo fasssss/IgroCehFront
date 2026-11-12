@@ -49,6 +49,8 @@
     border-radius: default.$border-radius_small;
     margin-right: default.$margin_small;
     height: 128px;
+    object-fit: contain;
+    max-width: 300px;
 }
 
 .guild-page__guild-name {
