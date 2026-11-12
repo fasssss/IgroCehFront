@@ -4,15 +4,10 @@
         "Review by": "Review by",
         "Game from": "Game from",
         "To the event": "To the event",
-        "I recommend": "I recommend",
-        "I don't recommend": "I don't recommend",
-        "Recommends": "Recommends",
-        "Doesn't recommend": "Doesn't recommend",
         "Topic, e.g. Story": "Topic, e.g. Story",
         "What do you think about it?": "What do you think about it?",
         "Add a section": "Add a section",
         "Remove the section": "Remove the section",
-        "Choose whether you recommend the game": "Choose whether you recommend the game",
         "Publish": "Publish",
         "Publish the review?": "Publish the review?",
         "After publishing the review can't be changed.": "After publishing the review can't be changed.",
@@ -38,22 +33,20 @@
         "You can answer the review of a guessed game": "You can answer the review of a guessed game",
         "Community reviews": "Community reviews",
         "Previous games": "Previous games",
-        "Next games": "Next games"
+        "Next games": "Next games",
+        "Score the game": "Score the game",
+        "Score": "Score",
+        "Score {{score}} of 10": "Score {{score}} of 10"
     },
     "ru": {
         "Paired review of {{game}}": "Парный обзор на игру «{{game}}»",
         "Review by": "Автор обзора",
         "Game from": "Игра от",
         "To the event": "К событию",
-        "I recommend": "Рекомендую",
-        "I don't recommend": "Не рекомендую",
-        "Recommends": "Рекомендует",
-        "Doesn't recommend": "Не рекомендует",
         "Topic, e.g. Story": "Тема, например «Сюжет»",
         "What do you think about it?": "Что вы об этом думаете?",
         "Add a section": "Добавить секцию",
         "Remove the section": "Удалить секцию",
-        "Choose whether you recommend the game": "Отметьте, рекомендуете ли вы игру",
         "Publish": "Опубликовать",
         "Publish the review?": "Опубликовать обзор?",
         "After publishing the review can't be changed.": "После публикации обзор нельзя будет изменить.",
@@ -79,6 +72,9 @@
         "You can answer the review of a guessed game": "Можете ответить на обзор загаданной игры",
         "Community reviews": "Обзоры сообщества",
         "Previous games": "Предыдущие игры",
-        "Next games": "Следующие игры"
+        "Next games": "Следующие игры",
+        "Score the game": "Оцените игру",
+        "Score": "Оценка",
+        "Score {{score}} of 10": "Оценка {{score}} из 10"
     }
 }

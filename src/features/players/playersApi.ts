@@ -7,24 +7,39 @@ import type { AchievementPlatform } from "root/features/globalEvents/achievement
 const playersApi = igroCehApi.injectEndpoints({
     endpoints: (build) => ({
         getPlayerProfile: build.query<GetPlayerProfileResponse, GetPlayerProfileRequest>({
-            query: ({ userId, guildId }) => ({
+            query: ({ userId }) => ({
                 url: '/api/getPlayerProfile',
-                params: { userId, guildId }
+                params: { userId }
             }),
         }),
         getPlayerHistory: build.query<GetPlayerHistoryResponse, GetPlayerHistoryRequest>({
-            query: ({ userId, guildId, startFrom }) => ({
+            query: ({ userId, startFrom }) => ({
                 url: '/api/getPlayerHistory',
-                params: { userId, guildId, startFrom }
+                params: { userId, startFrom }
             }),
-            // pages of one player and guild are merged into a single cache entry, the first page replaces it
-            serializeQueryArgs: ({ queryArgs }) => `${queryArgs.userId}:${queryArgs.guildId ?? ''}`,
+            // pages of one player are merged into a single cache entry, the first page replaces it
+            serializeQueryArgs: ({ queryArgs }) => queryArgs.userId,
             merge: (currentCache, response, { arg }) => {
                 if(arg.startFrom === 0) {
                     return response;
                 }
 
                 currentCache.historyItems.push(...response.historyItems);
+                currentCache.hasMore = response.hasMore;
+            },
+            forceRefetch: ({ currentArg, previousArg }) => currentArg?.startFrom !== previousArg?.startFrom,
+        }),
+        // the passed or the guessed games of the tab "Мои игры", 6 a page; the pages of one list are merged like the history,
+        // a new sort starts it over
+        getPlayerGames: build.query<GetPlayerGamesResponse, GetPlayerGamesRequest>({
+            query: ({ userId, kind, sort, startFrom }) => ({ url: '/api/getPlayerGames', params: { userId, kind, sort, startFrom } }),
+            serializeQueryArgs: ({ queryArgs }) => `${queryArgs.userId}:${queryArgs.kind}:${queryArgs.sort}`,
+            merge: (currentCache, response, { arg }) => {
+                if(arg.startFrom === 0) {
+                    return response;
+                }
+
+                currentCache.games.push(...response.games);
                 currentCache.hasMore = response.hasMore;
             },
             forceRefetch: ({ currentArg, previousArg }) => currentArg?.startFrom !== previousArg?.startFrom,
@@ -144,9 +159,7 @@ export type PlayerHistoryItem = {
 }
 
 export type GetPlayerProfileRequest = {
-    userId: string,
-    // statistics of every guild of the player when not set
-    guildId?: string
+    userId: string
 }
 
 export type GetPlayerProfileResponse = {
@@ -155,12 +168,44 @@ export type GetPlayerProfileResponse = {
 
 export type GetPlayerHistoryRequest = {
     userId: string,
-    guildId?: string,
     startFrom: number
 }
 
 export type GetPlayerHistoryResponse = {
     historyItems: PlayerHistoryItem[],
+    hasMore: boolean
+}
+
+// mirrors Application.Enum.PlayerGamesKind / PlayerGamesSort on backend
+export const PlayerGamesKind = { Passed: 0, Guessed: 1 } as const;
+export type PlayerGamesKind = typeof PlayerGamesKind[keyof typeof PlayerGamesKind];
+export const PlayerGamesSort = { Latest: 0, Score: 1 } as const;
+export type PlayerGamesSort = typeof PlayerGamesSort[keyof typeof PlayerGamesSort];
+
+// a game of the tab "Мои игры": passed by the player or guessed by them
+export type PlayerGame = {
+    eventRecordId: string,
+    game: Pick<GameObject, 'id' | 'name' | 'imageUrl' | 'steamUrl'>,
+    // who guessed a passed game or who got a guessed one
+    partner: UserShortObject | null,
+    eventId: string,
+    eventName: string,
+    // the time of the passing or of the guess
+    date: string | null,
+    // the review of a passed game and its score, when the viewer may read it
+    reviewId: string | null,
+    score: number | null
+}
+
+export type GetPlayerGamesRequest = {
+    userId: string,
+    kind: PlayerGamesKind,
+    sort: PlayerGamesSort,
+    startFrom: number
+}
+
+export type GetPlayerGamesResponse = {
+    games: PlayerGame[],
     hasMore: boolean
 }
 
@@ -210,6 +255,7 @@ export const {
     useGetPlayerProfileQuery,
     useGetPlayerHistoryQuery,
     useGetPlayerLadderQuery,
+    useGetPlayerGamesQuery,
     useGetPreferenceTagsQuery,
     useGetPlayerPreferencesQuery,
     useSetPreferencesMutation

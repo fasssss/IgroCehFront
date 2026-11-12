@@ -8,16 +8,9 @@
     gap: default.$margin_small;
     padding: default.$padding_small;
     border-radius: default.$border-radius_small;
-    color: default.$black;
+    background-color: default.$dark-grey;
+    color: review.$muted-text;
     font-weight: 700;
-}
-
-.published-review__verdict--up {
-    background-color: default.$green;
-}
-
-.published-review__verdict--down {
-    background-color: review.$failed;
 }
 
 .published-review__section {

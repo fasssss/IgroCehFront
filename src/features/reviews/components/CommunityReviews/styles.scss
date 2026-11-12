@@ -104,20 +104,8 @@ $avatar-size: 48px;
     color: review.$muted-text;
 }
 
-.community-reviews__thumb {
-    display: inline-flex;
-    padding: 2px;
-    border-radius: 4px;
-    color: default.$black;
-}
 
-.community-reviews__thumb--up {
-    background-color: default.$green;
-}
 
-.community-reviews__thumb--down {
-    background-color: review.$failed;
-}
 
 .community-reviews__loader {
     display: flex;

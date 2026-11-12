@@ -75,7 +75,6 @@
         "profile.tabs.ladder": "Ladder",
         "profile.tabs.guilds": "Communities",
         "profile.tabs.games": "My games",
-        "profile.gamesSoon": "The passed and the guessed games, their scores and the favorite games will be here.",
         "profile.noGuilds": "No communities in common yet",
         "history.active": "Active",
         "history.finished": "Finished",
@@ -98,7 +97,16 @@
         "ladder.takeGame": "Take a game",
         "ladder.regularSoon": "The Regular roster",
         "ladder.noPassed": "No passed ladder games yet",
-        "ladder.passed": "Passed"
+        "ladder.passed": "Passed",
+        "games.passed": "Passed games",
+        "games.guessed": "Guessed games",
+        "games.sort": "Order of the games",
+        "games.latest": "Latest first",
+        "games.byScore": "By score",
+        "games.review": "Review",
+        "games.showMore": "Show more",
+        "games.noPassed": "No passed games yet",
+        "games.noGuessed": "No guessed games yet"
     },
     "ru": {
         "Playing since {{date}}": "Играет с {{date}}",
@@ -195,7 +203,6 @@
         "profile.tabs.ladder": "Ладдер",
         "profile.tabs.guilds": "Сообщества",
         "profile.tabs.games": "Мои игры",
-        "profile.gamesSoon": "Здесь будут пройденные и загаданные игры, их оценки и любимые игры.",
         "profile.noGuilds": "Общих сообществ пока нет",
         "history.active": "Активен",
         "history.finished": "Завершён",
@@ -222,6 +229,15 @@
         "ladder.takeGame": "Взять игру",
         "ladder.regularSoon": "Регулярный ростер",
         "ladder.noPassed": "Пройденных игр ладдера пока нет",
-        "ladder.passed": "Пройдено"
+        "ladder.passed": "Пройдено",
+        "games.passed": "Пройденные игры",
+        "games.guessed": "Загаданные игры",
+        "games.sort": "Порядок игр",
+        "games.latest": "Сначала последние",
+        "games.byScore": "По оценке",
+        "games.review": "Отзыв",
+        "games.showMore": "Показать ещё",
+        "games.noPassed": "Пройденных игр пока нет",
+        "games.noGuessed": "Загаданных игр пока нет"
     }
 }

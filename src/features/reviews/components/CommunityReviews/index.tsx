@@ -2,10 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { CircularProgress } from "@mui/material";
-import { ImageNotSupportedOutlined, ThumbDown, ThumbUp } from "@mui/icons-material";
+import { ImageNotSupportedOutlined } from "@mui/icons-material";
 import { resolveImageUrl } from "root/shared/helpers/imageUrl";
 import { useGetCommunityReviewsQuery } from "../../reviewsApi";
 import { reviewPath } from "../../reviewPath";
+import { ReviewScore } from "../ReviewScore";
 import './styles.scss';
 
 const PAGE_SIZE = 20;
@@ -61,10 +62,7 @@ const CommunityReviews = () => {
                                     <span className="community-reviews__author-name">{review.author.userName}</span>
                                 </div>
                                 <div className="community-reviews__verdict">
-                                    {review.isRecommended ? t("Recommends") : t("Doesn't recommend")}
-                                    <span className={`community-reviews__thumb community-reviews__thumb--${review.isRecommended ? "up" : "down"}`}>
-                                        {review.isRecommended ? <ThumbUp fontSize="small" /> : <ThumbDown fontSize="small" />}
-                                    </span>
+                                    <ReviewScore score={review.score} size="small" />
                                 </div>
                             </div>
                         </Link>

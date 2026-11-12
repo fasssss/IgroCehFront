@@ -15,8 +15,8 @@ import { ProfileTab, toProfileTab } from "../../profileTabs";
 import { ProfileHero } from "../ProfileHero";
 import { PlayerGuilds } from "../PlayerGuilds";
 import { PlayerHistory } from "../PlayerHistory";
-import { ProfileSoon } from "../ProfileSoon";
 import { PlayerLadder } from "../PlayerLadder";
+import { PlayerGames } from "../PlayerGames";
 import { useCurrentUser } from "root/features/authorization/authorizationApi";
 import './styles.scss';
 
@@ -78,7 +78,7 @@ const PlayerProfilePage = () => {
                     <div className="player-profile__empty">{t('profile.noGuilds')}</div>
                 }
             </div>,
-        games: <ProfileSoon title={t('profile.tabs.games')} text={t('profile.gamesSoon')} />,
+        games: <PlayerGames key={userId} userId={userId} />,
     };
 
     return(

@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { IconButton } from "@mui/material";
-import { Add, Close, ThumbDown, ThumbDownOutlined, ThumbUp, ThumbUpOutlined } from "@mui/icons-material";
+import { Add, Close } from "@mui/icons-material";
 import { CommonButton } from "root/shared/components/CommonButton";
 import { CommonModal } from "root/shared/components/CommonModal";
 import { ReviewPageObject, usePublishReviewMutation } from "../../reviewsApi";
 import { ReviewVisibility } from "../../reviewVisibility";
 import { REVIEW_MAX_SECTIONS, REVIEW_TEXT_MAX_LENGTH, REVIEW_TITLE_MAX_LENGTH } from "../../reviewLimits";
+import { formatReviewScore, REVIEW_SCORES } from "../../reviewScore";
+import { ReviewScore } from "../ReviewScore";
 import { ReviewLayout } from "../ReviewLayout";
 import { ReviewVisibilitySlider } from "../ReviewVisibilitySlider";
 import './styles.scss';
@@ -17,17 +19,17 @@ type DraftSection = {
     text: string
 };
 
-// the player who passed the game writes the sections, picks a thumb and publishes everything at once
+// the player who passed the game writes the sections, scores the game and publishes everything at once
 const ReviewEditor = ({ page }: ReviewEditorProps) => {
     const { t } = useTranslation();
-    const [isRecommended, setIsRecommended] = useState<boolean | null>(null);
+    const [score, setScore] = useState<number | null>(null);
     const [visibility, setVisibility] = useState<ReviewVisibility>(ReviewVisibility.Guild);
     const [sections, setSections] = useState<DraftSection[]>([{ key: 0, title: "", text: "" }]);
     const [nextKey, setNextKey] = useState(1);
     const [isConfirmShown, setIsConfirmShown] = useState(false);
     const [publishReview, publishResult] = usePublishReviewMutation();
     const areSectionsFilled = sections.every(section => section.title.trim() && section.text.trim());
-    const canPublish = isRecommended !== null && areSectionsFilled;
+    const canPublish = score !== null && areSectionsFilled;
 
     const updateSection = (key: number, change: Partial<DraftSection>) =>
         setSections(current => current.map(section => section.key === key ? { ...section, ...change } : section));
@@ -43,7 +45,7 @@ const ReviewEditor = ({ page }: ReviewEditorProps) => {
             // the page switches to the published review when the query refetches
             await publishReview({
                 eventRecordId: page.eventRecordId,
-                isRecommended: isRecommended === true,
+                score: score ?? 0,
                 visibility,
                 sections: sections.map(({ title, text }) => ({ title, text })),
             }).unwrap();
@@ -52,26 +54,22 @@ const ReviewEditor = ({ page }: ReviewEditorProps) => {
         }
     };
 
-    const thumb = (value: boolean) =>
-        <button
-        type="button"
-        className={`review-editor__thumb review-editor__thumb--${value ? "up" : "down"} ${isRecommended === value ? "review-editor__thumb--active" : ""}`}
-        aria-pressed={isRecommended === value}
-        title={value ? t("I recommend") : t("I don't recommend")}
-        aria-label={value ? t("I recommend") : t("I don't recommend")}
-        onClick={() => setIsRecommended(value)}>
-            {
-                value ?
-                (isRecommended === true ? <ThumbUp /> : <ThumbUpOutlined />)
-                :
-                (isRecommended === false ? <ThumbDown /> : <ThumbDownOutlined />)
-            }
-        </button>;
+    // a score from 1 to 10 in steps of 0.5, shown in its color once it is chosen
+    const scorePicker =
+        <label className="review-editor__score">
+            <select className="review-editor__score-select" value={score ?? ""} aria-label={t("Score the game")}
+                onChange={e => setScore(e.target.value ? Number(e.target.value) : null)}
+            >
+                <option value="">{t("Score the game")}</option>
+                {REVIEW_SCORES.map(value => <option key={value} value={value}>{formatReviewScore(value)}</option>)}
+            </select>
+            {score !== null && <ReviewScore score={score} />}
+        </label>;
 
     return(
         <ReviewLayout
         page={page}
-        verdict={<div className="review-editor__thumbs">{thumb(true)}{thumb(false)}</div>}
+        verdict={scorePicker}
         settings={<ReviewVisibilitySlider value={visibility} onChange={setVisibility} />}>
             {
                 sections.map(section =>
@@ -111,8 +109,8 @@ const ReviewEditor = ({ page }: ReviewEditorProps) => {
             }
             <div className="review-editor__actions">
                 {
-                    isRecommended === null && areSectionsFilled &&
-                    <div className="review-editor__hint">{t("Choose whether you recommend the game")}</div>
+                    score === null && areSectionsFilled &&
+                    <div className="review-editor__hint">{t("Score the game")}</div>
                 }
                 <CommonButton color="success" disabled={!canPublish || publishResult.isLoading} onClick={() => setIsConfirmShown(true)}>
                     {t("Publish")}

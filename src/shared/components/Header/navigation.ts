@@ -27,8 +27,9 @@ type NavigationContext = {
 export const buildNavigation = ({ pathname, tab, userId, activeGlobalEventId }: NavigationContext): NavGroup[] => {
     const isCommunities = pathname === '/' || pathname.startsWith('/guild/');
     const isFest = pathname.startsWith('/global-event/');
-    const myLadderPath = userId ? profileTabPath(userId, 'ladder') : undefined;
-    const isMyLadder = !!userId && pathname === playerProfilePath(userId) && tab === 'ladder';
+    // "Мои игры" of the ladder is the tab "Мои игры" of the own profile
+    const myGamesPath = userId ? profileTabPath(userId, 'games') : undefined;
+    const isMyGames = !!userId && pathname === playerProfilePath(userId) && tab === 'games';
     const festPath = activeGlobalEventId ? globalEventPath(activeGlobalEventId) : undefined;
 
     return [
@@ -45,11 +46,11 @@ export const buildNavigation = ({ pathname, tab, userId, activeGlobalEventId }: 
         {
             id: 'ladder',
             labelKey: 'nav.ladder',
-            isActive: isFest || isMyLadder,
+            isActive: isFest || isMyGames,
             items: [
                 { labelKey: 'nav.igrofest', to: festPath, isActive: isFest },
                 { labelKey: 'nav.regular' },
-                { labelKey: 'nav.myGames', to: myLadderPath, isActive: isMyLadder },
+                { labelKey: 'nav.myGames', to: myGamesPath, isActive: isMyGames },
                 { labelKey: 'nav.playersRating' },
                 { labelKey: 'nav.howItWorks' },
             ]

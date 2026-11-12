@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ThumbDown, ThumbUp } from "@mui/icons-material";
 import { CommonButton } from "root/shared/components/CommonButton";
 import { CommonModal } from "root/shared/components/CommonModal";
 import { ReviewPageObject, usePublishReviewRepliesMutation, useSetReviewVisibilityMutation } from "../../reviewsApi";
 import { ReviewVisibility } from "../../reviewVisibility";
 import { REVIEW_REPLY_MAX_LENGTH } from "../../reviewLimits";
 import { ReviewLayout } from "../ReviewLayout";
+import { ReviewScore } from "../ReviewScore";
 import { ReviewPerson } from "../ReviewPerson";
 import { ReviewVisibilitySlider } from "../ReviewVisibilitySlider";
 import './styles.scss';
@@ -48,9 +48,9 @@ const PublishedReview = ({ page, canReply, isAuthor }: PublishedReviewProps) => 
     };
 
     const verdict =
-        <div className={`published-review__verdict published-review__verdict--${review.isRecommended ? "up" : "down"}`}>
-            {review.isRecommended ? <ThumbUp /> : <ThumbDown />}
-            {review.isRecommended ? t("Recommends") : t("Doesn't recommend")}
+        <div className="published-review__verdict">
+            {t("Score")}
+            <ReviewScore score={review.score} />
         </div>;
 
     const settings = isAuthor &&
