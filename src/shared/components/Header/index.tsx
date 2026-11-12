@@ -68,7 +68,11 @@ const Header = () => {
         userId: user?.id,
         activeGlobalEventId: activeGlobalEvent?.id
     });
-    const expandedGroup = groups.find(group => group.isActive);
+    // a group opens by a click on its title, one at a time; a page opens the group of its section
+    const sectionGroupId = groups.find(group => group.isActive)?.id ?? null;
+    const [expandedId, setExpandedId] = useState<NavGroup['id'] | null>(sectionGroupId);
+    useEffect(() => setExpandedId(sectionGroupId), [pathname, sectionGroupId]);
+    const expandedGroup = groups.find(group => group.id === expandedId);
 
     // a menu stays open on another page only by mistake
     const { setIsOpen: setUserMenuOpen } = userMenu;
@@ -76,12 +80,14 @@ const Header = () => {
 
     const currentLanguage = LANGUAGES.find(lang => i18n.resolvedLanguage === lang.code) ?? LANGUAGES[0];
 
+    // a part of the site that is not made yet is dim, its "soon" shows on hover and focus without widening the menu
     const renderItem = (item: NavItem) => {
         if(!item.to) {
             return(
-                <span key={item.labelKey} className="header__item header__item--soon" aria-disabled="true">
+                <span key={item.labelKey} className="header__item header__item--soon" tabIndex={0} aria-disabled="true">
                     {t(item.labelKey)}
-                    <SoonLabel className="header__soon" />
+                    <span className="visually-hidden">({t('soon')})</span>
+                    <span className="header__hint" aria-hidden><SoonLabel /></span>
                 </span>
             );
         }
@@ -97,13 +103,26 @@ const Header = () => {
         );
     }
 
-    const renderGroupTitle = (group: NavGroup) => {
+    const renderGroup = (group: NavGroup) => {
         const icons = GROUP_ICONS[group.id];
+        const isExpanded = group.id === expandedId;
+        const itemsId = `header-group-${group.id}`;
         return(
-            <Link to={group.to} className="header__group-title" title={t(group.labelKey)}>
-                <img src={group.isActive ? icons.active : icons.icon} className="header__group-icon" alt="" width={24} height={24} />
-                <span className="header__group-label">{t(group.labelKey)}</span>
-            </Link>
+            <div key={group.id} className={`header__group ${isExpanded ? 'header__group--expanded' : ''}`}>
+                <button type="button" className="header__group-title"
+                    aria-expanded={isExpanded} aria-controls={itemsId}
+                    onClick={() => setExpandedId(isExpanded ? null : group.id)}
+                >
+                    <img src={isExpanded ? icons.active : icons.icon} className="header__group-icon" alt="" width={24} height={24} />
+                    <span className="header__group-label">{t(group.labelKey)}</span>
+                </button>
+                <div id={itemsId} className="header__items">
+                    <div className="header__items-inner">
+                        <span className="header__separator" aria-hidden>|</span>
+                        {group.items.map(renderItem)}
+                    </div>
+                </div>
+            </div>
         );
     }
 
@@ -118,18 +137,7 @@ const Header = () => {
                         </span>
                     </Link>
                     <nav className="header__menu" aria-label={t('nav.mainMenu')}>
-                        {
-                            groups.map(group =>
-                                group.isActive ?
-                                <div key={group.id} className="header__group header__group--expanded">
-                                    {renderGroupTitle(group)}
-                                    <span className="header__separator" aria-hidden>|</span>
-                                    <div className="header__items">{group.items.map(renderItem)}</div>
-                                </div>
-                                :
-                                <div key={group.id} className="header__group">{renderGroupTitle(group)}</div>
-                            )
-                        }
+                        {groups.map(renderGroup)}
                     </nav>
                 </div>
                 <div className="header__right">

@@ -4,9 +4,12 @@
 // "Navbar-состояния" (22582:11444): 96px together with the bottom border
 $bar-height: 95px;
 $subnav-height: 48px;
-// below this width the items of the expanded ladder (with its "soon" marks) don't fit next to the groups
-$subnav-breakpoint: 1600px;
+// below it the spacing of the bar shrinks, so the expanded ladder still fits in one row
+$compact: 1440px;
+// below it the items of the expanded group go to a row of their own (not in the layouts: tablets and phones)
+$subnav-breakpoint: 1100px;
 $phone: 600px;
+$expand-time: .3s;
 
 .header {
     position: sticky;
@@ -74,25 +77,33 @@ $phone: 600px;
     min-width: 0;
 }
 
+// a group is its title; an expanded one gets the frame and its items slide out of the title (layout states 1 and 2)
 .header__group {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     flex-shrink: 0;
+    height: 58px;
+    box-sizing: border-box;
+    padding: 0;
+    border: 1px solid transparent;
+    transition: padding $expand-time ease, border-color $expand-time ease;
 }
 
 .header__group--expanded {
-    gap: 20px;
-    height: 58px;
     padding: 0 ds.space(24) 0 ds.space(16);
-    border: 1px solid ds.white(30);
+    border-color: ds.white(30);
 }
 
 .header__group-title {
     display: flex;
     align-items: center;
     gap: ds.space(8);
+    padding: 0;
+    border: none;
+    background: none;
     color: ds.white(80);
-    text-decoration: none;
+    cursor: pointer;
+    transition: color .15s;
 
     &:hover {
         color: ds.$text-primary;
@@ -117,19 +128,40 @@ $phone: 600px;
     white-space: nowrap;
 }
 
+// the items take no width while the group is closed and widen to their own width when it opens;
+// the width is clipped only sideways, so the "soon" hint below an item stays visible
+.header__items {
+    display: grid;
+    grid-template-columns: 0fr;
+    opacity: 0;
+    visibility: hidden;
+    transition: grid-template-columns $expand-time ease, opacity $expand-time ease, visibility 0s linear $expand-time;
+
+    .header__group--expanded & {
+        grid-template-columns: 1fr;
+        opacity: 1;
+        visibility: visible;
+        transition: grid-template-columns $expand-time ease, opacity $expand-time ease, visibility 0s;
+    }
+}
+
+.header__items-inner {
+    display: flex;
+    align-items: stretch;
+    gap: 20px;
+    min-width: 0;
+    overflow-x: clip;
+    overflow-y: visible;
+}
+
 .header__separator {
     font-family: ds.$font-family;
     font-size: 20px;
     font-weight: 300;
     line-height: 1;
+    align-self: center;
+    margin-left: 20px;
     opacity: .3;
-}
-
-.header__items {
-    display: flex;
-    align-items: stretch;
-    align-self: stretch;
-    gap: 20px;
 }
 
 .header__item {
@@ -140,7 +172,6 @@ $phone: 600px;
     position: relative;
     display: flex;
     align-items: center;
-    gap: 6px;
     color: ds.white(60);
     text-decoration: none;
     white-space: nowrap;
@@ -169,10 +200,33 @@ $phone: 600px;
     cursor: default;
 }
 
-.header__soon {
-    font-size: 12px;
-    line-height: 16px;
-    padding: 0 6px;
+// "soon" under a part of the site that is not made yet, on hover and on focus
+.header__hint {
+    position: absolute;
+    top: calc(100% + #{ds.space(8)});
+    left: 50%;
+    z-index: 1;
+    padding: ds.space(4);
+    background-color: ds.$surface-raised;
+    transform: translateX(-50%);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .15s, visibility 0s linear .15s;
+
+    .header__item--soon:hover &,
+    .header__item--soon:focus-visible & {
+        opacity: 1;
+        visibility: visible;
+        transition: opacity .15s, visibility 0s;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .header__group,
+    .header__items,
+    .header__group--expanded .header__items {
+        transition: none;
+    }
 }
 
 .header__dropdown {
@@ -315,16 +369,47 @@ $phone: 600px;
     display: none;
 }
 
-@media (max-width: $subnav-breakpoint) {
-    .header__group--expanded {
-        border: none;
-        padding: 0;
-        height: auto;
+// the spacing of the layout is for 1920px, a smaller screen keeps everything in one row with less air
+@media (max-width: $compact) {
+    .header__bar {
+        padding: 0 ds.space(24);
+    }
 
-        .header__separator,
-        .header__items {
-            display: none;
-        }
+    .header__left {
+        gap: ds.space(32);
+    }
+
+    .header__menu {
+        gap: ds.space(24);
+        padding-left: ds.space(24);
+    }
+
+    .header__items-inner {
+        gap: ds.space(16);
+    }
+
+    .header__separator {
+        margin-left: ds.space(16);
+    }
+
+    .header__right {
+        gap: ds.space(24);
+    }
+
+    .header__user {
+        padding-left: ds.space(24);
+    }
+}
+
+@media (max-width: $subnav-breakpoint) {
+    .header__group,
+    .header__group--expanded {
+        padding: 0;
+        border-color: transparent;
+    }
+
+    .header__items {
+        display: none;
     }
 
     .header__subnav {
@@ -332,7 +417,7 @@ $phone: 600px;
         align-items: stretch;
         gap: ds.space(24);
         height: $subnav-height;
-        padding: 0 ds.space(48);
+        padding: 0 ds.space(24);
         border-top: 1px solid ds.white(10);
         overflow-x: auto;
         scrollbar-width: none;
@@ -340,6 +425,17 @@ $phone: 600px;
 
     .header__subnav .header__item-line {
         bottom: 0;
+    }
+
+    // a touch screen has no hover: the row scrolls sideways, so "soon" stands right after the item
+    .header__subnav .header__hint {
+        position: static;
+        margin-left: 6px;
+        padding: 0;
+        background: none;
+        transform: none;
+        opacity: 1;
+        visibility: visible;
     }
 }
 

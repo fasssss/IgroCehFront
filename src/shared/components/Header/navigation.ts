@@ -1,7 +1,7 @@
 import { globalEventPath } from "root/features/globalEvents/globalEventPath";
 import { playerProfilePath } from "root/features/players/playerProfilePath";
 
-// the menu of the header: a group is expanded while the user is in its section;
+// the menu of the header: the title of a group opens its items, a page opens the group of its section (isActive);
 // an item without `to` is a part of the site that is not made yet and is shown as "soon"
 export type NavItem = {
     labelKey: string,
@@ -12,7 +12,6 @@ export type NavItem = {
 export type NavGroup = {
     id: 'events' | 'ladder',
     labelKey: string,
-    to: string,
     isActive: boolean,
     items: NavItem[]
 }
@@ -37,7 +36,6 @@ export const buildNavigation = ({ pathname, tab, userId, activeGlobalEventId }: 
         {
             id: 'events',
             labelKey: 'nav.events',
-            to: '/',
             isActive: isCommunities,
             items: [
                 { labelKey: 'nav.currentSeason' },
@@ -48,8 +46,6 @@ export const buildNavigation = ({ pathname, tab, userId, activeGlobalEventId }: 
         {
             id: 'ladder',
             labelKey: 'nav.ladder',
-            // Igrofest is the part of the ladder that exists, without an active one the own ladder games are shown
-            to: festPath ?? myLadderPath ?? '/',
             isActive: isFest || isMyLadder,
             items: [
                 { labelKey: 'nav.igrofest', to: festPath, isActive: isFest },
