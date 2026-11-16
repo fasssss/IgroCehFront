@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { skipToken } from "@reduxjs/toolkit/query";
 import { useActivateEventMutation, useSubmitPassingMutation, useSummarizeEventMutation } from "../../eventsApi";
@@ -13,10 +13,14 @@ import { playerProfilePath } from "root/features/players/playerProfilePath";
 import { useGetGuildByIdQuery } from "root/features/guilds/guildsApi";
 import { guessGamePath } from "../../guessGamePath";
 import { newcomerJoinPath } from "../../newcomerJoinPath";
+import { formatSeasonDate } from "../../seasons";
+
+// the longest delay setTimeout keeps, about 24.8 days; a page opened earlier sees the season start after a reload
+const MAX_TIMEOUT_DELAY = 2 ** 31 - 1;
 
 // progress of passing the guessed games, after summarizing shows results of the event
 const AuctionProgressPage = ({ event, currentUser }: EventStageProps) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { guildId } = useParams();
     const navigate = useNavigate();
     const [submitPassing] = useSubmitPassingMutation();
@@ -33,6 +37,22 @@ const AuctionProgressPage = ({ event, currentUser }: EventStageProps) => {
         && !event.eventRecords.some(record => record.participant.id === currentUser.id || record.toUser?.id === currentUser.id);
     // the creator activates the event once every participant has guessed, until then the games can be changed
     const canActivate = guessedCount > 0 && guessedCount === event.eventRecords.length;
+    // an event planned for the next season is played only from its start, the backend checks it too;
+    // the comparisons are negated so a missing date doesn't hold the activation
+    const seasonStartsAt = Date.parse(event.seasonStartsAt);
+    const [hasSeasonStarted, setHasSeasonStarted] = useState(() => !(Date.now() < seasonStartsAt));
+
+    // the page left open across the start of the season unlocks the activation by itself
+    useEffect(() => {
+        const delay = seasonStartsAt - Date.now();
+        setHasSeasonStarted(!(delay > 0));
+        if(!(delay > 0) || delay > MAX_TIMEOUT_DELAY) {
+            return;
+        }
+
+        const timer = setTimeout(() => setHasSeasonStarted(true), delay);
+        return () => clearTimeout(timer);
+    }, [seasonStartsAt]);
 
     return(
     <div className="auction-progress">
@@ -41,16 +61,21 @@ const AuctionProgressPage = ({ event, currentUser }: EventStageProps) => {
                 <h1>{event.eventName}</h1>
             </div>
             <div className="auction-progress__event-actions">
+                { isGuessing && !hasSeasonStarted &&
+                    <div className="auction-progress__hint">
+                        {t("The season starts on {{date}}, the event can be activated then", { date: formatSeasonDate(event.seasonStartsAt, i18n.language) })}
+                    </div>
+                }
                 { isCreator && isGuessing &&
                     <>
                         { !canActivate &&
-                            <div className="auction-progress__guessed-count">
+                            <div className="auction-progress__hint">
                                 {t("Games guessed: {{guessed}} of {{total}}", { guessed: guessedCount, total: event.eventRecords.length })}
                             </div>
                         }
                         <CommonButton
                         color="success"
-                        disabled={!canActivate}
+                        disabled={!canActivate || !hasSeasonStarted}
                         onClick={() => setIsActivateConfirmShown(true)}
                         >
                             {t("Activate event")}

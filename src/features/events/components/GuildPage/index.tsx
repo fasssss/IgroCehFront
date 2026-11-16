@@ -159,7 +159,7 @@ const GuildPage = () => {
                                     <div className="guild-page__create-event-hint">
                                         {
                                             isNextSeason ?
-                                            t("The season of the event is {{start}} – {{end}}. The registration lasts until it starts.", seasonDates)
+                                            t("The season of the event is {{start}} – {{end}}. The event can be activated once it starts.", seasonDates)
                                             :
                                             t("The season of the event is {{start}} – {{end}}. Points for passing are counted from its start.", seasonDates)
                                         }
