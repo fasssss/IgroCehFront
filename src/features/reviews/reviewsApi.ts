@@ -59,7 +59,8 @@ export type ReviewSectionObject = {
 }
 
 export type ReviewObject = {
-    isRecommended: boolean,
+    // empty for a neutral review
+    isRecommended: boolean | null,
     visibility: ReviewVisibility,
     publishedAt: string,
     // the one who guessed the game answers once
@@ -84,7 +85,8 @@ export type ReviewPageObject = {
 
 export type PublishReviewRequest = {
     eventRecordId: string,
-    isRecommended: boolean,
+    // empty for a neutral review
+    isRecommended: boolean | null,
     visibility: ReviewVisibility,
     sections: { title: string, text: string }[]
 }
@@ -106,7 +108,8 @@ export type PlayerReviewObject = {
     guildIconUrl: string | null,
     game: ReviewGame,
     guesser: ReviewPlayer,
-    isRecommended: boolean,
+    // empty for a neutral review
+    isRecommended: boolean | null,
     visibility: ReviewVisibility,
     publishedAt: string,
     hasReplies: boolean
@@ -137,7 +140,8 @@ export type CommunityReviewObject = {
     eventRecordId: string,
     game: ReviewGame,
     author: ReviewPlayer,
-    isRecommended: boolean,
+    // empty for a neutral review
+    isRecommended: boolean | null,
     publishedAt: string
 }
 

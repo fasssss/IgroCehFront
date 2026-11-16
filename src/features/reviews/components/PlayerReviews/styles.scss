@@ -82,6 +82,11 @@ $muted-text: rgba(255, 255, 255, 0.7);
     background-color: #ef6a5a;
 }
 
+.player-reviews__verdict--neutral {
+    background-color: default.$light-grey;
+    color: white;
+}
+
 .player-reviews__visibility {
     color: rgba(255, 255, 255, 0.6);
 }

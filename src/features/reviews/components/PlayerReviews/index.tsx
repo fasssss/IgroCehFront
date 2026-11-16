@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { GroupsOutlined, LockOutlined, PeopleOutlined, PublicOutlined, ThumbDown, ThumbUp } from "@mui/icons-material";
+import { GroupsOutlined, LockOutlined, PeopleOutlined, PublicOutlined } from "@mui/icons-material";
 import { resolveImageUrl } from "root/shared/helpers/imageUrl";
 import { useCurrentUser } from "root/features/authorization/authorizationApi";
 import { useGetPlayerReviewsQuery } from "../../reviewsApi";
 import { REVIEW_VISIBILITY_NAME, ReviewVisibility } from "../../reviewVisibility";
 import { reviewPath } from "../../reviewPath";
+import { REVIEW_VERDICT_ICON, REVIEW_VERDICT_NAME, reviewVerdict } from "../../reviewVerdict";
 import './styles.scss';
 
 // reviews the player wrote, on the profile next to the history
@@ -20,6 +21,17 @@ const VisibilityIcon = ({ visibility }: { visibility: ReviewVisibility }) => {
     const { t } = useTranslation();
     const Icon = VISIBILITY_ICONS[visibility];
     return <Icon fontSize="small" className="player-reviews__visibility" titleAccess={t(REVIEW_VISIBILITY_NAME[visibility])} />;
+};
+
+const Verdict = ({ isRecommended }: { isRecommended: boolean | null }) => {
+    const { t } = useTranslation();
+    const verdict = reviewVerdict(isRecommended);
+    const Icon = REVIEW_VERDICT_ICON[verdict];
+    return(
+        <span className={`player-reviews__verdict player-reviews__verdict--${verdict}`} title={t(REVIEW_VERDICT_NAME[verdict])}>
+            <Icon fontSize="small" />
+        </span>
+    );
 };
 
 const PlayerReviews = ({ userId, guildId }: PlayerReviewsProps) => {
@@ -50,11 +62,7 @@ const PlayerReviews = ({ userId, guildId }: PlayerReviewsProps) => {
                         <div className="player-reviews__info">
                             <div className="player-reviews__title">
                                 <span className="player-reviews__game">{review.game.name}</span>
-                                <span
-                                className={`player-reviews__verdict player-reviews__verdict--${review.isRecommended ? "up" : "down"}`}
-                                title={review.isRecommended ? t("Recommends") : t("Doesn't recommend")}>
-                                    {review.isRecommended ? <ThumbUp fontSize="small" /> : <ThumbDown fontSize="small" />}
-                                </span>
+                                <Verdict isRecommended={review.isRecommended} />
                                 {isOwnProfile && <VisibilityIcon visibility={review.visibility} />}
                             </div>
                             <div className="player-reviews__details">

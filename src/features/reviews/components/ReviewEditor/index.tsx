@@ -17,7 +17,8 @@ type DraftSection = {
     text: string
 };
 
-// the player who passed the game writes the sections, picks a thumb and publishes everything at once
+// the player who passed the game writes the sections, may pick a thumb and publishes everything at once;
+// without a thumb the review is neutral
 const ReviewEditor = ({ page }: ReviewEditorProps) => {
     const { t } = useTranslation();
     const [isRecommended, setIsRecommended] = useState<boolean | null>(null);
@@ -27,7 +28,6 @@ const ReviewEditor = ({ page }: ReviewEditorProps) => {
     const [isConfirmShown, setIsConfirmShown] = useState(false);
     const [publishReview, publishResult] = usePublishReviewMutation();
     const areSectionsFilled = sections.every(section => section.title.trim() && section.text.trim());
-    const canPublish = isRecommended !== null && areSectionsFilled;
 
     const updateSection = (key: number, change: Partial<DraftSection>) =>
         setSections(current => current.map(section => section.key === key ? { ...section, ...change } : section));
@@ -43,7 +43,7 @@ const ReviewEditor = ({ page }: ReviewEditorProps) => {
             // the page switches to the published review when the query refetches
             await publishReview({
                 eventRecordId: page.eventRecordId,
-                isRecommended: isRecommended === true,
+                isRecommended,
                 visibility,
                 sections: sections.map(({ title, text }) => ({ title, text })),
             }).unwrap();
@@ -52,6 +52,7 @@ const ReviewEditor = ({ page }: ReviewEditorProps) => {
         }
     };
 
+    // the chosen thumb is taken back by a second click
     const thumb = (value: boolean) =>
         <button
         type="button"
@@ -59,7 +60,7 @@ const ReviewEditor = ({ page }: ReviewEditorProps) => {
         aria-pressed={isRecommended === value}
         title={value ? t("I recommend") : t("I don't recommend")}
         aria-label={value ? t("I recommend") : t("I don't recommend")}
-        onClick={() => setIsRecommended(value)}>
+        onClick={() => setIsRecommended(current => current === value ? null : value)}>
             {
                 value ?
                 (isRecommended === true ? <ThumbUp /> : <ThumbUpOutlined />)
@@ -112,9 +113,9 @@ const ReviewEditor = ({ page }: ReviewEditorProps) => {
             <div className="review-editor__actions">
                 {
                     isRecommended === null && areSectionsFilled &&
-                    <div className="review-editor__hint">{t("Choose whether you recommend the game")}</div>
+                    <div className="review-editor__hint">{t("Without a thumb the review gets a neutral rating")}</div>
                 }
-                <CommonButton color="success" disabled={!canPublish || publishResult.isLoading} onClick={() => setIsConfirmShown(true)}>
+                <CommonButton color="success" disabled={!areSectionsFilled || publishResult.isLoading} onClick={() => setIsConfirmShown(true)}>
                     {t("Publish")}
                 </CommonButton>
                 {

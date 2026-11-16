@@ -121,6 +121,11 @@ $avatar-size: 48px;
     background-color: review.$failed;
 }
 
+.community-reviews__thumb--neutral {
+    background-color: default.$light-grey;
+    color: white;
+}
+
 .community-reviews__loader {
     display: flex;
     justify-content: center;

@@ -20,6 +20,11 @@
     background-color: review.$failed;
 }
 
+.published-review__verdict--neutral {
+    background-color: default.$light-grey;
+    color: white;
+}
+
 .published-review__section {
     @include review.section;
 }

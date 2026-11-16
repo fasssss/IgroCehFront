@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ThumbDown, ThumbUp } from "@mui/icons-material";
 import { CommonButton } from "root/shared/components/CommonButton";
 import { CommonModal } from "root/shared/components/CommonModal";
 import { ReviewPageObject, usePublishReviewRepliesMutation, useSetReviewVisibilityMutation } from "../../reviewsApi";
 import { ReviewVisibility } from "../../reviewVisibility";
 import { REVIEW_REPLY_MAX_LENGTH } from "../../reviewLimits";
+import { REVIEW_VERDICT_ICON, REVIEW_VERDICT_NAME, reviewVerdict } from "../../reviewVerdict";
 import { ReviewLayout } from "../ReviewLayout";
 import { ReviewPerson } from "../ReviewPerson";
 import { ReviewVisibilitySlider } from "../ReviewVisibilitySlider";
@@ -18,6 +18,8 @@ const PublishedReview = ({ page, canReply, isAuthor }: PublishedReviewProps) => 
     const [isConfirmShown, setIsConfirmShown] = useState(false);
     const [publishReplies, publishResult] = usePublishReviewRepliesMutation();
     const review = page.review!;
+    const verdictKind = reviewVerdict(review.isRecommended);
+    const VerdictIcon = REVIEW_VERDICT_ICON[verdictKind];
     const canPublish = Object.values(replies).some(reply => reply.trim());
     // the slider moves at once, the choice is saved when it is released
     const [visibility, setVisibility] = useState<ReviewVisibility>(review.visibility);
@@ -48,9 +50,9 @@ const PublishedReview = ({ page, canReply, isAuthor }: PublishedReviewProps) => 
     };
 
     const verdict =
-        <div className={`published-review__verdict published-review__verdict--${review.isRecommended ? "up" : "down"}`}>
-            {review.isRecommended ? <ThumbUp /> : <ThumbDown />}
-            {review.isRecommended ? t("Recommends") : t("Doesn't recommend")}
+        <div className={`published-review__verdict published-review__verdict--${verdictKind}`}>
+            <VerdictIcon />
+            {t(REVIEW_VERDICT_NAME[verdictKind])}
         </div>;
 
     const settings = isAuthor &&

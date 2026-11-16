@@ -2,13 +2,28 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { CircularProgress } from "@mui/material";
-import { ImageNotSupportedOutlined, ThumbDown, ThumbUp } from "@mui/icons-material";
+import { ImageNotSupportedOutlined } from "@mui/icons-material";
 import { resolveImageUrl } from "root/shared/helpers/imageUrl";
 import { useGetCommunityReviewsQuery } from "../../reviewsApi";
 import { reviewPath } from "../../reviewPath";
+import { REVIEW_VERDICT_ICON, REVIEW_VERDICT_NAME, reviewVerdict } from "../../reviewVerdict";
 import './styles.scss';
 
 const PAGE_SIZE = 20;
+
+const Verdict = ({ isRecommended }: { isRecommended: boolean | null }) => {
+    const { t } = useTranslation();
+    const verdict = reviewVerdict(isRecommended);
+    const Icon = REVIEW_VERDICT_ICON[verdict];
+    return(
+        <div className="community-reviews__verdict">
+            {t(REVIEW_VERDICT_NAME[verdict])}
+            <span className={`community-reviews__thumb community-reviews__thumb--${verdict}`}>
+                <Icon fontSize="small" />
+            </span>
+        </div>
+    );
+};
 
 // every review the user can read, the newest first; more of them are asked for when the end of the list is reached
 const CommunityReviews = () => {
@@ -60,12 +75,7 @@ const CommunityReviews = () => {
                                     }
                                     <span className="community-reviews__author-name">{review.author.userName}</span>
                                 </div>
-                                <div className="community-reviews__verdict">
-                                    {review.isRecommended ? t("Recommends") : t("Doesn't recommend")}
-                                    <span className={`community-reviews__thumb community-reviews__thumb--${review.isRecommended ? "up" : "down"}`}>
-                                        {review.isRecommended ? <ThumbUp fontSize="small" /> : <ThumbDown fontSize="small" />}
-                                    </span>
-                                </div>
+                                <Verdict isRecommended={review.isRecommended} />
                             </div>
                         </Link>
                     )
