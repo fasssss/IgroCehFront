@@ -16,6 +16,7 @@ import { usePostNewEventMutation,
     useLazyGetEventPeriodLimitsQuery,
     useLazyGetEventsByGuildIdQuery } from "../../eventsApi";
 import { EventTile } from "../EventTile";
+import { EventPeriodPicker } from "../EventPeriodPicker";
 import { formatSeasonDate } from "../../seasons";
 import './styles.scss';
 
@@ -41,9 +42,9 @@ const GuildPage = () => {
     const [ownDates, setOwnDates] = useState<{ start: string, end: string } | null>(null);
     const [getPeriodLimits] = useLazyGetEventPeriodLimitsQuery();
     const periodLimitsQuery = useGetEventPeriodLimitsQuery(ownDates?.start ? { startDate: ownDates.start } : skipToken);
-    // the bounds of another start don't count while the ones of the picked start load
+    // the bounds of another start don't count while the ones of the picked start load, the last ones still draw the calendar
     const limits = periodLimitsQuery.currentData;
-    const limitTexts = periodLimitsQuery.data;
+    const lastLimits = periodLimitsQuery.data;
     const isStartValid = !!ownDates?.start && !!limits && ownDates.start >= limits.earliestStart && ownDates.start <= limits.latestStart;
     const isEndValid = !!ownDates?.end && !!limits && ownDates.end >= limits.earliestEnd && ownDates.end <= limits.latestEnd;
     const [isScrollUpButtonShown, setIsScrollUpButtonShown] = useState(false);
@@ -254,24 +255,15 @@ const GuildPage = () => {
                                             {
                                                 ownDates &&
                                                 <>
-                                                    <div className="guild-page__create-event-dates">
-                                                        <TextField
-                                                        type="date"
-                                                        label={t("Start date")}
-                                                        value={ownDates.start}
-                                                        onChange={(e) => setOwnDates({ ...ownDates, start: e.target.value })}
-                                                        error={!!limits && !isStartValid}
-                                                        slotProps={{ inputLabel: { shrink: true }, htmlInput: { min: limitTexts?.earliestStart, max: limitTexts?.latestStart } }}
-                                                        />
-                                                        <TextField
-                                                        type="date"
-                                                        label={t("End date")}
-                                                        value={ownDates.end}
-                                                        onChange={(e) => setOwnDates({ ...ownDates, end: e.target.value })}
-                                                        error={!!limits && !isEndValid}
-                                                        slotProps={{ inputLabel: { shrink: true }, htmlInput: { min: limits?.earliestEnd, max: limits?.latestEnd } }}
-                                                        />
-                                                    </div>
+                                                    <EventPeriodPicker
+                                                    start={ownDates.start}
+                                                    end={ownDates.end}
+                                                    limits={limits}
+                                                    lastLimits={lastLimits}
+                                                    isStartWrong={!!limits && !isStartValid}
+                                                    isEndWrong={!!limits && !isEndValid}
+                                                    onChange={setOwnDates}
+                                                    />
                                                     {
                                                         limits && !isStartValid &&
                                                         <div className="guild-page__create-event-error">

@@ -1,0 +1,192 @@
+@use '../../../../shared/default.module.scss' as default;
+
+$picker-accent: default.$yellow;
+$picker-on-accent: #2d2400;
+$picker-wrong: #e5534b;
+$picker-muted: rgba(255, 255, 255, 0.6);
+$picker-faint: rgba(255, 255, 255, 0.22);
+
+.event-period-picker {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 400px;
+}
+
+.event-period-picker__cards {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 8px;
+    align-items: center;
+}
+
+// the card in work is the one the calendar picks for
+.event-period-picker__card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 8px 12px;
+    border: 1px solid default.$light-grey;
+    border-radius: 12px;
+    background-color: default.$dark-grey;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.event-period-picker__card--active {
+    border-color: $picker-accent;
+}
+
+.event-period-picker__card--wrong {
+    border-color: $picker-wrong;
+}
+
+.event-period-picker__card-label {
+    font-size: 12px;
+    color: $picker-muted;
+}
+
+.event-period-picker__card--active .event-period-picker__card-label {
+    color: $picker-accent;
+}
+
+.event-period-picker__card-day {
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.event-period-picker__card-month {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.event-period-picker__length {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 12px;
+    color: $picker-muted;
+    white-space: nowrap;
+}
+
+.event-period-picker__quick {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.event-period-picker__chip {
+    padding: 4px 10px;
+    border: 1px solid default.$light-grey;
+    border-radius: 14px;
+    background-color: default.$dark-grey;
+    color: rgba(255, 255, 255, 0.85);
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.event-period-picker__chip--active {
+    border-color: $picker-accent;
+    color: $picker-accent;
+}
+
+.event-period-picker__calendar {
+    padding: 8px 8px 10px 8px;
+    border-radius: 12px;
+    background-color: default.$dark-grey;
+}
+
+.event-period-picker__caption {
+    padding: 0 4px;
+    font-size: 12px;
+    color: $picker-muted;
+}
+
+.event-period-picker__month {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.event-period-picker__nav {
+    display: flex;
+    padding: 4px;
+    border: none;
+    border-radius: default.$border-radius_small;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.event-period-picker__nav:hover:not(:disabled) {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.event-period-picker__nav:disabled {
+    color: $picker-faint;
+    cursor: default;
+}
+
+.event-period-picker__grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    row-gap: 2px;
+    text-align: center;
+}
+
+.event-period-picker__weekday {
+    padding: 2px 0 4px 0;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.event-period-picker__day {
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: default.$border-radius_small;
+    background: none;
+    color: inherit;
+    font: inherit;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.event-period-picker__day:hover:not(:disabled) {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+// before the start and the end, which keep their colors when they can't be picked
+.event-period-picker__day:disabled {
+    color: $picker-faint;
+    cursor: default;
+}
+
+// the days between the start and the end make one band
+.event-period-picker__day--in-period {
+    border-radius: 0;
+    background-color: rgba(225, 184, 0, 0.18);
+}
+
+.event-period-picker__day--in-period:hover:not(:disabled) {
+    background-color: rgba(225, 184, 0, 0.3);
+}
+
+.event-period-picker__day--edge,
+.event-period-picker__day--edge:hover:not(:disabled),
+.event-period-picker__day--edge:disabled {
+    background-color: $picker-accent;
+    color: $picker-on-accent;
+    font-weight: 700;
+}
+
+.event-period-picker__day--today {
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55);
+}

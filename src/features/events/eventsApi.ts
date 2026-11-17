@@ -263,10 +263,19 @@ export type EventPeriodLimits = {
     startDate: string,
     earliestEnd: string,
     latestEnd: string,
+    // the quick lengths from the start with their end days, the shortest and the longest among them
+    quickEnds: EventPeriodQuickEnd[],
     // for the texts
     minDays: number,
     maxMonths: number,
     maxStartMonths: number
+}
+
+// a length in days or in months, for the label
+export type EventPeriodQuickEnd = {
+    days: number | null,
+    months: number | null,
+    end: string
 }
 
 export type GetEventPeriodLimitsRequest = {

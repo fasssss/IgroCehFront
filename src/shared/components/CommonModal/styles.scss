@@ -33,10 +33,16 @@
     font-weight: 800;
 }
 
+// the scrollbar is thin and of the colors of the modal, it runs in the right padding of the container,
+// so the content keeps its width and doesn't touch it; the page under the modal doesn't scroll on with it
 .common-modal__body {
-    padding: default.$padding_big 0 default.$padding_big 0;
+    padding: default.$padding_big default.$padding_small default.$padding_big 0;
+    margin-right: -(default.$padding_small);
     min-height: 0;
     overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
 }
 
 .common-modal__actions {

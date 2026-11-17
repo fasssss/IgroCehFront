@@ -107,17 +107,6 @@ $create-event-error: #e5534b;
     font-size: 14px;
 }
 
-.guild-page__create-event-dates {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-
-    // the native calendar icon of the date field follows the dark theme
-    input {
-        color-scheme: dark;
-    }
-}
-
 .guild-page__create-event-error {
     max-width: 400px;
     color: $create-event-error;
