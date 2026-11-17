@@ -54,6 +54,12 @@ const eventsApi = igroCehApi.injectEndpoints({
             keepUnusedDataFor: 1,
             transformResponse: (response: GetEventSeasonsResponse) => response.seasons,
         }),
+        // the bounds move with the days, so they aren't kept long
+        getEventPeriodLimits: build.query<EventPeriodLimits, GetEventPeriodLimitsRequest>({
+            query: ({ startDate }) => startDate ? `/api/getEventPeriodLimits?startDate=${startDate}` : '/api/getEventPeriodLimits',
+            keepUnusedDataFor: 60,
+            transformResponse: (response: GetEventPeriodLimitsResponse) => response.periodLimits,
+        }),
         joinEvent: build.mutation<JoinEventResponse, JoinEventRequest>({
             query: postTo('/api/joinEvent'),
             invalidatesTags: invalidateEvent,
@@ -182,6 +188,8 @@ export type EventObject = {
     allowsNewcomers: boolean,
     // an event planned for the next season stays in the registration until it starts
     seasonStartsAt: string,
+    // false for an event with its own dates, seasonStartsAt is then its own start; older servers don't send it
+    isSeason?: boolean,
     eventRecords: EventRecord[],
     // set by the event room when an admin deletes the opened event
     isDeleted?: boolean
@@ -226,7 +234,10 @@ export type PostNewEventRequest = {
     eventName: string,
     allowsNewcomers: boolean,
     // false puts the event into the current season; without it the server takes the season it offers by default
-    isNextSeason?: boolean
+    isNextSeason?: boolean,
+    // own dates of the advanced options instead of a season, both or none, "yyyy-mm-dd" days at 00:00 UTC
+    startDate?: string,
+    endDate?: string
 }
 
 export type EventSeason = {
@@ -240,6 +251,31 @@ export type EventSeasons = {
     next: EventSeason,
     // the last month of a season offers the next one
     isNextByDefault: boolean
+}
+
+// the bounds of the own dates of a new event, counted by the server: "yyyy-mm-dd" days the front only compares,
+// postNewEvent checks the same bounds
+export type EventPeriodLimits = {
+    // today in UTC
+    earliestStart: string,
+    latestStart: string,
+    // the start the bounds of the end are counted from
+    startDate: string,
+    earliestEnd: string,
+    latestEnd: string,
+    // for the texts
+    minDays: number,
+    maxMonths: number,
+    maxStartMonths: number
+}
+
+export type GetEventPeriodLimitsRequest = {
+    // without it the bounds of the end are counted from today
+    startDate?: string
+}
+
+export type GetEventPeriodLimitsResponse = {
+    periodLimits: EventPeriodLimits
 }
 
 export type GetEventSeasonsResponse = {
@@ -348,6 +384,8 @@ export type DeleteEventRequest = {
 export const {
     usePostNewEventMutation,
     useGetEventSeasonsQuery,
+    useGetEventPeriodLimitsQuery,
+    useLazyGetEventPeriodLimitsQuery,
     useLazyGetEventsByGuildIdQuery,
     useJoinEventMutation,
     useRemoveFromEventMutation,

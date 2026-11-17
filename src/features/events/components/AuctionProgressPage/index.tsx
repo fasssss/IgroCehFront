@@ -63,7 +63,12 @@ const AuctionProgressPage = ({ event, currentUser }: EventStageProps) => {
             <div className="auction-progress__event-actions">
                 { isGuessing && !hasSeasonStarted &&
                     <div className="auction-progress__hint">
-                        {t("The season starts on {{date}}, the event can be activated then", { date: formatSeasonDate(event.seasonStartsAt, i18n.language) })}
+                        {
+                            event.isSeason === false ?
+                            t("The event starts on {{date}}, it can be activated then", { date: formatSeasonDate(event.seasonStartsAt, i18n.language) })
+                            :
+                            t("The season starts on {{date}}, the event can be activated then", { date: formatSeasonDate(event.seasonStartsAt, i18n.language) })
+                        }
                     </div>
                 }
                 { isCreator && isGuessing &&

@@ -5,8 +5,9 @@ import { useTranslation } from 'react-i18next';
 
 const CommonModal = ({ 
     name, 
-    onConfirm, 
-    onConfirmText, 
+    onConfirm,
+    onConfirmText,
+    isConfirmDisabled,
     onClose,
     onCloseText, 
     children
@@ -28,7 +29,7 @@ const CommonModal = ({
                     </CommonButton>
                     {
                         onConfirm &&
-                        <CommonButton color='success' onClick={onConfirm}>
+                        <CommonButton color='success' onClick={onConfirm} disabled={isConfirmDisabled}>
                             { onConfirmText || t("Confirm") }
                         </CommonButton>
                     }
@@ -42,6 +43,7 @@ type CommonModalProps = {
     name: string,
     onConfirm?: MouseEventHandler<HTMLButtonElement>,
     onConfirmText?: string,
+    isConfirmDisabled?: boolean,
     onClose: MouseEventHandler<HTMLButtonElement>
     onCloseText?: string
 }

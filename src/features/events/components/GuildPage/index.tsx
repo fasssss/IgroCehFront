@@ -2,7 +2,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import AddIcon from '@mui/icons-material/Add';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 import { useEffect, useState } from "react";
-import { CircularProgress, Fab, FormControlLabel, Switch, TextField } from "@mui/material";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import { Button, CircularProgress, Fab, FormControlLabel, Switch, TextField } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { skipToken } from "@reduxjs/toolkit/query";
 import { CommonButton } from "root/shared/components/CommonButton";
@@ -10,6 +12,8 @@ import { CommonModal } from "root/shared/components/CommonModal";
 import { useGetGuildByIdQuery } from "root/features/guilds/guildsApi";
 import { usePostNewEventMutation,
     useGetEventSeasonsQuery,
+    useGetEventPeriodLimitsQuery,
+    useLazyGetEventPeriodLimitsQuery,
     useLazyGetEventsByGuildIdQuery } from "../../eventsApi";
 import { EventTile } from "../EventTile";
 import { formatSeasonDate } from "../../seasons";
@@ -31,6 +35,17 @@ const GuildPage = () => {
     const isNextSeason = isNextSeasonChosen ?? eventSeasons.data?.isNextByDefault ?? false;
     const season = eventSeasons.data && (isNextSeason ? eventSeasons.data.next : eventSeasons.data.current);
     const seasonDates = season && { start: formatSeasonDate(season.start, i18n.language), end: formatSeasonDate(season.end, i18n.language) };
+    // the advanced options: own dates of the event instead of the season, "yyyy-mm-dd" days;
+    // the server gives their bounds as days for the picked start, the front only compares with them
+    const [isAdvancedShown, setIsAdvancedShown] = useState(false);
+    const [ownDates, setOwnDates] = useState<{ start: string, end: string } | null>(null);
+    const [getPeriodLimits] = useLazyGetEventPeriodLimitsQuery();
+    const periodLimitsQuery = useGetEventPeriodLimitsQuery(ownDates?.start ? { startDate: ownDates.start } : skipToken);
+    // the bounds of another start don't count while the ones of the picked start load
+    const limits = periodLimitsQuery.currentData;
+    const limitTexts = periodLimitsQuery.data;
+    const isStartValid = !!ownDates?.start && !!limits && ownDates.start >= limits.earliestStart && ownDates.start <= limits.latestStart;
+    const isEndValid = !!ownDates?.end && !!limits && ownDates.end >= limits.earliestEnd && ownDates.end <= limits.latestEnd;
     const [isScrollUpButtonShown, setIsScrollUpButtonShown] = useState(false);
     const [isScrolledDown, setIsScrolledDown] = useState(false);
 
@@ -77,15 +92,41 @@ const GuildPage = () => {
         }
     }, [isScrolledDown]);
 
-    // without the seasons the switch isn't shown, and the server takes the season it offers
+    // without the seasons the switch isn't shown, and the server takes the season it offers; own dates replace the season
     const createEvent = async () => {
-        const { eventId } = await postNewEvent({ guildId, ...eventToCreate, isNextSeason: season ? isNextSeason : undefined }).unwrap();
-        navigate(`/guild/${guildId}/event/${eventId}`);
+        const dates = ownDates ? { startDate: ownDates.start, endDate: ownDates.end } : { isNextSeason: season ? isNextSeason : undefined };
+        try {
+            const { eventId } = await postNewEvent({ guildId, ...eventToCreate, ...dates }).unwrap();
+            navigate(`/guild/${guildId}/event/${eventId}`);
+        } catch {
+            // the form says the event wasn't created
+        }
+    };
+
+    // the own dates start as the chosen season, moved into the bounds the server gives; the days of the season are
+    // the dates of its "yyyy-mm-ddT00:00:00+00:00"
+    const switchOwnDates = async (isOn: boolean) => {
+        if(!isOn || !season) {
+            setOwnDates(null);
+            return;
+        }
+
+        const within = (day: string, earliest: string, latest: string) => day < earliest ? earliest : day > latest ? latest : day;
+        try {
+            const seasonLimits = await getPeriodLimits({ startDate: season.start.slice(0, 10) }).unwrap();
+            const start = within(seasonLimits.startDate, seasonLimits.earliestStart, seasonLimits.latestStart);
+            const startLimits = start === seasonLimits.startDate ? seasonLimits : await getPeriodLimits({ startDate: start }).unwrap();
+            setOwnDates({ start, end: within(season.end.slice(0, 10), startLimits.earliestEnd, startLimits.latestEnd) });
+        } catch {
+            // without the bounds the own dates aren't offered, the switch stays off
+        }
     };
 
     const closeCreation = () => {
         setIsCreateNewOpened(false);
         setIsNextSeasonChosen(null);
+        setIsAdvancedShown(false);
+        setOwnDates(null);
     };
 
     return (
@@ -137,6 +178,7 @@ const GuildPage = () => {
                 <CommonModal name={ t("Create new event") }
                     onClose={closeCreation}
                     onConfirm={createEvent}
+                    isConfirmDisabled={!!ownDates && !(isStartValid && isEndValid)}
                 >
                     {
                         !postNewEventResult.isLoading ?
@@ -150,6 +192,7 @@ const GuildPage = () => {
                                 seasonDates ?
                                 <>
                                     <FormControlLabel
+                                    disabled={!!ownDates}
                                     control={
                                         <Switch
                                         checked={isNextSeason}
@@ -158,6 +201,9 @@ const GuildPage = () => {
                                     label={t("Plan for the next season")} />
                                     <div className="guild-page__create-event-hint">
                                         {
+                                            ownDates ?
+                                            t("The event has its own dates instead of a season")
+                                            :
                                             isNextSeason ?
                                             t("The season of the event is {{start}} – {{end}}. The event can be activated once it starts.", seasonDates)
                                             :
@@ -181,6 +227,76 @@ const GuildPage = () => {
                             <div className="guild-page__create-event-hint">
                                 {t("Participants fill a pool of games during the registration, and new players can join after the start.")}
                             </div>
+                            {
+                                season &&
+                                <div className="guild-page__create-event-advanced">
+                                    <Button
+                                    color="inherit"
+                                    className="guild-page__create-event-advanced-toggle"
+                                    endIcon={isAdvancedShown ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                                    onClick={() => setIsAdvancedShown(!isAdvancedShown)}
+                                    >
+                                        {t("Advanced options")}
+                                    </Button>
+                                    {
+                                        isAdvancedShown &&
+                                        <>
+                                            <div className="guild-page__create-event-warning">
+                                                {t("Change the dates of the event only for a good reason and after thinking it over: they set when the event can be activated and how many points the passing gives.")}
+                                            </div>
+                                            <FormControlLabel
+                                            control={
+                                                <Switch
+                                                checked={!!ownDates}
+                                                onChange={(e) => switchOwnDates(e.target.checked)} />
+                                            }
+                                            label={t("Own dates of the event")} />
+                                            {
+                                                ownDates &&
+                                                <>
+                                                    <div className="guild-page__create-event-dates">
+                                                        <TextField
+                                                        type="date"
+                                                        label={t("Start date")}
+                                                        value={ownDates.start}
+                                                        onChange={(e) => setOwnDates({ ...ownDates, start: e.target.value })}
+                                                        error={!!limits && !isStartValid}
+                                                        slotProps={{ inputLabel: { shrink: true }, htmlInput: { min: limitTexts?.earliestStart, max: limitTexts?.latestStart } }}
+                                                        />
+                                                        <TextField
+                                                        type="date"
+                                                        label={t("End date")}
+                                                        value={ownDates.end}
+                                                        onChange={(e) => setOwnDates({ ...ownDates, end: e.target.value })}
+                                                        error={!!limits && !isEndValid}
+                                                        slotProps={{ inputLabel: { shrink: true }, htmlInput: { min: limits?.earliestEnd, max: limits?.latestEnd } }}
+                                                        />
+                                                    </div>
+                                                    {
+                                                        limits && !isStartValid &&
+                                                        <div className="guild-page__create-event-error">
+                                                            {t("The start is from today and up to {{months}} months ahead", { months: limits.maxStartMonths })}
+                                                        </div>
+                                                    }
+                                                    {
+                                                        limits && isStartValid && !isEndValid &&
+                                                        <div className="guild-page__create-event-error">
+                                                            {t("The event lasts from {{days}} days to {{months}} months", { days: limits.minDays, months: limits.maxMonths })}
+                                                        </div>
+                                                    }
+                                                    <div className="guild-page__create-event-hint">
+                                                        {t("The event can be activated from its start. The period is split into three equal parts: passing in the first one gives 3 points, in the second 2, in the third 1, after the end 0.")}
+                                                    </div>
+                                                </>
+                                            }
+                                        </>
+                                    }
+                                </div>
+                            }
+                            {
+                                postNewEventResult.isError &&
+                                <div className="guild-page__create-event-error">{t("Couldn't create the event, try again")}</div>
+                            }
                         </div>
                         :
                         <div className="guild-page__create-event-spinner">

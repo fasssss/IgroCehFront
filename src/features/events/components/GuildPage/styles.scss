@@ -1,5 +1,8 @@
 @use '../../../../shared/default.module.scss' as default;
 
+$create-event-warning: default.$yellow;
+$create-event-error: #e5534b;
+
 .guild-page {
     height: 100%;
 }
@@ -79,4 +82,44 @@
 .guild-page__create-event-spinner {
     display: flex;
     justify-content: center;
+}
+
+// the own dates of the event, hidden until the creator opens them
+.guild-page__create-event-advanced {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.guild-page__create-event-advanced-toggle.MuiButton-root {
+    align-self: flex-start;
+    text-transform: none;
+}
+
+// the dates set the points and the activation, so the warning stands out from the hints
+.guild-page__create-event-warning {
+    max-width: 400px;
+    padding: 8px 12px;
+    border-left: 3px solid $create-event-warning;
+    background-color: rgba(225, 184, 0, 0.08);
+    font-size: 14px;
+}
+
+.guild-page__create-event-dates {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    // the native calendar icon of the date field follows the dark theme
+    input {
+        color-scheme: dark;
+    }
+}
+
+.guild-page__create-event-error {
+    max-width: 400px;
+    color: $create-event-error;
+    font-size: 14px;
 }
