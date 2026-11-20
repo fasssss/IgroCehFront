@@ -151,7 +151,11 @@
         "The game in PSN: {{name}} · {{titleRef}}": "The game in PSN: {{name}} · {{titleRef}}",
         "Another game in PSN": "Another game in PSN",
         "The trophy list {{titleRef}} isn't found or has no trophies": "The trophy list {{titleRef}} isn't found or has no trophies",
-        "PSN doesn't answer or is busy, the trophies can be chosen later": "PSN doesn't answer or is busy, the trophies can be chosen later"
+        "PSN doesn't answer or is busy, the trophies can be chosen later": "PSN doesn't answer or is busy, the trophies can be chosen later",
+        "fest.profilePlaceholder": "Link to the Steam / console profile",
+        "fest.confirm": "Confirm the passing",
+        "fest.claimPlatform": "Platform of the profile",
+        "Couldn't open {{platform}}, try again": "Couldn't open {{platform}}, try again"
     },
     "ru": {
         "Construct a global event": "Сконструировать глобальное событие",
@@ -305,6 +309,10 @@
         "The game in PSN: {{name}} · {{titleRef}}": "Игра в PSN: {{name}} · {{titleRef}}",
         "Another game in PSN": "Другая игра в PSN",
         "The trophy list {{titleRef}} isn't found or has no trophies": "Список трофеев {{titleRef}} не найден или в нём нет трофеев",
-        "PSN doesn't answer or is busy, the trophies can be chosen later": "PSN не отвечает или занят, трофеи можно выбрать позже"
+        "PSN doesn't answer or is busy, the trophies can be chosen later": "PSN не отвечает или занят, трофеи можно выбрать позже",
+        "fest.profilePlaceholder": "Ссылка на профиль Steam / Консоли",
+        "fest.confirm": "Подтвердить прохождение",
+        "fest.claimPlatform": "Платформа профиля",
+        "Couldn't open {{platform}}, try again": "Не удалось открыть {{platform}}, попробуйте ещё раз"
     }
 }

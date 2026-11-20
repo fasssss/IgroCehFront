@@ -1,0 +1,239 @@
+@use '../../../../shared/styles' as ds;
+
+// two halves divided by a line, 130px of air on both sides of each as in the layout
+.player-games {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-bottom: 1px solid ds.white(20);
+}
+
+.player-games__column {
+    display: flex;
+    flex-direction: column;
+    gap: ds.space(24);
+    min-width: 0;
+    padding: 60px ds.$page-gutter;
+
+    & + & {
+        border-left: 1px solid ds.white(20);
+    }
+}
+
+.player-games__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: ds.space(16);
+}
+
+.player-games__title,
+.player-games__sort-option {
+    @include ds.small;
+    line-height: 1;
+    margin: 0;
+    color: ds.white(50);
+    text-transform: uppercase;
+}
+
+.player-games__sort {
+    display: flex;
+    gap: ds.space(24);
+}
+
+.player-games__sort-option {
+    padding: 0;
+    border: none;
+    background: none;
+    text-transform: none;
+    text-decoration: underline dotted;
+    text-underline-offset: 3px;
+    cursor: pointer;
+
+    &:hover {
+        color: ds.$text-primary;
+    }
+
+    &:focus-visible {
+        outline: 2px solid ds.$accent-brand;
+        outline-offset: 2px;
+    }
+}
+
+.player-games__sort-option--active {
+    color: ds.$text-primary;
+    text-decoration-style: solid;
+}
+
+.player-games__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+// number, cover, the game, the partner, the review and the score in one line; a hovered row gets a frame as in the layout
+.player-games__row {
+    display: flex;
+    align-items: center;
+    gap: ds.space(24);
+    padding: ds.space(12) 0;
+    border-bottom: 1px dashed ds.white(10);
+    outline: 1px solid transparent;
+    outline-offset: ds.space(8);
+    transition: outline-color .15s;
+
+    &:hover {
+        outline-color: ds.$text-primary;
+    }
+}
+
+.player-games__number {
+    @include ds.caption;
+    width: 16px;
+    flex-shrink: 0;
+    color: ds.white(30);
+}
+
+.player-games__cover {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    object-fit: cover;
+}
+
+.player-games__cover--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: ds.$surface-raised;
+    color: ds.white(40);
+}
+
+.player-games__game {
+    display: flex;
+    flex-direction: column;
+    gap: ds.space(8);
+    flex: 1;
+    min-width: 0;
+}
+
+.player-games__name {
+    @include ds.label;
+    line-height: 1;
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+}
+
+.player-games__event {
+    @include ds.caption;
+    line-height: 1;
+    color: ds.white(30);
+}
+
+.player-games__partner {
+    @include ds.caption;
+    display: flex;
+    align-items: center;
+    gap: ds.space(4);
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.player-games__partner-caption {
+    color: ds.white(30);
+}
+
+.player-games__partner-name {
+    color: ds.white(60);
+    text-decoration: none;
+
+    &:hover {
+        color: ds.$text-primary;
+        text-decoration: underline;
+    }
+}
+
+.player-games__avatar {
+    width: 40px;
+    height: 40px;
+    margin-left: ds.space(12);
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.player-games__avatar--empty {
+    background-color: ds.$surface-raised;
+}
+
+.player-games__review {
+    @include ds.caption;
+    width: 48px;
+    flex-shrink: 0;
+    color: ds.white(60);
+
+    &:hover {
+        color: ds.$text-primary;
+    }
+}
+
+.player-games__score {
+    display: flex;
+    justify-content: flex-end;
+    width: 56px;
+    flex-shrink: 0;
+}
+
+.player-games__no-score {
+    font-family: ds.$font-family;
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1;
+    color: ds.white(20);
+}
+
+.player-games__empty {
+    @include ds.body;
+    margin: 0;
+    color: ds.white(40);
+}
+
+.player-games__loader {
+    display: flex;
+    justify-content: center;
+    padding: ds.space(16);
+}
+
+@media (max-width: 1600px) {
+    .player-games__column {
+        padding: ds.space(48);
+    }
+}
+
+@media (max-width: 1100px) {
+    .player-games {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .player-games__column + .player-games__column {
+        border-left: none;
+        border-top: 1px solid ds.white(20);
+    }
+}
+
+// the partner goes under the game on a phone
+@media (max-width: 600px) {
+    .player-games__column {
+        padding: ds.space(32) ds.space(16);
+    }
+
+    .player-games__row {
+        flex-wrap: wrap;
+        gap: ds.space(12);
+    }
+
+    .player-games__partner {
+        order: 1;
+        width: 100%;
+        padding-left: 28px;
+    }
+}

@@ -36,8 +36,6 @@ $avatar-size: 48px;
 .community-reviews__cover {
     flex-shrink: 0;
     width: 88px;
-    // global img rule in DragNDropImage styles caps every image at 300px
-    max-width: none;
     aspect-ratio: 2 / 3;
     object-fit: cover;
     border-radius: default.$border-radius_small;
@@ -106,25 +104,8 @@ $avatar-size: 48px;
     color: review.$muted-text;
 }
 
-.community-reviews__thumb {
-    display: inline-flex;
-    padding: 2px;
-    border-radius: 4px;
-    color: default.$black;
-}
 
-.community-reviews__thumb--up {
-    background-color: default.$green;
-}
 
-.community-reviews__thumb--down {
-    background-color: review.$failed;
-}
-
-.community-reviews__thumb--neutral {
-    background-color: default.$light-grey;
-    color: white;
-}
 
 .community-reviews__loader {
     display: flex;

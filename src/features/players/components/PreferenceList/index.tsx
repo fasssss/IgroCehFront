@@ -1,14 +1,14 @@
 import { useTranslation } from "react-i18next";
 import { Autocomplete, Chip, ChipProps, TextField } from "@mui/material";
 import { Close } from "@mui/icons-material";
-import { PlayerPreferences, PreferenceTag } from "../../playersApi";
+import { PreferenceTag } from "../../playersApi";
 import { usePreferenceTagName } from "../../preferenceTagName";
 import './styles.scss';
 
 // mirrors PreferenceLimits.MaxTagsPerList on backend
 const MAX_TAGS_PER_LIST = 20;
 
-export type PreferenceListKind = keyof PlayerPreferences;
+export type PreferenceListKind = 'preferred' | 'avoided';
 
 // one list of tags under its title: a field where tags are added by typing, or just the tags when it is read only
 const PreferenceList = ({ kind, title, value, options, isLoading, onChange }: PreferenceListProps) => {

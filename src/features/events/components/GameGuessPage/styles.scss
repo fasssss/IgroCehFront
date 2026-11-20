@@ -23,6 +23,9 @@
 
 .game-guess__user-image {
     border-radius: 50%;
+    object-fit: contain;
+    max-width: 300px;
+    max-height: 300px;
 }
 
 .game-guess__change {

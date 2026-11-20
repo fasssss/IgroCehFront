@@ -1,0 +1,28 @@
+@use '../../../../shared/styles' as ds;
+
+.review-score {
+    font-family: ds.$font-family;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.review-score--large {
+    font-size: 36px;
+}
+
+.review-score--small {
+    font-size: 20px;
+}
+
+.review-score--success {
+    color: ds.$status-success;
+}
+
+.review-score--warning {
+    color: ds.$status-warning;
+}
+
+.review-score--error {
+    color: ds.$status-error;
+}

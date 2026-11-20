@@ -1,0 +1,14 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="73" height="18.022" viewBox="0 0 73 18.022" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="logo">
+<path id="Ellipse 62" d="M15.3827 2.63926C14.1225 1.37905 12.5169 0.520839 10.769 0.173148C9.02099 -0.174544 7.20918 0.00390459 5.56264 0.685926C3.91609 1.36795 2.50877 2.52291 1.51863 4.00476C0.528485 5.48661 -2.69106e-07 7.2288 0 9.011C2.69106e-07 10.7932 0.528486 12.5354 1.51863 14.0172C2.50877 15.4991 3.9161 16.6541 5.56264 17.3361C7.20919 18.0181 9.021 18.1965 10.769 17.8489C12.5169 17.5012 14.1225 16.643 15.3827 15.3827L9.011 9.011L15.3827 2.63926Z" fill="white"/>
+<circle id="Ellipse 63" cx="27.752" cy="9.011" r="8.29813" stroke-width="1.42574" stroke="white" stroke-opacity="0.5"/>
+<mask id="stroke0_0_19" fill="white">
+<path d="M47.4155 17.5043L56.8412 1.34591H37.9897L47.4155 17.5043Z"/>
+</mask>
+<path id="Polygon 7" d="M47.4155 17.5043L56.8412 1.34591H37.9897L47.4155 17.5043Z" stroke-width="2.85147" stroke="white" stroke-opacity="0.5" mask="url(#stroke0_0_19)"/>
+<mask id="stroke1_0_19" fill="white">
+<path d="M63.7987 1.34498L73 17.5033H54.5974L63.7987 1.34498Z"/>
+</mask>
+<path id="Polygon 7_2" d="M63.7987 1.34498L73 17.5033H54.5974L63.7987 1.34498Z" stroke-width="2.85147" stroke="white" stroke-opacity="0.5" mask="url(#stroke1_0_19)"/>
+</g>
+</svg>

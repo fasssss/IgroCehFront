@@ -21,11 +21,6 @@ const reviewsApi = igroCehApi.injectEndpoints({
             query: (body) => ({ url: '/api/setReviewVisibility', method: 'POST', body }),
             invalidatesTags: (_result, _error, { eventRecordId }) => [{ type: 'Review', id: eventRecordId }, 'ReviewLists'],
         }),
-        // reviews the player wrote, the newest first
-        getPlayerReviews: build.query<GetPlayerReviewsResponse, GetPlayerReviewsRequest>({
-            query: ({ userId, guildId }) => ({ url: '/api/getPlayerReviews', params: { userId, guildId: guildId ?? '' } }),
-            providesTags: ['ReviewLists'],
-        }),
         // passed games to review and guessed games whose reviews wait for answers
         getReviewSuggestions: build.query<GetReviewSuggestionsResponse, void>({
             query: () => ({ url: '/api/getReviewSuggestions' }),
@@ -59,8 +54,8 @@ export type ReviewSectionObject = {
 }
 
 export type ReviewObject = {
-    // empty for a neutral review
-    isRecommended: boolean | null,
+    // from 1 to 10 in steps of 0.5
+    score: number,
     visibility: ReviewVisibility,
     publishedAt: string,
     // the one who guessed the game answers once
@@ -85,8 +80,8 @@ export type ReviewPageObject = {
 
 export type PublishReviewRequest = {
     eventRecordId: string,
-    // empty for a neutral review
-    isRecommended: boolean | null,
+    // from 1 to 10 in steps of 0.5
+    score: number,
     visibility: ReviewVisibility,
     sections: { title: string, text: string }[]
 }
@@ -99,30 +94,6 @@ export type SetReviewVisibilityRequest = {
 export type PublishReviewRepliesRequest = {
     eventRecordId: string,
     replies: { sectionId: string, text: string }[]
-}
-
-export type PlayerReviewObject = {
-    eventRecordId: string,
-    eventName: string,
-    guildName: string,
-    guildIconUrl: string | null,
-    game: ReviewGame,
-    guesser: ReviewPlayer,
-    // empty for a neutral review
-    isRecommended: boolean | null,
-    visibility: ReviewVisibility,
-    publishedAt: string,
-    hasReplies: boolean
-}
-
-export type GetPlayerReviewsRequest = {
-    userId: string,
-    // all shared guilds when empty
-    guildId?: string
-}
-
-export type GetPlayerReviewsResponse = {
-    reviews: PlayerReviewObject[]
 }
 
 export type ReviewSuggestion = {
@@ -140,8 +111,8 @@ export type CommunityReviewObject = {
     eventRecordId: string,
     game: ReviewGame,
     author: ReviewPlayer,
-    // empty for a neutral review
-    isRecommended: boolean | null,
+    // from 1 to 10 in steps of 0.5
+    score: number,
     publishedAt: string
 }
 
@@ -155,7 +126,6 @@ export const {
     usePublishReviewMutation,
     usePublishReviewRepliesMutation,
     useSetReviewVisibilityMutation,
-    useGetPlayerReviewsQuery,
     useGetReviewSuggestionsQuery,
     useGetCommunityReviewsQuery,
 } = reviewsApi;

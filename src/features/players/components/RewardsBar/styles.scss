@@ -1,71 +1,106 @@
-@use '../../../../shared/default.module.scss' as default;
+@use '../../../../shared/styles' as ds;
 
-$segment-gap: 2px;
+.rewards-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
 
 .rewards-bar__track {
-    display: flex;
-    gap: $segment-gap;
-    height: 20px;
+    height: 8px;
+    background-color: ds.white(20);
 }
 
-.rewards-bar__segment {
-    position: relative;
-    min-width: 4px;
-    outline: none;
+.rewards-bar__fill {
+    height: 100%;
+    background-color: ds.$status-success;
 }
 
-// the bar grows from the left, only its far end is rounded
-.rewards-bar__segment:last-child {
-    border-radius: 0 4px 4px 0;
-}
-
-.rewards-bar__segment:hover,
-.rewards-bar__segment:focus-visible {
-    filter: brightness(1.15);
-}
-
-.rewards-bar__tooltip {
-    position: absolute;
-    bottom: calc(100% + 8px);
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 4px default.$padding_small;
-    border-radius: default.$border-radius_small;
-    background-color: default.$black;
-    color: white;
-    font-size: 14px;
-    white-space: nowrap;
-    pointer-events: none;
-    z-index: 1;
-}
-
-.rewards-bar__legend {
+.rewards-bar__details {
     display: flex;
     flex-wrap: wrap;
-    gap: default.$margin_small default.$margin_big;
-    margin-top: default.$margin_big;
+    align-items: center;
+    justify-content: space-between;
+    gap: ds.space(16);
 }
 
-.rewards-bar__legend-item {
+.rewards-bar__percent {
+    @include ds.small;
+    line-height: 1;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: ds.space(8);
+    color: ds.white(40);
 }
 
-.rewards-bar__swatch {
-    width: 10px;
-    height: 10px;
-    border-radius: 2px;
+// the numbers of the capsules are Akrobat Black, the layout has TikTok Sans there
+.rewards-bar__percent-value,
+.rewards-bar__reward {
+    font-family: ds.$font-family;
+    font-weight: 900;
+    line-height: 1;
+    color: ds.$background-base;
 }
 
-.rewards-bar__legend-label {
-    color: rgba(255, 255, 255, 0.7);
+.rewards-bar__percent-value {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 54px;
+    height: 24px;
+    padding: 0 ds.space(8);
+    box-sizing: border-box;
+    border-radius: ds.radius(12);
+    background-color: ds.$status-success;
+    font-size: 14px;
 }
 
-.rewards-bar__legend-count {
-    font-weight: 700;
+.rewards-bar__counters {
+    display: flex;
+    gap: ds.space(24);
+    margin: 0;
+    padding: 0;
+    list-style: none;
 }
 
-.rewards-bar__empty {
-    color: rgba(255, 255, 255, 0.7);
+.rewards-bar__counter {
+    font-family: ds.$font-family;
+    font-size: 14px;
+    font-weight: 900;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    gap: ds.space(8);
+    color: ds.white(60);
+}
+
+.rewards-bar__reward {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: ds.radius(12);
+    font-size: 13px;
+}
+
+// more points are brighter: 80%, 70% and 60% of the green, a late passing even dimmer
+.rewards-bar__reward--3 {
+    background-color: ds.tint(ds.$status-success, 80%);
+}
+
+.rewards-bar__reward--2 {
+    background-color: ds.tint(ds.$status-success, 70%);
+}
+
+.rewards-bar__reward--1 {
+    background-color: ds.tint(ds.$status-success, 60%);
+}
+
+.rewards-bar__reward--0 {
+    background-color: ds.tint(ds.$status-success, 40%);
+}
+
+.rewards-bar__failed {
+    display: block;
 }

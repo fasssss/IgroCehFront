@@ -17,8 +17,6 @@ $icon-size: 32px;
 
 .global-event-game-card__cover {
     width: 100%;
-    // global img rule in DragNDropImage styles caps every image at 300px
-    max-width: none;
     aspect-ratio: 2 / 3;
     object-fit: cover;
     border-radius: default.$border-radius_small;
@@ -66,6 +64,7 @@ $icon-size: 32px;
     width: $icon-size;
     height: $icon-size;
     border-radius: 4px;
+    object-fit: contain;
 }
 
 .global-event-game-card__icon--empty {

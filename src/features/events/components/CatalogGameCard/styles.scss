@@ -18,9 +18,6 @@
     grid-area: image;
     align-self: start;
     width: 100%;
-    // global img rule in DragNDropImage styles caps every image at 300px
-    max-width: none;
-    max-height: none;
     aspect-ratio: 2 / 3;
     object-fit: cover;
     border-radius: default.$border-radius_small;

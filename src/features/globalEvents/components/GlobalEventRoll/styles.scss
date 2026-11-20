@@ -48,11 +48,10 @@ $cover-width_phone: 92px;
 .global-event-roll__cover {
     display: block;
     width: 100%;
-    // global img rule in DragNDropImage styles caps every image at 300px
-    max-width: none;
     aspect-ratio: 2 / 3;
     object-fit: cover;
     background-color: default.$grey;
+    border-radius: default.$border-radius_small;
 }
 
 .global-event-roll__cover--empty {

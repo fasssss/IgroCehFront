@@ -8,32 +8,14 @@ import {
     GlobalEvent,
     GlobalEventGame,
     GlobalEventParticipation,
-    useCheckGlobalEventPassingMutation,
     useSubmitGlobalEventClaimMutation
 } from "../../globalEventsApi";
-import { CLAIM_PLATFORM_NAME, CLAIM_PLATFORMS, ClaimPlatform, ClaimStatus, PassingCheck } from "../../globalEventClaims";
+import { CLAIM_PLATFORM_NAME, CLAIM_PLATFORMS, ClaimPlatform, ClaimStatus } from "../../globalEventClaims";
 import { ACHIEVEMENT_PLATFORM_ICON, ACHIEVEMENT_PLATFORM_NAME, ACHIEVEMENT_PLATFORMS, AchievementPlatform, isLinkedOn } from "../../achievementPlatforms";
-import { GLOBAL_EVENT_CLAIM_PROFILE_MAX_LENGTH, GLOBAL_EVENT_PASSING_CHECK_DELAY_MINUTES } from "../../globalEventLimits";
-import { formatTimeLeft, useNow } from "../../globalEventTime";
+import { GLOBAL_EVENT_CLAIM_PROFILE_MAX_LENGTH } from "../../globalEventLimits";
+import { usePassingCheck } from "../../usePassingCheck";
 import { PlatformSignInButton } from "../PlatformSignInButton";
 import './styles.scss';
-
-const errorStatus = (error: unknown) =>
-    typeof error === 'object' && error !== null && 'status' in error ? error.status : undefined;
-
-// each platform hides the achievements of a player in its own way, so it is opened in its own way
-const PROFILE_HIDDEN_TEXT: Record<AchievementPlatform, string> = {
-    [AchievementPlatform.Steam]: "The game details of your Steam profile are hidden: open them and check again",
-    [AchievementPlatform.Xbox]: "Your achievements in Xbox are hidden: open them to everyone in the privacy settings of Xbox and check again",
-    [AchievementPlatform.Psn]: "Your trophies in PlayStation are hidden: open them to everyone in the privacy settings of PlayStation and check again",
-};
-
-// the API answers 503 for a platform that is down and for a limit of requests; PSN shares one limit for the whole site, so it may be just busy
-const UNAVAILABLE_TEXT: Record<AchievementPlatform, string> = {
-    [AchievementPlatform.Steam]: "{{platform}} doesn't answer, try later",
-    [AchievementPlatform.Xbox]: "{{platform}} doesn't answer, try later",
-    [AchievementPlatform.Psn]: "PSN doesn't answer or is busy, try later",
-};
 
 // the player proves the passing of the picked game: each platform with achievements of the game counts a chosen one unlocked after the pick
 // (each checked once in ten minutes), a claim with a profile on PSN, Xbox Live or Steam is checked by an administrator;
@@ -149,33 +131,8 @@ const GlobalEventPassingProof = ({ globalEvent, game, participation }: GlobalEve
 // or the sign-in that links the platform first
 const PlatformPassingCheck = ({ globalEventId, platform, isLinked, checkableAt }: PlatformPassingCheckProps) => {
     const { t } = useTranslation();
-    const [checkPassing, checkResult] = useCheckGlobalEventPassingMutation();
-    const [checkText, setCheckText] = useState<string | null>(null);
-    const checkableTime = checkableAt ? Date.parse(checkableAt) : null;
-    const now = useNow(checkableTime !== null);
-    const checkWait = checkableTime === null ? 0 : checkableTime - now;
+    const { check, isChecking, isWaiting, checkText, waitText } = usePassingCheck(globalEventId, platform, checkableAt);
     const name = ACHIEVEMENT_PLATFORM_NAME[platform];
-
-    const check = async () => {
-        setCheckText(null);
-        try {
-            // a passed game turns the page into its result, so only the misses are told here
-            const { passingCheck } = await checkPassing({ globalEventId, platform }).unwrap();
-            setCheckText(
-                passingCheck === PassingCheck.NotPassed
-                    ? t("{{platform}} doesn't see any of the achievements of the game yet. Unlock one of them and check again", { platform: name })
-                : passingCheck === PassingCheck.UnlockedBeforePick ? t("The achievement was unlocked before you picked the game, it doesn't count")
-                : passingCheck === PassingCheck.ProfileHidden ? t(PROFILE_HIDDEN_TEXT[platform])
-                : null
-            );
-        } catch(error) {
-            // the participation is fetched again after a failure, so a check made too early shows the wait below
-            const status = errorStatus(error);
-            setCheckText(status === 429 ? null
-                : status === 503 ? t(UNAVAILABLE_TEXT[platform], { platform: name })
-                : t("Something went wrong, try again"));
-        }
-    };
 
     if(!isLinked) {
         return(
@@ -192,7 +149,7 @@ const PlatformPassingCheck = ({ globalEventId, platform, isLinked, checkableAt }
         <div className="global-event-passing__row">
             <CommonButton
             startIcon={<SvgIcon><SvgSelector iconName={ACHIEVEMENT_PLATFORM_ICON[platform]} /></SvgIcon>}
-            disabled={checkResult.isLoading || checkWait > 0}
+            disabled={isChecking || isWaiting}
             onClick={check}>
                 {t("Check in {{platform}}", { platform: name })}
             </CommonButton>
@@ -200,16 +157,7 @@ const PlatformPassingCheck = ({ globalEventId, platform, isLinked, checkableAt }
                 <span className="global-event-passing__text">
                     {checkText ?? t("Any one of the achievements of the game unlocked after the pick counts")}
                 </span>
-                {
-                    checkWait > 0 &&
-                    <span className="global-event-passing__text">
-                        {t("{{platform}} is checked once in {{minutes}} minutes. The next check in {{left}}", {
-                            platform: name,
-                            minutes: GLOBAL_EVENT_PASSING_CHECK_DELAY_MINUTES,
-                            left: formatTimeLeft(checkWait, t)
-                        })}
-                    </span>
-                }
+                {waitText && <span className="global-event-passing__text">{waitText}</span>}
             </div>
         </div>
     );

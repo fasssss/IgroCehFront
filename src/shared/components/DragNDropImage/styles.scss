@@ -22,7 +22,8 @@
     fill: default.$light-grey;
 }
 
-img {
+// only the preview of this component; :where keeps it weaker than the class of the page that uses it
+.drag-n-drop :where(img) {
     object-fit: contain;
     max-height: 300px;
     max-width: 300px;

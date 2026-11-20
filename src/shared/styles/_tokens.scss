@@ -1,0 +1,76 @@
+@use 'sass:list';
+@use 'sass:map';
+
+// tokens of the Figma file "ИГРОЦЕХ / Простая дизайн-система" (22583:3009);
+// the raw values are read only by root.scss, components use the custom properties through the aliases below
+
+$palette: (
+    'background-base': #0D0D0F,
+    'surface-raised': #1C1C21,
+    'text-primary': #FFFFFF,
+    'text-secondary': rgba(255, 255, 255, 0.7),
+    'border-default': rgba(255, 255, 255, 0.2),
+    'accent-brand': #FF6633,
+    'accent-brand-hover': #FF7D52,
+    'status-success': #69D257,
+    'status-info': #A1D1FF,
+    'status-error': #FF7B7B,
+    'status-warning': #FEC24C,
+);
+
+// transparencies of white used across the layouts
+$white-alphas: (5, 10, 20, 30, 40, 50, 60, 80);
+
+// base step is 4px: 8–16 for controls, 24–32 for groups, 48–64 for sections
+$spacings: (4, 8, 12, 16, 24, 32, 48, 64);
+
+// R0 for cards and fields, R12 for game icons, R64 for badges and capsules
+$radii: (0, 12, 64);
+
+// the side inset of the content in the 1920px layouts
+$page-gutter: 130px;
+
+$background-base: var(--background-base);
+$surface-raised: var(--surface-raised);
+$text-primary: var(--text-primary);
+$text-secondary: var(--text-secondary);
+$border-default: var(--border-default);
+$accent-brand: var(--accent-brand);
+$accent-brand-hover: var(--accent-brand-hover);
+$status-success: var(--status-success);
+$status-info: var(--status-info);
+$status-error: var(--status-error);
+$status-warning: var(--status-warning);
+
+// the base background under the fixed header
+$background-base-90: var(--background-base-90);
+
+@function white($percent) {
+    @if not list.index($white-alphas, $percent) {
+        @error "white(#{$percent}) is not a token, use one of #{$white-alphas}";
+    }
+    @return var(--white-#{$percent});
+}
+
+@function space($px) {
+    @if not list.index($spacings, $px) {
+        @error "space(#{$px}) is not a token, use one of #{$spacings}";
+    }
+    @return $px * 1px;
+}
+
+@function radius($px) {
+    @if not list.index($radii, $px) {
+        @error "radius(#{$px}) is not a token, use one of #{$radii}";
+    }
+    @return $px * 1px;
+}
+
+// a token color made transparent, e.g. the 10% fill of the genre capsules
+@function tint($color, $percent) {
+    @return color-mix(in srgb, #{$color} #{$percent}, transparent);
+}
+
+@function raw($name) {
+    @return map.get($palette, $name);
+}

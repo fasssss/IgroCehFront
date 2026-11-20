@@ -1,0 +1,6 @@
+@use 'tokens';
+
+// for the MUI theme: CssBaseline paints the body with the theme background
+:export {
+    backgroundBase: tokens.raw('background-base');
+}

@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { SvgIcon } from "@mui/material";
-import { Close } from "@mui/icons-material";
-import { SvgSelector } from "root/shared/components/SvgSelector";
 import { CommonModal } from "root/shared/components/CommonModal";
+import { AccountButton } from "root/shared/components/AccountButton";
 import { useCurrentUser } from "root/features/authorization/authorizationApi";
+import iconSteam from "root/assets/design/icon-steam.svg";
 import { useUnlinkSteamMutation } from "../../steamApi";
 import { steamProfileUrl } from "../../steamPaths";
-import { SteamSignInButton } from "../SteamSignInButton";
+import { useSteamSignIn } from "../../useSteamSignIn";
 import './styles.scss';
 
 // the Steam account of a player in their profile: everyone sees the link to it, the owner links and unlinks it
@@ -18,6 +17,7 @@ const SteamAccount = ({ userId, steamId }: SteamAccountProps) => {
     // the own account comes with the current user, so it changes right after linking or unlinking
     const linkedSteamId = isOwn ? currentUser.steamId : steamId;
     const [unlinkSteam, unlinking] = useUnlinkSteamMutation();
+    const signIn = useSteamSignIn();
     const [isConfirming, setIsConfirming] = useState(false);
 
     const unlink = async () => {
@@ -26,29 +26,24 @@ const SteamAccount = ({ userId, steamId }: SteamAccountProps) => {
     };
 
     if(!linkedSteamId) {
-        return isOwn ? <SteamSignInButton /> : null;
+        return isOwn ?
+            <AccountButton icon={iconSteam} label="Steam" title={t("Link Steam")}
+                disabled={signIn.isLeaving}
+                onLink={signIn.signIn}
+                error={signIn.isFailed ? t("Couldn't open Steam, try again") : undefined}
+            />
+            : null;
     }
 
     return(
-        <span className="steam-account">
-            <span className="steam-account__chip">
-                <a href={steamProfileUrl(linkedSteamId)} target="_blank" rel="noreferrer" className="steam-account__profile" title={t("Profile in Steam")}>
-                    <SvgIcon className="steam-account__logo"><SvgSelector iconName="steam-icon" /></SvgIcon>
-                    Steam
-                </a>
-                {
-                    isOwn &&
-                    <button
-                    className="steam-account__unlink"
-                    title={t("Unlink Steam")}
-                    aria-label={t("Unlink Steam")}
-                    disabled={unlinking.isLoading}
-                    onClick={() => setIsConfirming(true)}>
-                        <Close fontSize="small" />
-                    </button>
-                }
-            </span>
-            {unlinking.isError && <span className="steam-account__error">{t("Couldn't unlink Steam, try again")}</span>}
+        <>
+            <AccountButton icon={iconSteam} label="Steam" title={t("Profile in Steam")}
+                href={steamProfileUrl(linkedSteamId)}
+                onUnlink={isOwn ? () => setIsConfirming(true) : undefined}
+                unlinkLabel={t("Unlink Steam")}
+                disabled={unlinking.isLoading}
+                error={unlinking.isError ? t("Couldn't unlink Steam, try again") : undefined}
+            />
             {
                 isConfirming &&
                 <CommonModal
@@ -62,7 +57,7 @@ const SteamAccount = ({ userId, steamId }: SteamAccountProps) => {
                     </div>
                 </CommonModal>
             }
-        </span>
+        </>
     );
 };
 

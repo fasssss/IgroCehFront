@@ -4,8 +4,8 @@ import { ReviewPlayer } from "../../reviewsApi";
 import './styles.scss';
 
 // the avatar and the name of a player, leading to the profile
-const ReviewPerson = ({ player, guildId }: ReviewPersonProps) => (
-    <Link to={playerProfilePath(player.id, guildId)} className="review-person">
+const ReviewPerson = ({ player }: ReviewPersonProps) => (
+    <Link to={playerProfilePath(player.id)} className="review-person">
         {
             player.avatarUrl ?
             <img src={player.avatarUrl} className="review-person__avatar" alt="" />
@@ -17,9 +17,7 @@ const ReviewPerson = ({ player, guildId }: ReviewPersonProps) => (
 );
 
 type ReviewPersonProps = {
-    player: ReviewPlayer,
-    // the profile opens with the guild of the reviewed event selected
-    guildId: string
+    player: ReviewPlayer
 }
 
 export { ReviewPerson }

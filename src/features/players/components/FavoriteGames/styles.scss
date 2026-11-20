@@ -1,0 +1,166 @@
+@use '../../../../shared/styles' as ds;
+
+// the cover and the caption keep the proportions of the 400 x 260 + 101 card of the layout
+$info-height: 101px;
+
+.profile-section.favorite-games {
+    gap: 40px;
+    padding: 60px ds.$page-gutter 80px;
+}
+
+// the title looks as the titles of the columns above
+.favorite-games .profile-section__title {
+    color: ds.white(50);
+    text-transform: uppercase;
+}
+
+.favorite-games__editor {
+    display: flex;
+    flex-direction: column;
+    gap: ds.space(12);
+}
+
+// the search of the catalog is as wide as a field, not half of the page
+.favorite-games__search .search-bar {
+    width: 100%;
+    max-width: 640px;
+    margin: 0;
+}
+
+.favorite-games__hint {
+    @include ds.small;
+    color: ds.white(40);
+}
+
+.favorite-games__error {
+    @include ds.small;
+    color: ds.$status-error;
+}
+
+.favorite-games__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 22px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+// the frame is an outline, so the card keeps its size when the frame becomes white
+.favorite-games__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    outline: 1px solid ds.white(10);
+    outline-offset: -1px;
+}
+
+.favorite-games__card:not(.favorite-games__card--free):hover,
+.favorite-games__card:focus-within {
+    outline: 2px solid ds.$text-primary;
+    outline-offset: -2px;
+
+    .favorite-games__info {
+        border-top-color: transparent;
+        background-color: ds.white(5);
+    }
+}
+
+.favorite-games__cover {
+    display: block;
+    width: 100%;
+    aspect-ratio: 400 / 260;
+    object-fit: cover;
+}
+
+.favorite-games__cover--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: ds.$surface-raised;
+    color: ds.white(40);
+}
+
+.favorite-games__info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: ds.space(12);
+    min-height: $info-height;
+    padding: 0 ds.space(24);
+    box-sizing: border-box;
+    border-top: 1px solid ds.white(10);
+}
+
+.favorite-games__name {
+    @include ds.h3;
+    line-height: 1;
+    overflow: hidden;
+    color: ds.$text-primary;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.favorite-games__year {
+    @include ds.small;
+    line-height: 1;
+    color: ds.white(30);
+}
+
+.favorite-games__remove {
+    position: absolute;
+    top: ds.space(12);
+    right: ds.space(12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: ds.radius(64);
+    background-color: ds.$background-base-90;
+    cursor: pointer;
+
+    &:hover {
+        background-color: ds.$surface-raised;
+    }
+
+    &:focus-visible {
+        outline: 2px solid ds.$accent-brand;
+        outline-offset: 2px;
+    }
+}
+
+// a free place of the editor: only the dashed frame
+.favorite-games__card--free {
+    outline: 1px dashed ds.white(20);
+
+    .favorite-games__info {
+        border-top-color: transparent;
+    }
+}
+
+@media (max-width: 1600px) {
+    .profile-section.favorite-games {
+        padding: ds.space(48);
+    }
+}
+
+@media (max-width: 1100px) {
+    .favorite-games__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .profile-section.favorite-games {
+        padding: ds.space(32) ds.space(16);
+    }
+
+    .favorite-games__grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}

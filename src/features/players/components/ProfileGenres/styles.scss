@@ -1,0 +1,4 @@
+// the narrow column of the hero fits one list under the other
+.profile-genres .profile-genres__editor {
+    grid-template-columns: minmax(0, 1fr);
+}

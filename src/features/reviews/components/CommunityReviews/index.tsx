@@ -6,24 +6,10 @@ import { ImageNotSupportedOutlined } from "@mui/icons-material";
 import { resolveImageUrl } from "root/shared/helpers/imageUrl";
 import { useGetCommunityReviewsQuery } from "../../reviewsApi";
 import { reviewPath } from "../../reviewPath";
-import { REVIEW_VERDICT_ICON, REVIEW_VERDICT_NAME, reviewVerdict } from "../../reviewVerdict";
+import { ReviewScore } from "../ReviewScore";
 import './styles.scss';
 
 const PAGE_SIZE = 20;
-
-const Verdict = ({ isRecommended }: { isRecommended: boolean | null }) => {
-    const { t } = useTranslation();
-    const verdict = reviewVerdict(isRecommended);
-    const Icon = REVIEW_VERDICT_ICON[verdict];
-    return(
-        <div className="community-reviews__verdict">
-            {t(REVIEW_VERDICT_NAME[verdict])}
-            <span className={`community-reviews__thumb community-reviews__thumb--${verdict}`}>
-                <Icon fontSize="small" />
-            </span>
-        </div>
-    );
-};
 
 // every review the user can read, the newest first; more of them are asked for when the end of the list is reached
 const CommunityReviews = () => {
@@ -75,7 +61,9 @@ const CommunityReviews = () => {
                                     }
                                     <span className="community-reviews__author-name">{review.author.userName}</span>
                                 </div>
-                                <Verdict isRecommended={review.isRecommended} />
+                                <div className="community-reviews__verdict">
+                                    <ReviewScore score={review.score} size="small" />
+                                </div>
                             </div>
                         </Link>
                     )

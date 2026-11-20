@@ -1,72 +1,56 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import iconRewardFailed from "root/assets/design/icon-reward-failed.svg";
 import './styles.scss';
 
-// one green from light to dark: more points read brighter on the dark surface,
-// the red of not completed games stays distinguishable from the darkest green for colorblind players
-const REWARD_COLORS: Record<number, string> = {
-    3: '#c6ef7f',
-    2: '#8cc907',
-    1: '#638f12',
-    0: '#476a10',
-};
-const FAILED_COLOR = '#ef6a5a';
+// mirrors CalculatePassingReward on backend: a game passed in the first month of the event gives 3 points
+const MAX_REWARD = 3;
+const COUNTED_REWARDS = [3, 2, 1];
 
-// share of games completed for each reward and of games not completed in time
+// the share of the points the player could get for the finished games (layout 20648:731):
+// a passed game could give MAX_REWARD, a game not passed in time gives nothing; under it the games of every reward
 const RewardsBar = ({ rewards, failedCount }: RewardsBarProps) => {
     const { t } = useTranslation();
-    const [hoveredSegment, setHoveredSegment] = useState<string | null>(null);
-    const segments = [
-        ...rewards.map(({ reward, count }) => ({
-            key: `reward-${reward}`,
-            label: t('{{count}} points', { count: reward }),
-            count,
-            color: REWARD_COLORS[reward],
-        })),
-        { key: 'failed', label: t('Not completed'), count: failedCount, color: FAILED_COLOR },
-    ];
-    const total = segments.reduce((sum, segment) => sum + segment.count, 0);
+    const countOf = (reward: number) => rewards.find(item => item.reward === reward)?.count ?? 0;
+    const earned = rewards.reduce((sum, { reward, count }) => sum + reward * count, 0);
+    const finishedGames = rewards.reduce((sum, { count }) => sum + count, 0) + failedCount;
+    const percent = finishedGames ? Math.round(earned / (finishedGames * MAX_REWARD) * 100) : 0;
+    // a game passed too late gives 0 points, it is shown only when there is one
+    const shownRewards = countOf(0) ? [...COUNTED_REWARDS, 0] : COUNTED_REWARDS;
 
-    if(total === 0) {
-        return <div className="rewards-bar__empty">{t('No completed games yet')}</div>;
-    }
+    const gamesTitle = (label: string, count: number) => t('{{label}}: {{count}} games', { label, count });
 
     return(
         <div className="rewards-bar">
-            <div className="rewards-bar__track">
-                {
-                    segments.filter(segment => segment.count > 0).map(segment => {
-                        const description = t('{{label}}: {{count}} games', { label: segment.label, count: segment.count });
-                        return(
-                            <div key={segment.key}
-                                className="rewards-bar__segment"
-                                style={{ flexGrow: segment.count, backgroundColor: segment.color }}
-                                tabIndex={0}
-                                aria-label={description}
-                                onMouseEnter={() => setHoveredSegment(segment.key)}
-                                onMouseLeave={() => setHoveredSegment(null)}
-                                onFocus={() => setHoveredSegment(segment.key)}
-                                onBlur={() => setHoveredSegment(null)}
-                            >
-                                {
-                                    hoveredSegment === segment.key &&
-                                    <div className="rewards-bar__tooltip">{description}</div>
-                                }
-                            </div>
-                        );
-                    })
-                }
+            <div className="rewards-bar__track" role="progressbar"
+                aria-valuemin={0} aria-valuemax={100} aria-valuenow={percent}
+                aria-label={t('profile.pointsEarned')}
+            >
+                <div className="rewards-bar__fill" style={{ width: `${percent}%` }} />
             </div>
-            <div className="rewards-bar__legend">
-                {
-                    segments.map(segment =>
-                        <div key={segment.key} className="rewards-bar__legend-item">
-                            <span className="rewards-bar__swatch" style={{ backgroundColor: segment.color }} />
-                            <span className="rewards-bar__legend-label">{segment.label}</span>
-                            <span className="rewards-bar__legend-count">{segment.count}</span>
-                        </div>
-                    )
-                }
+            <div className="rewards-bar__details">
+                <div className="rewards-bar__percent">
+                    <span className="rewards-bar__percent-value">{percent}%</span>
+                    {t('profile.pointsEarned')}
+                </div>
+                <ul className="rewards-bar__counters">
+                    {
+                        shownRewards.map(reward => {
+                            const count = countOf(reward);
+                            return(
+                                <li key={reward} className="rewards-bar__counter" title={gamesTitle(t('{{count}} points', { count: reward }), count)}>
+                                    <span className={`rewards-bar__reward rewards-bar__reward--${reward}`} aria-hidden>{reward}</span>
+                                    <span className="visually-hidden">{t('{{count}} points', { count: reward })}:</span>
+                                    {count}
+                                </li>
+                            );
+                        })
+                    }
+                    <li className="rewards-bar__counter" title={gamesTitle(t('Not completed'), failedCount)}>
+                        <img src={iconRewardFailed} alt="" width={24} height={24} className="rewards-bar__failed" />
+                        <span className="visually-hidden">{t('Not completed')}:</span>
+                        {failedCount}
+                    </li>
+                </ul>
             </div>
         </div>
     );

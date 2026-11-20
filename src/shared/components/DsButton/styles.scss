@@ -1,0 +1,83 @@
+@use '../../styles' as ds;
+
+.ds-button {
+    @include ds.small;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: ds.space(8);
+    box-sizing: border-box;
+    padding: 0 ds.space(24);
+    border: 1px solid transparent;
+    border-radius: ds.radius(0);
+    background: none;
+    color: ds.$text-primary;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color .15s, border-color .15s;
+
+    &:focus-visible {
+        outline: 2px solid ds.$accent-brand;
+        outline-offset: 2px;
+    }
+
+    &:disabled {
+        opacity: .4;
+        cursor: default;
+    }
+}
+
+.ds-button--medium {
+    height: 48px;
+}
+
+.ds-button--large {
+    height: 60px;
+}
+
+.ds-button--uppercase {
+    text-transform: uppercase;
+}
+
+.ds-button--full-width {
+    width: 100%;
+}
+
+.ds-button__icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+
+    > * {
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.ds-button--outline {
+    border-color: ds.$border-default;
+
+    &:hover:not(:disabled) {
+        border-color: ds.$text-primary;
+    }
+}
+
+.ds-button--primary {
+    background-color: ds.$accent-brand;
+    color: ds.$background-base;
+
+    &:hover:not(:disabled) {
+        background-color: ds.$accent-brand-hover;
+    }
+}
+
+.ds-button--filled {
+    border-color: ds.white(5);
+    background-color: ds.white(5);
+
+    &:hover:not(:disabled) {
+        background-color: ds.white(10);
+    }
+}

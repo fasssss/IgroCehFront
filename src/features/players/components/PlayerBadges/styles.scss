@@ -1,11 +1,12 @@
-@use '../../../../shared/default.module.scss' as default;
+@use '../../../../shared/styles' as ds;
 
-$badge-size: 88px;
+// the row of badges after the name (layout 20674:3884)
+$badge-size: 40px;
 
 .player-badges {
     display: flex;
     flex-wrap: wrap;
-    gap: default.$margin_big;
+    gap: 10px;
 }
 
 .player-badges__badge {
@@ -15,25 +16,25 @@ $badge-size: 88px;
 
     &:hover,
     &:focus-visible {
-        transform: scale(1.08);
+        transform: scale(1.1);
+    }
+
+    &:focus-visible {
+        outline: 2px solid ds.$accent-brand;
+        outline-offset: 2px;
     }
 }
 
 .player-badges__image {
     width: $badge-size;
     height: $badge-size;
-    // global img rule in DragNDropImage styles caps every image at 300px
-    max-width: none;
+    object-fit: contain;
 }
 
 .player-badges__image--missing.MuiSvgIcon-root {
-    padding: default.$padding_big;
+    padding: ds.space(8);
     box-sizing: border-box;
     border-radius: 50%;
-    background-color: default.$grey;
-    color: default.$yellow;
-}
-
-.player-badges__empty {
-    color: rgba(255, 255, 255, 0.7);
+    background-color: ds.$surface-raised;
+    color: ds.$status-warning;
 }

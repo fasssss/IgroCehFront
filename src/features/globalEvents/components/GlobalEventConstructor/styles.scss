@@ -74,7 +74,7 @@ $form-width: 900px;
 .global-event-constructor__image img {
     width: 100%;
     height: auto;
-    // global img rule in DragNDropImage styles caps every image at 300px
+    // the preview of DragNDropImage is capped at 300px by its own styles
     max-width: none;
     max-height: none;
     aspect-ratio: 4 / 1;

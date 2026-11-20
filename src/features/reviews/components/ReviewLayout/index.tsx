@@ -27,8 +27,8 @@ const ReviewLayout = ({ page, verdict, settings, children }: PropsWithChildren<R
                 <div className="review-layout__content">
                     <h1 className="review-layout__title">{t("Paired review of {{game}}", { game: page.game.name })}</h1>
                     <div className="review-layout__meta">
-                        <span className="review-layout__meta-item">{t("Review by")}: <ReviewPerson player={page.author} guildId={page.guildId} /></span>
-                        <span className="review-layout__meta-item">{t("Game from")}: <ReviewPerson player={page.guesser} guildId={page.guildId} /></span>
+                        <span className="review-layout__meta-item">{t("Review by")}: <ReviewPerson player={page.author} /></span>
+                        <span className="review-layout__meta-item">{t("Game from")}: <ReviewPerson player={page.guesser} /></span>
                         <Link to={`/guild/${page.guildId}/event/${page.eventId}`} className="review-layout__event-link">
                             {t("To the event")}: {page.eventName}
                         </Link>

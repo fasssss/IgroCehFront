@@ -1,3 +1,2 @@
-// a link from a guild page keeps the guild selected in the profile
-export const playerProfilePath = (userId: string, guildId?: string) =>
-    guildId ? `/user/${userId}?guild=${guildId}` : `/user/${userId}`;
+// the profile always shows every guild shared with the player, a guild isn't selected in it
+export const playerProfilePath = (userId: string) => `/user/${userId}`;

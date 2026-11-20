@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, RouteObject } from "react-router-dom";
 import {
     LoginPage,
     RedirectLoginPage,
@@ -18,7 +18,14 @@ import {
 } from "../features";
 import Layout from "./components/Layout";
 
+// the showcase of the design system exists only in the dev build, the production bundle drops it with the import
+const devRoutes: RouteObject[] = import.meta.env.DEV ? [{
+    path: "ds-preview",
+    lazy: async () => ({ Component: (await import("./components/DsPreview")).default })
+}] : [];
+
 const router = createBrowserRouter([
+    ...devRoutes,
     {
         path: "login",
         element: <LoginPage />
@@ -44,9 +51,10 @@ const router = createBrowserRouter([
                 element: <LeaderBoardPage />
             },
             {
-                // ?guild= selects one of the guilds shared with the player
+                // the hero of the profile starts right under the header
                 path: "user/:userId",
-                element: <PlayerProfilePage />
+                element: <PlayerProfilePage />,
+                handle: { flush: true }
             },
             {
                 // the reviews to write and to answer and every review the user can read
